@@ -6,7 +6,7 @@ env:
   NIX_PATH: "channel:nixos-24.11"
   CI_DIR: "./CI"
   CI_SCRIPTS_DIR: "./CI/scripts"
-  SHELL: "nix develop path:$CI_DIR --command"
+  DOCS_SCRIPT: "nix develop path:$CI_DIR#docs --command"
 
   linux: "x86_64-linux"
 
@@ -24,6 +24,6 @@ steps:
     depends_on:
       - linux-nix
     commands:
-      - $CI_SCRIPTS_DIR/build-docs.sh
+      - $DOCS_SCRIPT $CI_SCRIPTS_DIR/build-docs.sh
     agents:
       system: ${linux}

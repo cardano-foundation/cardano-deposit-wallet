@@ -21,7 +21,7 @@
           devShells.docs =
             with import nixpkgs { inherit system; };
             mkShell {
-              packages = [ mdbook ];
+              packages = [ mdbook tree gnused ];
             };
         };
 
