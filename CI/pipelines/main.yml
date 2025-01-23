@@ -1,0 +1,28 @@
+agents:
+  queue: cardano-wallet
+
+env:
+  LC_ALL: "C.UTF-8"
+  NIX_PATH: "channel:nixos-24.11"
+  CI_DIR: "./CI"
+  CI_SCRIPTS_DIR: "./CI/scripts"
+  DOCS_SCRIPT: "nix develop path:$CI_DIR#docs --command"
+
+  linux: "x86_64-linux"
+
+steps:
+
+  - label: Check Nix (linux)
+    key: linux-nix
+    commands:
+      - nix --version
+    agents:
+      system: ${linux}
+
+  - label: Build Docs
+    depends_on:
+      - linux-nix
+    commands:
+      - $DOCS_SCRIPT $CI_SCRIPTS_DIR/build-docs.sh
+    agents:
+      system: ${linux}
