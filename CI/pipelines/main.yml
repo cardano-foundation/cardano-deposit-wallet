@@ -13,7 +13,6 @@ env:
 steps:
 
   - label: Check Nix (linux)
-    # Check whether regenerate.sh was applied when it had to be applied.
     key: linux-nix
     commands:
       - nix --version

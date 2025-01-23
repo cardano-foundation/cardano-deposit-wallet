@@ -6,8 +6,8 @@
 # There are three possible targets for the documentation:
 # - tagged: the documentation for any tagged commit, it will appear in a folder
 #   with the tag name
-# - latest: the documentation for the main branch, it will appear in a folder
-#   called latest
+# - canary: the documentation for the main branch, it will appear in a folder
+#   called canary
 # - test: the documentation for any other branch, it will appear in a folder
 #   called test
 # For new tags it is necessary to update the landing page to include a link to
@@ -31,7 +31,7 @@ if [ "$current_tag" != "no-tag" ]; then
   target="$current_tag"
 elif [ "$current_branch" == "main" ]; then
   # If the current branch is main, use "latest" as the target
-  target="latest"
+  target="canary"
 else
   # In all other cases target is test
   target="test"
@@ -46,7 +46,7 @@ sed -i -r "s/^title = \"(.*)\"/title = \"\1 ($target)\"/" site/docs/book.toml
 mdbook build site/docs -d "$temp_docs_dir"
 
 # Build the landing page, only for the latest target
-if [ "$target" == "latest" ]; then
+if [ "$target" == "canary" ]; then
     mdbook build site/landing -d "$temp_site_dir"
 fi
 
@@ -57,7 +57,7 @@ git checkout gh-pages
 git reset --hard origin/gh-pages
 
 # populate the root of the html site with the landing mdbook, only for the latest target
-if [ "$target" == "latest" ]; then
+if [ "$target" == "canary" ]; then
     # shellcheck disable=SC2086
     cp -r $temp_site_dir/* .
     rm -rf "$temp_site_dir"
