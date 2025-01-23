@@ -2,34 +2,30 @@
 
 First off, thanks for taking the time to contribute! 🎉
 
-When contributing to this repository, please first describe the change you wish to make [via an issue](https://github.com/cardano-foundation/cf-identity-wallet/issues/new) before making a change.
+When contributing to this repository, please first describe the change you wish to make via an issue before making a change.
 Please note we have a [code of conduct](CODE_OF_CONDUCT.md), please follow it in all your interactions with the project.
 
 ## Issues and pull requests
 
 ### Bug reports
 
-[Submit a bug report](https://github.com/cardano-foundation/cf-identity-wallet/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=%5BBUG%5D+) using the provided template for bug reports. If the template does not fit your purpose start with a blank issue.
+[Submit a bug report](https://github.com/cardano-foundation/cardano-deposit-wallet/issues/new?labels=bug&template=bug_report.yml) using the provided template for bug reports. If the template does not fit your purpose start with a blank issue.
 
 For bug reports, it's very important to fill in the information in the structure provided by the templates to help us analyzing the bug.
 
 ### Feature requests and ideas
 
-[Submit a feature request](https://github.com/cardano-foundation/cf-identity-wallet/issues/new?assignees=&labels=&projects=&template=feature_request.md&title=%5BFEATURE%5D+) using the provided template for feature requests. If the template does not fit your purpose start with a blank issue but make sure the name starts with a "FEATURE" in square brackets.
+[Submit a feature request](https://github.com/cardano-foundation/cardano-deposit-wallet/issues/new?labels=enhancement&template=feature_request.yml) using the provided template for feature requests. If the template does not fit your purpose start with a blank issue but make sure the name starts with a "FEATURE" in square brackets.
 
-If you are starting with a very vague idea instead of a concrete feature request post it in the [discussions section](https://github.com/cardano-foundation/cf-identity-wallet/discussions) of the repository where we can refine the idea with you and create a structured feature request from it.
+If you are starting with a very vague idea instead of a concrete feature request post it in the [discussions section](https://github.com/cardano-foundation/cardano-deposit-wallet/discussions) of the repository or contact us in [discord](https://discord.gg/UrjTq655) where we can refine the idea with you and create a structured feature request from it.
 
 ### Creating a pull request
 
 Thank you for contributing your changes by opening a pull requests! To get something merged we usually require:
 
-- The pull request should successfully clear existing tests and introduce new tests if needed. Further details about the project's testing methodology can be found [here](docs/Testing.md).
-- ❗ Description of the changes - please follow the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/#specification) as we use it to automatically generate our CHANGELOG ❗This repository has a githook to ensure the use of conventional commits. To configure it run this command on the root of the project before creating your first commit:
+- The pull request should be tackling at least one already accepted issue. Reference the issue inside the pull request description `Issues`
+- The pull request should enumerate the changes made in the code inside the pull request description part `Changes`
+- Unsolicited changes have also to be explained inside the pull request description part `Notes`
 
-```
-make init
-```
+i.e. https://github.com/cardano-foundation/cardano-deposit-wallet/pull/5
 
-- Quality of changes is ensured - through new or updated automated tests
-- Change is related to an issue (feature request or bug report) - ideally discussed beforehand
-- Well-scoped - we prefer multiple PRs, rather than a big one
