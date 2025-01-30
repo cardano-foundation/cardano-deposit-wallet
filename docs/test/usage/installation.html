@@ -199,10 +199,10 @@ Linux instructions for preprod here. Little changes are needed for macOS.</p>
 <li>screen</li>
 <li>a working browser</li>
 </ul>
-<p>Nixers Can Run a Shell with All the Tools</p>
+<p>Nixers can run a shell with all the tools:</p>
 <pre><code class="language-bash">nix-shell -p jq wget gnutar screen
 </code></pre>
-<p>Now download cardano-wallet executable</p>
+<p>Now download the cardano-wallet executable:</p>
 <pre><code class="language-bash"># install the wallet
 LATEST_RELEASE=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-wallet/releases/latest | jq -r .tag_name)
 WALLET_NAME=cardano-wallet-$LATEST_RELEASE-linux64
@@ -215,7 +215,7 @@ export PATH=$PATH:$WALLET_DIR
 </code></pre>
 <p>You will need to start the node and the wallet. It's recommended to retrieve the
 node state from Mithril to avoid long waiting times.</p>
-<p>Download the Mithril executable</p>
+<p>Download the Mithril executable:</p>
 <pre><code class="language-bash"># install mithril
 LATEST_MITHRIL=$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r .tag_name)
 MITHRIL_NAME=mithril-$LATEST_MITHRIL-linux-x64
@@ -226,7 +226,7 @@ tar xvzf "$MITHRIL_NAME.tar.gz" -C "$MITHRIL_DIR" --remove-files &gt; /dev/null
 export PATH=$PATH:"$MITHRIL_DIR"
 # end of install mithril
 </code></pre>
-<p>Create a directory for the node state</p>
+<p>Create a directory for the node state:</p>
 <pre><code class="language-bash"># set up the node database directory
 NODE_DB=$(pwd)/node-db
 export NODE_DB
@@ -234,9 +234,9 @@ mkdir -p "$NODE_DB"
 rm -rf "$NODE_DB/preprod"
 # end of set up the node database directory
 </code></pre>
-<p>Populate it via Mithril</p>
+<p>Populate it via Mithril:</p>
 <blockquote>
-<p>NixOS will refuse to run Mithril unless <code>programs.nix-ld.enable = true;</code> is in the configuration</p>
+<p>NixOS will refuse to run Mithril unless <code>programs.nix-ld.enable = true;</code> is in the configuration.</p>
 </blockquote>
 <pre><code class="language-bash"># populate the node database with the latest preprod snapshot
 export AGGREGATOR_ENDPOINT=https://aggregator.release-preprod.api.mithril.network/aggregator
@@ -257,11 +257,11 @@ screen -dmS node-session cardano-node run \
     --topology "$NODE_CONFIGS/topology.json"
 # end of start the node
 </code></pre>
-<p>You can observe the node logs with</p>
+<p>You can observe the node logs with:</p>
 <pre><code class="language-bash">screen -r node-session
 </code></pre>
-<p>Detatch from the screen with <code>Ctrl-a d</code></p>
-<p>Now you can start the wallet</p>
+<p>Detach from the screen with <code>Ctrl-a d</code>.</p>
+<p>Now you can start the wallet:</p>
 <pre><code class="language-bash"># start the wallet
 DEPOSIT_PORT=$(shuf -i 1024-65000 -n 1)
 export DEPOSIT_PORT
@@ -274,16 +274,17 @@ screen -dmS wallet-session cardano-wallet serve \
 # end of start the wallet
 </code></pre>
 <blockquote>
-<p>ATM the legacy port is required even if we are not using it. Once the deposit wallet will be extracted from the wallet, the legacy port will be removed.</p>
+<p>ATM the legacy port is required even if we are not using it. Once the deposit
+wallet is extracted from the wallet, the legacy port will be removed.</p>
 </blockquote>
-<p>You can observe the wallet logs with</p>
+<p>You can observe the wallet logs with:</p>
 <pre><code class="language-bash">screen -r wallet-session
 </code></pre>
-<p>Detatch from the screen with <code>Ctrl-a d</code></p>
-<p>Now you can connect to the web ui with</p>
+<p>Detach from the screen with <code>Ctrl-a d</code>.</p>
+<p>Now you can connect to the web UI with:</p>
 <pre><code class="language-bash">xdg-open http://localhost:$DEPOSIT_PORT
 </code></pre>
-<p>Clean up the screen sessions with</p>
+<p>Clean up the screen sessions with:</p>
 <pre><code class="language-bash"># remove screen sessions
 screen -S node-session -X quit
 screen -S wallet-session -X quit
