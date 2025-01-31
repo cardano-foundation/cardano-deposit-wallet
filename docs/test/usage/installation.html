@@ -235,7 +235,7 @@ wget -q https://github.com/input-output-hk/mithril/releases/download/$LATEST_MIT
 MITHRIL_DIR=$(pwd)/$MITHRIL_NAME
 mkdir -p "$MITHRIL_DIR"
 tar xvzf "$MITHRIL_NAME.tar.gz" -C "$MITHRIL_DIR" --remove-files &gt; /dev/null
-export PATH=$PATH:"$MITHRIL_DIR"
+export PATH="$MITHRIL_DIR:$PATH"
 # end of install mithril
 </code></pre>
 <p>Create a directory for the node state:</p>
