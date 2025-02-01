@@ -296,8 +296,8 @@ wallet is extracted from the wallet, the legacy port will be removed.</p>
 </code></pre>
 <p>Clean up the screen sessions with:</p>
 <pre><code class="language-bash"># remove screen sessions
-screen -S node-session -X quit
-screen -S wallet-session -X quit
+screen -S node-session -X quit || true
+screen -S wallet-session -X quit || true
 # end of remove screen sessions
 </code></pre>
 
