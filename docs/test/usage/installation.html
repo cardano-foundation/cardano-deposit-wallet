@@ -223,7 +223,7 @@ export WALLET_DIR
 export PATH="$WALLET_DIR:$PATH"
 NODE_CONFIGS="$WALLET_DIR/configs/preprod"
 export NODE_CONFIGS
-# end of install the wallet
+# end of install the deposit wallet
 </code></pre>
 <p>You will need to start the node and the wallet. It's recommended to retrieve the
 node state from Mithril to avoid long waiting times.</p>
@@ -260,8 +260,6 @@ digest=$(mithril-client cdb snapshot list --json | jq -r .[0].digest)
 <p>Now you can start the node that comes bundled with the wallet. I am using <code>screen</code>
 to keep the node running in the background.</p>
 <pre><code class="language-bash"># start the node
-NODE_CONFIGS="$WALLET_DIR/configs/preprod"
-export NODE_CONFIGS
 screen -dmS node-session cardano-node run \
     --config "$NODE_CONFIGS/config.json" \
     --database-path "$NODE_DB/preprod" \
@@ -274,7 +272,7 @@ screen -dmS node-session cardano-node run \
 </code></pre>
 <p>Detach from the screen with <code>Ctrl-a d</code>.</p>
 <p>Now you can start the wallet:</p>
-<pre><code class="language-bash"># start the wallet
+<pre><code class="language-bash"># start the deposit wallet
 DEPOSIT_PORT=$(shuf -i 1024-65000 -n 1)
 export DEPOSIT_PORT
 LEGACY_PORT=$(shuf -i 1024-65000 -n 1)
@@ -283,7 +281,7 @@ screen -dmS wallet-session cardano-wallet serve \
     --testnet "$NODE_CONFIGS/byron-genesis.json" \
     --ui-deposit-port "$DEPOSIT_PORT" \
     --port "$LEGACY_PORT"
-# end of start the wallet
+# end of start the deposit wallet
 </code></pre>
 <blockquote>
 <p>ATM the legacy port is required even if we are not using it. Once the deposit
