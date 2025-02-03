@@ -222,28 +222,16 @@ Linux instructions for preprod here. Little changes are needed for macOS.</p>
 <p>Nixers can run a shell with all the tools:</p>
 <pre><code class="language-bash">nix-shell -p jq wget gnutar screen
 </code></pre>
-<blockquote>
-<p>ATM there is no release do you have to build the wallet with nix in the cardano-wallet project.
-ATM the repository is private so you have to clone it and build it locally.</p>
-</blockquote>
-<pre><code class="language-bash">
-nix build .#linux-package -o ./result
-
-```bash
-# install the deposit wallet
-LATEST_RELEASE=0.0.1
-# LATEST_RELEASE=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit/wallet/releases/latest | jq -r .tag_name)
-WALLET_NAME=cardano-deposit-wallet-$LATEST_RELEASE-linux64
-# wget -q "https://github.com/cardano-foundation/cardano-deposit-wallet/releases/download/$LATEST_RELEASE/$WALLET_NAME.tar.gz"
-ls -la result
-tar xvzf "./result/$WALLET_NAME.tar.gz" --remove-files &gt; /dev/null
-ls -la .
-WALLET_DIR=$(pwd)
+<p>Now download the cardano-wallet executable:</p>
+<pre><code class="language-bash"># install the wallet
+LATEST_RELEASE=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-wallet/releases/latest | jq -r .tag_name)
+WALLET_NAME=cardano-wallet-$LATEST_RELEASE-linux64
+wget -q "https://github.com/cardano-foundation/cardano-wallet/releases/download/$LATEST_RELEASE/$WALLET_NAME.tar.gz"
+tar xvzf "$WALLET_NAME.tar.gz" --remove-files &gt; /dev/null
+WALLET_DIR=$(pwd)/$WALLET_NAME
 export WALLET_DIR
-export PATH="$WALLET_DIR:$PATH"
-NODE_CONFIGS="$WALLET_DIR/configs/preprod"
-export NODE_CONFIGS
-# end of install the deposit wallet
+export PATH=$PATH:$WALLET_DIR
+# end of install the wallet
 </code></pre>
 <p>You will need to start the node and the wallet. It's recommended to retrieve the
 node state from Mithril to avoid long waiting times.</p>
@@ -255,7 +243,7 @@ wget -q https://github.com/input-output-hk/mithril/releases/download/$LATEST_MIT
 MITHRIL_DIR=$(pwd)/$MITHRIL_NAME
 mkdir -p "$MITHRIL_DIR"
 tar xvzf "$MITHRIL_NAME.tar.gz" -C "$MITHRIL_DIR" --remove-files &gt; /dev/null
-export PATH="$MITHRIL_DIR:$PATH"
+export PATH=$PATH:"$MITHRIL_DIR"
 # end of install mithril
 </code></pre>
 <p>Create a directory for the node state:</p>
@@ -280,6 +268,8 @@ digest=$(mithril-client cdb snapshot list --json | jq -r .[0].digest)
 <p>Now you can start the node that comes bundled with the wallet. I am using <code>screen</code>
 to keep the node running in the background.</p>
 <pre><code class="language-bash"># start the node
+NODE_CONFIGS="$WALLET_DIR/configs/preprod"
+export NODE_CONFIGS
 screen -dmS node-session cardano-node run \
     --config "$NODE_CONFIGS/config.json" \
     --database-path "$NODE_DB/preprod" \
@@ -292,7 +282,7 @@ screen -dmS node-session cardano-node run \
 </code></pre>
 <p>Detach from the screen with <code>Ctrl-a d</code>.</p>
 <p>Now you can start the wallet:</p>
-<pre><code class="language-bash"># start the deposit wallet
+<pre><code class="language-bash"># start the wallet
 DEPOSIT_PORT=$(shuf -i 1024-65000 -n 1)
 export DEPOSIT_PORT
 LEGACY_PORT=$(shuf -i 1024-65000 -n 1)
@@ -301,7 +291,7 @@ screen -dmS wallet-session cardano-wallet serve \
     --testnet "$NODE_CONFIGS/byron-genesis.json" \
     --ui-deposit-port "$DEPOSIT_PORT" \
     --port "$LEGACY_PORT"
-# end of start the deposit wallet
+# end of start the wallet
 </code></pre>
 <blockquote>
 <p>ATM the legacy port is required even if we are not using it. Once the deposit
@@ -316,8 +306,8 @@ wallet is extracted from the wallet, the legacy port will be removed.</p>
 </code></pre>
 <p>Clean up the screen sessions with:</p>
 <pre><code class="language-bash"># remove screen sessions
-screen -S node-session -X quit || true
-screen -S wallet-session -X quit || true
+screen -S node-session -X quit
+screen -S wallet-session -X quit
 # end of remove screen sessions
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
