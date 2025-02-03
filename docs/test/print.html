@@ -89,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Intro</a></li><li class="chapter-item expanded "><a href="specifications.html"><strong aria-hidden="true">1.</strong> Specifications</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">4.</strong> Examples</a></li><li class="chapter-item expanded "><a href="api.html"><strong aria-hidden="true">5.</strong> API</a></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Intro</a></li><li class="chapter-item expanded "><a href="specifications.html"><strong aria-hidden="true">1.</strong> Specifications</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="usage/installation.html"><strong aria-hidden="true">3.1.</strong> Installation</a></li></ol></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">4.</strong> Examples</a></li><li class="chapter-item expanded "><a href="api.html"><strong aria-hidden="true">5.</strong> API</a></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -177,7 +177,149 @@
                         <p>TODO</p>
 <div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
 <div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
-<div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="status"><a class="header" href="#status">Status</a></h2>
+<p>At the moment the project is in the early stages of development. To try it out you need
+to use it as part of the cardano-wallet project.
+<a href="https://github.com/cardano-foundation/cardano-wallet">Here</a> you can find the cardano-wallet project.
+Critically:</p>
+<ul>
+<li>the executable is still not able to persist the wallet state</li>
+<li>the REST API is not complete
+On the other hand to prove the concept you can access a web-UI which uses the
+exact same code that the REST API will use.
+Regarding persistence, in case of positive feedback, we will implement an early
+inefficient solution so that it became usable soon and prepare an efficient database
+solution for the future.
+Only linux and macos are supported at the moment. So for windows users, you can try
+the project using WSL2.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
+<h3 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h3>
+<p>This is a full node experience, so all caveats of running a full node apply.</p>
+<p>In particular, for <code>mainnet</code> you will need:</p>
+<ul>
+<li>24 GB RAM (UTxO set is still in memory)</li>
+<li>250 GB disk space (Transaction history is stored in full)</li>
+<li>4 CPU cores (for syncing)</li>
+</ul>
+<p>But for <code>preprod</code> you can get away with:</p>
+<ul>
+<li>2 GB RAM</li>
+<li>5 GB disk space</li>
+<li>2 CPU cores</li>
+</ul>
+<h3 id="using-the-released-bundle"><a class="header" href="#using-the-released-bundle">Using the Released Bundle</a></h3>
+<p>The released code is available in the cardano-wallet project. I will outline the
+Linux instructions for preprod here. Little changes are needed for macOS.</p>
+<p>You will need some tools:</p>
+<ul>
+<li>jq</li>
+<li>wget</li>
+<li>tar</li>
+<li>screen</li>
+<li>a working browser</li>
+</ul>
+<p>Nixers can run a shell with all the tools:</p>
+<pre><code class="language-bash">nix-shell -p jq wget gnutar screen
+</code></pre>
+<blockquote>
+<p>ATM there is no release do you have to build the wallet with nix in the cardano-wallet project.
+ATM the repository is private so you have to clone it and build it locally.</p>
+</blockquote>
+<pre><code class="language-bash">
+nix build .#linux-package -o ./result
+
+```bash
+# install the deposit wallet
+LATEST_RELEASE=0.0.1
+# LATEST_RELEASE=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit/wallet/releases/latest | jq -r .tag_name)
+WALLET_NAME=cardano-deposit-wallet-$LATEST_RELEASE-linux64
+# wget -q "https://github.com/cardano-foundation/cardano-deposit-wallet/releases/download/$LATEST_RELEASE/$WALLET_NAME.tar.gz"
+ls -la result
+tar xvzf "./result/$WALLET_NAME.tar.gz" --remove-files &gt; /dev/null
+ls -la .
+WALLET_DIR=$(pwd)
+export WALLET_DIR
+export PATH="$WALLET_DIR:$PATH"
+NODE_CONFIGS="$WALLET_DIR/configs/preprod"
+export NODE_CONFIGS
+# end of install the deposit wallet
+</code></pre>
+<p>You will need to start the node and the wallet. It's recommended to retrieve the
+node state from Mithril to avoid long waiting times.</p>
+<p>Download the Mithril executable:</p>
+<pre><code class="language-bash"># install mithril
+LATEST_MITHRIL=$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r .tag_name)
+MITHRIL_NAME=mithril-$LATEST_MITHRIL-linux-x64
+wget -q https://github.com/input-output-hk/mithril/releases/download/$LATEST_MITHRIL/$MITHRIL_NAME.tar.gz
+MITHRIL_DIR=$(pwd)/$MITHRIL_NAME
+mkdir -p "$MITHRIL_DIR"
+tar xvzf "$MITHRIL_NAME.tar.gz" -C "$MITHRIL_DIR" --remove-files &gt; /dev/null
+export PATH="$MITHRIL_DIR:$PATH"
+# end of install mithril
+</code></pre>
+<p>Create a directory for the node state:</p>
+<pre><code class="language-bash"># set up the node database directory
+NODE_DB=$(pwd)/node-db
+export NODE_DB
+mkdir -p "$NODE_DB"
+rm -rf "$NODE_DB/preprod"
+# end of set up the node database directory
+</code></pre>
+<p>Populate it via Mithril:</p>
+<blockquote>
+<p>NixOS will refuse to run Mithril unless <code>programs.nix-ld.enable = true;</code> is in the configuration.</p>
+</blockquote>
+<pre><code class="language-bash"># populate the node database with the latest preprod snapshot
+export AGGREGATOR_ENDPOINT=https://aggregator.release-preprod.api.mithril.network/aggregator
+export GENESIS_VERIFICATION_KEY=5b3132372c37332c3132342c3136312c362c3133372c3133312c3231332c3230372c3131372c3139382c38352c3137362c3139392c3136322c3234312c36382c3132332c3131392c3134352c31332c3233322c3234332c34392c3232392c322c3234392c3230352c3230352c33392c3233352c34345d
+digest=$(mithril-client cdb snapshot list --json | jq -r .[0].digest)
+(cd "${NODE_DB}" &amp;&amp; mithril-client cdb download "$digest" &amp;&amp; mv db preprod)
+# end of populate the node database with the latest preprod snapshot
+</code></pre>
+<p>Now you can start the node that comes bundled with the wallet. I am using <code>screen</code>
+to keep the node running in the background.</p>
+<pre><code class="language-bash"># start the node
+screen -dmS node-session cardano-node run \
+    --config "$NODE_CONFIGS/config.json" \
+    --database-path "$NODE_DB/preprod" \
+    --socket-path "$NODE_DB/preprod/node.socket" \
+    --topology "$NODE_CONFIGS/topology.json"
+# end of start the node
+</code></pre>
+<p>You can observe the node logs with:</p>
+<pre><code class="language-bash">screen -r node-session
+</code></pre>
+<p>Detach from the screen with <code>Ctrl-a d</code>.</p>
+<p>Now you can start the wallet:</p>
+<pre><code class="language-bash"># start the deposit wallet
+DEPOSIT_PORT=$(shuf -i 1024-65000 -n 1)
+export DEPOSIT_PORT
+LEGACY_PORT=$(shuf -i 1024-65000 -n 1)
+screen -dmS wallet-session cardano-wallet serve \
+    --node-socket "$NODE_DB/preprod/node.socket" \
+    --testnet "$NODE_CONFIGS/byron-genesis.json" \
+    --ui-deposit-port "$DEPOSIT_PORT" \
+    --port "$LEGACY_PORT"
+# end of start the deposit wallet
+</code></pre>
+<blockquote>
+<p>ATM the legacy port is required even if we are not using it. Once the deposit
+wallet is extracted from the wallet, the legacy port will be removed.</p>
+</blockquote>
+<p>You can observe the wallet logs with:</p>
+<pre><code class="language-bash">screen -r wallet-session
+</code></pre>
+<p>Detach from the screen with <code>Ctrl-a d</code>.</p>
+<p>Now you can connect to the web UI with:</p>
+<pre><code class="language-bash">xdg-open http://localhost:$DEPOSIT_PORT
+</code></pre>
+<p>Clean up the screen sessions with:</p>
+<pre><code class="language-bash"># remove screen sessions
+screen -S node-session -X quit || true
+screen -S wallet-session -X quit || true
+# end of remove screen sessions
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
 <div style="break-before: page; page-break-before: always;"></div><p>API is not yet active.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="contributing"><a class="header" href="#contributing">Contributing</a></h1>
