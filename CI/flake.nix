@@ -13,6 +13,10 @@
           mkShell { packages = [ gnused gnutar jq mdbook tree wget ]; };
         devShells.tests = with import nixpkgs { inherit system; };
           mkShell { packages = [ gnutar jq screen wget ]; };
+        devShells.checks = with import nixpkgs { inherit system; };
+          mkShell { packages = [ nixfmt-classic ]; };
+        devShells.default = with import nixpkgs { inherit system; };
+          mkShell { packages = [ just ]; };
       };
 
     };

@@ -8,12 +8,21 @@ env:
   CI_SCRIPTS_DIR: "./CI/scripts"
   DOCS_SCRIPT: "nix develop $CI_DIR#docs --command"
   TESTS_SCRIPT: "nix develop $CI_DIR#tests --command"
+  CHECKS_SCRIPT: "nix develop $CI_DIR#checks --command"
   linux_agent: "x86_64-linux"
   macos_silicon: "aarch64-darwin"
   macos_intel: "x86_64-darwin"
   macos_agent: "aarch64-darwin"
 
 steps:
+
+  - group: Checks
+    depends_on: []
+    key: checks
+    steps:
+    - label: Check Nix files are formatted
+    - command: $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-nix-format.sh
+
   - group: Linux Setup
     depends_on: []
     key: linux-setup
