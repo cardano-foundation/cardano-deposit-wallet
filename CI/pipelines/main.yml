@@ -21,7 +21,11 @@ steps:
     key: checks
     steps:
     - label: Check Nix files are formatted
-    - command: $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-nix-format.sh
+      commands:
+        - $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-nix-format.sh
+    - label: Check Shell files are formatted
+      commands:
+        - $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-shell-format.sh
 
   - group: Linux Setup
     depends_on: []
