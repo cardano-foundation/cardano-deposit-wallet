@@ -8,21 +8,66 @@ env:
   CI_SCRIPTS_DIR: "./CI/scripts"
   DOCS_SCRIPT: "nix develop path:$CI_DIR#docs --command"
 
-  linux: "x86_64-linux"
+  linux_agent: "x86_64-linux"
+  macos_silicon: "aarch64-darwin"
+  macos_intel: "x86_64-darwin"
+  macos_agent: "aarch64-darwin"
 
 steps:
+  - group: Linux Setup
+    depends_on: []
+    key: linux-setup
+    steps:
+    - label: Check Nix (linux)
+      key: linux-nix
+      commands:
+        - nix --version
+      agents:
+        system: ${linux_agent}
 
-  - label: Check Nix (linux)
-    key: linux-nix
-    commands:
-      - nix --version
-    agents:
-      system: ${linux}
-
-  - label: Build Docs
+  - group: Linux Artifacts
     depends_on:
-      - linux-nix
-    commands:
-      - $DOCS_SCRIPT $CI_SCRIPTS_DIR/build-docs.sh
-    agents:
-      system: ${linux}
+      - linux-setup
+    steps:
+    - label: Build package (linux)
+      commands:
+        - nix build .#linux.package
+      artifact_paths:
+        - ./result/*
+      agents:
+        system: ${linux_agent}
+    - label: Build Docs
+      commands:
+        - $DOCS_SCRIPT $CI_SCRIPTS_DIR/build-docs.sh
+      agents:
+        system: ${linux_agent}
+
+  - group: MacOS Setup
+    depends_on: []
+    key: macos-setup
+    steps:
+    - label: Check Nix (macos)
+      key: macos-nix
+      commands:
+        - nix --version
+
+  - group: Macos Artifacts
+    depends_on:
+      - macos-setup
+
+    steps:
+    - label: Build Package (macos-silicon)
+      commands:
+        - nix build .#macos-silicon.package
+      artifact_paths:
+        - ./result/*
+      agents:
+        system: ${macos_agent}
+
+    - label: Build Package (macos-intel)
+      commands:
+        - nix build --system ${macos_intel} .#macos-intel.package
+      artifact_paths:
+        - ./result/*
+      agents:
+        system: ${macos_agent}

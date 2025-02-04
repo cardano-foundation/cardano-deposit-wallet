@@ -19,8 +19,12 @@
         pkgs = import nixpkgs { inherit system; };
         stdenv = pkgs.stdenv;
         buildPlatform = stdenv.buildPlatform;
-        mkPackage =
-          p: pkgs.callPackage ./nix/package.nix (p // { inherit stdenv; });
+        version = "0.0.1";
+        mkPackage = p:
+          pkgs.callPackage ./nix/package.nix (p // {
+            inherit stdenv;
+            inherit version;
+          });
         wallet-artifact = wallet.packages.${system}.ci.artifacts;
         onAttrs = pkgs.lib.optionalAttrs;
       in onAttrs buildPlatform.isLinux {
