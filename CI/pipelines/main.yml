@@ -6,8 +6,8 @@ env:
   NIX_PATH: "channel:nixos-24.11"
   CI_DIR: "./CI"
   CI_SCRIPTS_DIR: "./CI/scripts"
-  DOCS_SCRIPT: "nix develop path:$CI_DIR#docs --command"
-
+  DOCS_SCRIPT: "nix develop $CI_DIR#docs --command"
+  TESTS_SCRIPT: "nix develop $CI_DIR#tests --command"
   linux_agent: "x86_64-linux"
   macos_silicon: "aarch64-darwin"
   macos_intel: "x86_64-darwin"
@@ -26,6 +26,7 @@ steps:
         system: ${linux_agent}
 
   - group: Linux Artifacts
+    key: linux-artifacts
     depends_on:
       - linux-setup
     steps:
@@ -39,6 +40,18 @@ steps:
     - label: Build Docs
       commands:
         - $DOCS_SCRIPT $CI_SCRIPTS_DIR/build-docs.sh
+      agents:
+        system: ${linux_agent}
+
+  - group: Linux Tests
+    depends_on:
+      - linux-artifacts
+    steps:
+    - label: Smoke Test Linux Package
+      commands:
+        - $TESTS_SCRIPT $CI_SCRIPTS_DIR/smoke-test-linux-package.sh
+      artifact_paths:
+        - ./*.log
       agents:
         system: ${linux_agent}
 
