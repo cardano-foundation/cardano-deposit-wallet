@@ -2,6 +2,12 @@
 
 set -euox pipefail
 
+# make sure PACKAGED_FOR is set
+if [ -z "${PACKAGED_FOR:-}" ]; then
+    echo "Error: PACKAGED_FOR is not set."
+    exit 1
+fi
+
 # trap exit and interrupt signals
 cleanup () {
     # remove screen sessions
@@ -22,7 +28,7 @@ wallet_session="wallet-session-$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 
 # download the cardano-wallet package
 if [ -n "${BUILDKITE:-}" ]; then
     VERSION=0.0.1
-    cardano_wallet_segment="cardano-deposit-wallet-$VERSION-linux64"
+    cardano_wallet_segment="cardano-deposit-wallet-$VERSION-$PACKAGED_FOR"
     cardano_wallet_tar="result/$cardano_wallet_segment.tar.gz"
     buildkite-agent artifact download "$cardano_wallet_tar" "."
 else

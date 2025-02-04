@@ -49,11 +49,13 @@ steps:
     steps:
     - label: Smoke Test Linux Package
       commands:
-        - $TESTS_SCRIPT $CI_SCRIPTS_DIR/smoke-test-linux-package.sh
+        - $TESTS_SCRIPT $CI_SCRIPTS_DIR/smoke-test-package.sh
       artifact_paths:
         - ./*.log
       agents:
         system: ${linux_agent}
+      env:
+        PACKAGED_FOR: linux64
 
   - group: MacOS Setup
     depends_on: []
@@ -65,9 +67,9 @@ steps:
         - nix --version
 
   - group: Macos Artifacts
+    key: macos-artifacts
     depends_on:
       - macos-setup
-
     steps:
     - label: Build Package (macos-silicon)
       commands:
@@ -84,3 +86,18 @@ steps:
         - ./result/*
       agents:
         system: ${macos_agent}
+
+  - group: Macos Tests
+    depends_on:
+      - macos-artifacts
+    steps:
+    - label: Smoke Test Macos Silicon Package
+      commands:
+        - $TESTS_SCRIPT $CI_SCRIPTS_DIR/smoke-test-package.sh
+      artifact_paths:
+        - ./*.log
+      agents:
+        system: ${macos_agent}
+      env:
+        PACKAGED_FOR: macos-silicon
+
