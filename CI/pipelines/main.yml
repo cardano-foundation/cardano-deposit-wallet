@@ -101,3 +101,12 @@ steps:
       env:
         PACKAGED_FOR: macos-silicon
 
+    - label: Smoke Test Macos Intel Package
+      commands:
+        - nix develop --system ${macos_intel} $CI_DIR#tests --command $CI_SCRIPTS_DIR/smoke-test-package.sh
+      artifact_paths:
+        - ./*.log
+      agents:
+        system: ${macos_agent}
+      env:
+        PACKAGED_FOR: macos-intel
