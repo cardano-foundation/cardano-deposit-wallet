@@ -2,10 +2,10 @@
 
 [Intro](./intro.md)
 
-- [Specifications](./specifications.md)
 - [Installation](./installation.md)
-- [Usage](./usage.md)
 - [Examples](./examples.md)
+- [Usage](./usage.md)
 - [API](./api.md)
+- [Specifications](./specifications.md)
 - [Contributing](./contributing.md)
 
