@@ -13,28 +13,27 @@
 # For new tags it is necessary to update the landing page to include a link to
 # the new documentation
 
-
 set -euox pipefail
 
 # Define the current branch in case of buildkite or local
 if [ -n "${BUILDKITE:-}" ]; then
-    current_branch=${BUILDKITE_BRANCH}
+	current_branch=${BUILDKITE_BRANCH}
 else
-    current_branch=$(git rev-parse --abbrev-ref HEAD)
+	current_branch=$(git rev-parse --abbrev-ref HEAD)
 fi
 
 # Check if the current commit is tagged
 current_tag=$(git describe --tags --exact-match || echo "no-tag")
 
 if [ "$current_tag" != "no-tag" ]; then
-  # If the current commit is tagged, use the tag as the target
-  target="$current_tag"
+	# If the current commit is tagged, use the tag as the target
+	target="$current_tag"
 elif [ "$current_branch" == "main" ]; then
-  # If the current branch is main, use "latest" as the target
-  target="canary"
+	# If the current branch is main, use "latest" as the target
+	target="canary"
 else
-  # In all other cases target is test
-  target="test"
+	# In all other cases target is test
+	target="test"
 fi
 temp_docs_dir=$(mktemp -d)
 temp_site_dir=$(mktemp -d)
@@ -47,7 +46,7 @@ mdbook build site/docs -d "$temp_docs_dir"
 
 # Build the landing page, only for the latest target
 if [ "$target" == "canary" ]; then
-    mdbook build site/landing -d "$temp_site_dir"
+	mdbook build site/landing -d "$temp_site_dir"
 fi
 
 # clean up and switch to gh-pages branch
@@ -58,9 +57,9 @@ git reset --hard origin/gh-pages
 
 # populate the root of the html site with the landing mdbook, only for the latest target
 if [ "$target" == "canary" ]; then
-    # shellcheck disable=SC2086
-    cp -r $temp_site_dir/* .
-    rm -rf "$temp_site_dir"
+	# shellcheck disable=SC2086
+	cp -r $temp_site_dir/* .
+	rm -rf "$temp_site_dir"
 fi
 
 # populate the docs target folder with the mdbook of the docs
@@ -77,6 +76,6 @@ git push origin gh-pages || true
 
 # Switch back to the original branch
 if [ -z "${BUILDKITE:-}" ]; then
-    git checkout "$current_branch"
-    git clean -fxd
+	git checkout "$current_branch"
+	git clean -fxd
 fi

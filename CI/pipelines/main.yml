@@ -6,23 +6,120 @@ env:
   NIX_PATH: "channel:nixos-24.11"
   CI_DIR: "./CI"
   CI_SCRIPTS_DIR: "./CI/scripts"
-  DOCS_SCRIPT: "nix develop path:$CI_DIR#docs --command"
-
-  linux: "x86_64-linux"
+  DOCS_SCRIPT: "nix develop $CI_DIR#docs --command"
+  TESTS_SCRIPT: "nix develop $CI_DIR#tests --command"
+  CHECKS_SCRIPT: "nix develop $CI_DIR#checks --command"
+  linux_agent: "x86_64-linux"
+  macos_silicon: "aarch64-darwin"
+  macos_intel: "x86_64-darwin"
+  macos_agent: "aarch64-darwin"
 
 steps:
 
-  - label: Check Nix (linux)
-    key: linux-nix
-    commands:
-      - nix --version
-    agents:
-      system: ${linux}
+  - group: Checks
+    depends_on: []
+    key: checks
+    steps:
+    - label: Check Nix files are formatted
+      commands:
+        - $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-nix-format.sh
+    - label: Check Shell files are formatted
+      commands:
+        - $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-shell-format.sh
 
-  - label: Build Docs
+  - group: Linux Setup
+    depends_on: []
+    key: linux-setup
+    steps:
+    - label: Check Nix (linux)
+      key: linux-nix
+      commands:
+        - nix --version
+      agents:
+        system: ${linux_agent}
+
+  - group: Linux Artifacts
+    key: linux-artifacts
     depends_on:
-      - linux-nix
-    commands:
-      - $DOCS_SCRIPT $CI_SCRIPTS_DIR/build-docs.sh
-    agents:
-      system: ${linux}
+      - linux-setup
+    steps:
+    - label: Build package (linux)
+      commands:
+        - nix build .#linux.package
+      artifact_paths:
+        - ./result/*
+      agents:
+        system: ${linux_agent}
+    - label: Build Docs
+      commands:
+        - $DOCS_SCRIPT $CI_SCRIPTS_DIR/build-docs.sh
+      agents:
+        system: ${linux_agent}
+
+  - group: Linux Tests
+    depends_on:
+      - linux-artifacts
+    steps:
+    - label: Smoke Test Linux Package
+      commands:
+        - $TESTS_SCRIPT $CI_SCRIPTS_DIR/smoke-test-package.sh
+      artifact_paths:
+        - ./*.log
+      agents:
+        system: ${linux_agent}
+      env:
+        PACKAGED_FOR: linux64
+
+  - group: MacOS Setup
+    depends_on: []
+    key: macos-setup
+    steps:
+    - label: Check Nix (macos)
+      key: macos-nix
+      commands:
+        - nix --version
+
+  - group: Macos Artifacts
+    key: macos-artifacts
+    depends_on:
+      - macos-setup
+    steps:
+    - label: Build Package (macos-silicon)
+      commands:
+        - nix build .#macos-silicon.package
+      artifact_paths:
+        - ./result/*
+      agents:
+        system: ${macos_agent}
+
+    - label: Build Package (macos-intel)
+      commands:
+        - nix build --system ${macos_intel} .#macos-intel.package
+      artifact_paths:
+        - ./result/*
+      agents:
+        system: ${macos_agent}
+
+  - group: Macos Tests
+    depends_on:
+      - macos-artifacts
+    steps:
+    - label: Smoke Test Macos Silicon Package
+      commands:
+        - $TESTS_SCRIPT $CI_SCRIPTS_DIR/smoke-test-package.sh
+      artifact_paths:
+        - ./*.log
+      agents:
+        system: ${macos_agent}
+      env:
+        PACKAGED_FOR: macos-silicon
+
+    - label: Smoke Test Macos Intel Package
+      commands:
+        - nix develop --system ${macos_intel} $CI_DIR#tests --command $CI_SCRIPTS_DIR/smoke-test-package.sh
+      artifact_paths:
+        - ./*.log
+      agents:
+        system: ${macos_agent}
+      env:
+        PACKAGED_FOR: macos-intel

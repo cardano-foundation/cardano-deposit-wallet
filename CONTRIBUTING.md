@@ -29,3 +29,8 @@ Thank you for contributing your changes by opening a pull requests! To get somet
 
 i.e. https://github.com/cardano-foundation/cardano-deposit-wallet/pull/5
 
+### Code Quality
+
+- You will need `nix` to work with our code.
+- Make sure `just` is in your environment.
+- CI is checking for formatting . Please make sure to run `just format` before pushing your changes.
