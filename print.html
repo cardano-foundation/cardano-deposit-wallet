@@ -175,11 +175,31 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>This is the landing page for the site. It is the first page that users will see when they visit the site. It should provide a brief overview of the site and what it offers.</p>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="docs-versions"><a class="header" href="#docs-versions">Docs Versions</a></h2>
+<p>The Cardano Deposit Wallet is a full-node wallet targeting businesses that need to track the origin of incoming payments ("deposits").</p>
+<p>For example, consider an online shop that accepts payments in ADA.
+Whenever the shop sells an item, the shop needs to monitor the <a href="https://cardano.org/">Cardano blockchain</a>
+for a transaction that contains the payment from the customer.
+The Cardano Deposit Wallet takes care of that.</p>
+<p>The Cardano Deposit Wallet works as follows:</p>
 <ul>
-<li><a href="https://cardano-foundation.github.io/cardano-deposit-wallet/docs/canary/index.html">Canary</a></li>
-<li><a href="https://cardano-foundation.github.io/cardano-deposit-wallet/docs/test/index.html">Test</a></li>
+<li>To each customer of the business, the wallet assigns a unique address.</li>
+<li>Whenever someone makes a deposit to that address, this deposit is assumed to originate from the customer assigned to that address.</li>
+<li>Outgoing funds are not distinguished by customer — once funds have gone into the wallet, they are all part of a single wallet balance.</li>
+</ul>
+<p>The Cardano Deposit Wallet works with a <a href="https://github.com/IntersectMBO/cardano-node">cardano-node</a> in order to enjoy the full security and decentralization of the Cardano blockchain.</p>
+<h1 id="site"><a class="header" href="#site">Site</a></h1>
+<p>This site presents and documents
+the Cardano Deposit Wallet.
+Use the sidebar for navigation.</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="documentation-by-version"><a class="header" href="#documentation-by-version">Documentation (by Version)</a></h2>
+<p>This page links to the documentation of the Cardano Deposit Wallet.</p>
+<ul>
+<li>
+<p><a href="https://cardano-foundation.github.io/cardano-deposit-wallet/docs/test/index.html">Test</a> — Documentation for the latest released version.</p>
+</li>
+<li>
+<p><a href="https://cardano-foundation.github.io/cardano-deposit-wallet/docs/canary/index.html">Canary</a> — Current state of the documentation; for a future release.</p>
+</li>
 </ul>
 
                     </main>
