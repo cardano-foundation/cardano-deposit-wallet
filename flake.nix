@@ -32,6 +32,12 @@
           wallet-package = wallet-artifact.linux64.release;
           platform = "linux64";
         };
+        packages.docker-image = pkgs.callPackage ./nix/docker-image.nix {
+          inherit pkgs;
+          inherit version;
+          wallet-package = self.outputs.packages.${system}.linux.package;
+          platform = "linux64";
+        };
       } // onAttrs buildPlatform.isMacOS {
         packages.macos-silicon = onAttrs buildPlatform.isAarch64 {
           package = mkPackage {
