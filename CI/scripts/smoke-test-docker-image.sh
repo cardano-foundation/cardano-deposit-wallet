@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -euox pipefail
+
+home=$(pwd)
+workdir=$(mktemp -d)
+
+cleanup() {
+	cd "$home"
+	rm -rf "$workdir"
+}
+
+trap cleanup EXIT
+trap cleanup INT
+
+cd "$workdir" || exit
+
+if [ -n "${BUILDKITE:-}" ]; then
+	cardano_wallet_image="result/docker-image-cardano-deposit-wallet.tar.gz"
+	buildkite-agent artifact download $cardano_wallet_image .
+else
+	cardano_wallet_image="$1"
+fi
+
+# load the cardano-wallet image
+docker load -i "$cardano_wallet_image"
+
+export NETWORK=preprod
+export SUCCESS_STATUS=syncing
+export USE_LOCAL_IMAGE=true
+
+cp "$home"/run/docker/docker-compose.yml .
+"$home"/run/docker/run.sh sync
