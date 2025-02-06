@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     wallet.url =
-      "github:cardano-foundation/cardano-wallet?rev=13a411f9ed2b05432d528343deb18b171fc1a424";
+      "github:cardano-foundation/cardano-wallet?rev=3acbb2a9e6f44b1a922758785fa17273d3a3e26a";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
