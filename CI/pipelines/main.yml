@@ -50,6 +50,13 @@ steps:
         - ./result/*
       agents:
         system: ${linux_agent}
+    - label: Build Docker Image
+      commands:
+        - nix build .#docker-image
+      artifact_paths:
+        - ./result/*
+      agents:
+        system: ${linux_agent}
     - label: Build Docs
       commands:
         - $DOCS_SCRIPT $CI_SCRIPTS_DIR/build-docs.sh
