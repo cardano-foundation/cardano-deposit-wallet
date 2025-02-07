@@ -11,6 +11,7 @@ workdir=$(mktemp -d)
 cleanup() {
 	cd "$home"
 	rm -rf "$workdir"
+	docker image rm -f cardanofoundation/cardano-deposit-wallet:"$VERSION"
 }
 
 trap cleanup EXIT
