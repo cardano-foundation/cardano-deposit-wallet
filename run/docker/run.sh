@@ -26,8 +26,14 @@ if [ -z "${NETWORK-}" ]; then
 	exit 1
 fi
 
+# enforce VERSION variable
+if [ -z "${VERSION-}" ]; then
+	echo "VERSION variable is not set"
+	exit 1
+fi
+
 # Define and export wallet and node version tags
-RELEASE_WALLET_TAG=0.0.1
+RELEASE_WALLET_TAG=$VERSION
 
 WALLET_TAG=${WALLET_TAG:=$RELEASE_WALLET_TAG}
 export WALLET_TAG
