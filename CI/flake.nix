@@ -14,6 +14,7 @@
             docs = shell [ gnused gnutar jq mdbook tree wget ];
             tests = shell [ gnutar jq screen wget ];
             checks = shell [ nixfmt-classic shfmt ];
+            release = shell [ gnused ];
             default = shell [ just ];
           };
         };
