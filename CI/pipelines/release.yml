@@ -14,10 +14,35 @@ steps:
     key: add-release-commits
     commands:
       - $RELEASE_SCRIPT $CI_SCRIPTS_DIR/add-release-commits.sh
+    agents:
+        system: ${linux_agent}
   - label: Trigger Main Pipeline
     key: trigger-main-pipeline
     depends_on:
       - add-release-commits
     commands:
-      - $RELEASE_SCRIPT $CI_SCRIPTS_DIR/trigger-main-from-release.sh \
-          | buildkite-agent pipeline upload
+      - $RELEASE_SCRIPT $CI_SCRIPTS_DIR/trigger-main-from-release.sh | buildkite-agent pipeline upload
+    agents:
+        system: ${linux_agent}
+  - block: Push a new release to Github
+    key: can-push-release
+    depends_on:
+      - main-pipeline-build
+  - label: Push Release
+    depends_on:
+      - can-push-release
+    key: push-release
+    commands:
+      - $RELEASE_SCRIPT $CI_SCRIPTS_DIR/push-release.sh
+    env:
+      TEMPLATE: $CI_DIR/templates/release.md
+    agents:
+        system: ${linux_agent}
+
+  - label: Push Release Artifacts
+    depends_on:
+      - push-release
+    commands:
+      - $RELEASE_SCRIPT $CI_SCRIPTS_DIR/push-release-artifacts.sh
+    agents:
+        system: ${linux_agent}
