@@ -2721,17 +2721,17 @@
         "nixpkgs-unstable": "nixpkgs-unstable_3"
       },
       "locked": {
-        "lastModified": 1738323094,
-        "narHash": "sha256-ZNEHdNKU0xrurvBLMHgXBCgLzzpWzC94nwprDuher9Q=",
+        "lastModified": 1738844829,
+        "narHash": "sha256-MhEM7ktQtzH6uQG4EXnRRFBFg1fiCb0p2ouxHAtG0TI=",
         "owner": "cardano-foundation",
         "repo": "cardano-wallet",
-        "rev": "13a411f9ed2b05432d528343deb18b171fc1a424",
+        "rev": "3acbb2a9e6f44b1a922758785fa17273d3a3e26a",
         "type": "github"
       },
       "original": {
         "owner": "cardano-foundation",
         "repo": "cardano-wallet",
-        "rev": "13a411f9ed2b05432d528343deb18b171fc1a424",
+        "rev": "3acbb2a9e6f44b1a922758785fa17273d3a3e26a",
         "type": "github"
       }
     },

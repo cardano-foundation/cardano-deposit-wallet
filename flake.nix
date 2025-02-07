@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     wallet.url =
-      "github:cardano-foundation/cardano-wallet?rev=13a411f9ed2b05432d528343deb18b171fc1a424";
+      "github:cardano-foundation/cardano-wallet?rev=3acbb2a9e6f44b1a922758785fa17273d3a3e26a";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -32,6 +32,12 @@
           wallet-package = wallet-artifact.linux64.release;
           platform = "linux64";
         };
+        packages.docker-image = pkgs.callPackage ./nix/docker-image.nix {
+          inherit pkgs;
+          inherit version;
+          wallet-package = self.outputs.packages.${system}.linux.package;
+          platform = "linux64";
+        };
       } // onAttrs buildPlatform.isMacOS {
         packages.macos-silicon = onAttrs buildPlatform.isAarch64 {
           package = mkPackage {
@@ -49,8 +55,8 @@
         devShells.default = pkgs.mkShell {
           packages = [
             wallet.packages.${system}.cardano-wallet
-            wallet.inputs.cardano-node-runtime.${system}.cardano-node
-            wallet.inputs.cardano-node-runtime.${system}.cardano-cli
+            wallet.inputs.cardano-node-runtime.packages.${system}.cardano-node
+            wallet.inputs.cardano-node-runtime.packages.${system}.cardano-cli
             wallet.packages.${system}.cardano-address
             wallet.packages.${system}.bech32
           ];

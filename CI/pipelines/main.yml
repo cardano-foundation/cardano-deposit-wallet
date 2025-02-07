@@ -26,6 +26,9 @@ steps:
     - label: Check Shell files are formatted
       commands:
         - $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-shell-format.sh
+    - label: Nix develop works
+      commands:
+        - nix develop --command echo "Nix develop works"
 
   - group: Linux Setup
     depends_on: []
@@ -50,6 +53,13 @@ steps:
         - ./result/*
       agents:
         system: ${linux_agent}
+    - label: Build Docker Image
+      commands:
+        - nix build .#docker-image -o result/docker-image-cardano-deposit-wallet.tar.gz
+      artifact_paths:
+        - ./result/*
+      agents:
+        system: ${linux_agent}
     - label: Build Docs
       commands:
         - $DOCS_SCRIPT $CI_SCRIPTS_DIR/build-docs.sh
@@ -69,6 +79,18 @@ steps:
         system: ${linux_agent}
       env:
         PACKAGED_FOR: linux64
+
+  - group: Docker Tests
+    depends_on:
+      - linux-artifacts
+    steps:
+    - label: Smoke Test Docker Image
+      commands:
+        - $TESTS_SCRIPT $CI_SCRIPTS_DIR/smoke-test-docker-image.sh
+      artifact_paths:
+        - ./*.log
+      agents:
+        system: ${linux_agent}
 
   - group: MacOS Setup
     depends_on: []
