@@ -5,19 +5,18 @@
 
   outputs = inputs@{ flake-parts, nixpkgs, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [ ];
       systems = [ "x86_64-linux" "aarch64-darwin" "x86_64-darwin" ];
-      # https://flake.parts/index.html
-      perSystem = { system, ... }: {
-        devShells.docs = with import nixpkgs { inherit system; };
-          mkShell { packages = [ gnused gnutar jq mdbook tree wget ]; };
-        devShells.tests = with import nixpkgs { inherit system; };
-          mkShell { packages = [ gnutar jq screen wget ]; };
-        devShells.checks = with import nixpkgs { inherit system; };
-          mkShell { packages = [ nixfmt-classic shfmt ]; };
-        devShells.default = with import nixpkgs { inherit system; };
-          mkShell { packages = [ just ]; };
-      };
+      perSystem = { system, ... }:
+        with import nixpkgs { inherit system; };
+        let shell = ps: mkShell { packages = ps; };
+        in {
+          devShells = {
+            docs = shell [ gnused gnutar jq mdbook tree wget ];
+            tests = shell [ gnutar jq screen wget ];
+            checks = shell [ nixfmt-classic shfmt ];
+            default = shell [ just ];
+          };
+        };
 
     };
 
