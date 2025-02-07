@@ -55,8 +55,8 @@
         devShells.default = pkgs.mkShell {
           packages = [
             wallet.packages.${system}.cardano-wallet
-            wallet.inputs.cardano-node-runtime.${system}.cardano-node
-            wallet.inputs.cardano-node-runtime.${system}.cardano-cli
+            wallet.inputs.cardano-node-runtime.packages.${system}.cardano-node
+            wallet.inputs.cardano-node-runtime.packages.${system}.cardano-cli
             wallet.packages.${system}.cardano-address
             wallet.packages.${system}.bech32
           ];

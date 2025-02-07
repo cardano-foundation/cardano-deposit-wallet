@@ -26,6 +26,9 @@ steps:
     - label: Check Shell files are formatted
       commands:
         - $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-shell-format.sh
+    - label: Nix develop works
+      commands:
+        - nix develop --command echo "Nix develop works"
 
   - group: Linux Setup
     depends_on: []
