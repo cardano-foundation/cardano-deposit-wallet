@@ -52,7 +52,7 @@ steps:
         system: ${linux_agent}
     - label: Build Docker Image
       commands:
-        - nix build .#docker-image -o result/docker-image-cardano-deposit-wallet.tar.gz
+        - $CI_SCRIPTS_DIR/build-docker-image.sh
       artifact_paths:
         - ./result/*
       agents:
