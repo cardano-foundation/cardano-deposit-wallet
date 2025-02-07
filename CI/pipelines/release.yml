@@ -14,3 +14,9 @@ steps:
     key: add-release-commits
     commands:
       - $RELEASE_SCRIPT $CI_SCRIPTS_DIR/add-release-commits.sh
+  - label: Trigger Main Pipeline
+    key: trigger-main-pipeline
+    depends_on:
+      - add-release-commits
+    commands:
+      - $RELEASE_SCRIPT $CI_SCRIPTS_DIR/trigger-main-from-release.sh
