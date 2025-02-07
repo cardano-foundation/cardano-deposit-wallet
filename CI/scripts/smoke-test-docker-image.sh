@@ -2,6 +2,9 @@
 
 set -euox pipefail
 
+VERSION=$(nix eval --raw .#version)
+export VERSION
+
 home=$(pwd)
 workdir=$(mktemp -d)
 

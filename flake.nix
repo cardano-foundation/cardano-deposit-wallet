@@ -19,7 +19,7 @@
         pkgs = import nixpkgs { inherit system; };
         stdenv = pkgs.stdenv;
         buildPlatform = stdenv.buildPlatform;
-        version = "0.0.1";
+        version = self.dirtyShortRev or self.shortRev;
         mkPackage = p:
           pkgs.callPackage ./nix/package.nix (p // {
             inherit stdenv;
@@ -32,6 +32,7 @@
           wallet-package = wallet-artifact.linux64.release;
           platform = "linux64";
         };
+        packages.version = version;
         packages.docker-image = pkgs.callPackage ./nix/docker-image.nix {
           inherit pkgs;
           inherit version;
@@ -51,6 +52,7 @@
             platform = "macos-intel";
           };
         };
+        packages.version = version;
       } // {
         devShells.default = pkgs.mkShell {
           packages = [
