@@ -23,12 +23,18 @@ steps:
     - label: Check Nix files are formatted
       commands:
         - $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-nix-format.sh
+      agents:
+        system: ${linux_agent}
     - label: Check Shell files are formatted
       commands:
         - $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-shell-format.sh
+      agents:
+        system: ${linux_agent}
     - label: Nix develop works
       commands:
         - nix develop --command echo "Nix develop works"
+      agents:
+        system: ${linux_agent}
 
   - group: Linux Setup
     depends_on: []
