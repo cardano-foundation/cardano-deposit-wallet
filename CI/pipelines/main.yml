@@ -54,7 +54,7 @@ steps:
     steps:
     - label: Build package (linux)
       commands:
-        - nix build .#linux.package
+        - nix build .#linux64.package
       artifact_paths:
         - ./result/*
       agents:

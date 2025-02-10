@@ -28,7 +28,7 @@
         wallet-artifact = wallet.packages.${system}.ci.artifacts;
         onAttrs = pkgs.lib.optionalAttrs;
       in onAttrs buildPlatform.isLinux {
-        packages.linux.package = mkPackage {
+        packages.linux64.package = mkPackage {
           wallet-package = wallet-artifact.linux64.release;
           platform = "linux64";
         };
@@ -36,7 +36,7 @@
         packages.docker-image = pkgs.callPackage ./nix/docker-image.nix {
           inherit pkgs;
           inherit version;
-          wallet-package = self.outputs.packages.${system}.linux.package;
+          wallet-package = self.outputs.packages.${system}.linux64.package;
           platform = "linux64";
         };
       } // onAttrs buildPlatform.isMacOS {
