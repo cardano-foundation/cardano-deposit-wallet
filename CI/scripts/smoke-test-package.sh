@@ -27,7 +27,7 @@ wallet_session="wallet-session-$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 
 
 # download the cardano-wallet package
 if [ -n "${BUILDKITE:-}" ]; then
-	VERSION=0.0.1
+	VERSION=$(nix eval --raw .#version)
 	cardano_wallet_segment="cardano-deposit-wallet-$VERSION-$PACKAGED_FOR"
 	cardano_wallet_tar="result/$cardano_wallet_segment.tar.gz"
 	buildkite-agent artifact download "$cardano_wallet_tar" "."

@@ -19,7 +19,7 @@
         pkgs = import nixpkgs { inherit system; };
         stdenv = pkgs.stdenv;
         buildPlatform = stdenv.buildPlatform;
-        version = "0.0.1";
+        version = self.dirtyShortRev or self.shortRev;
         mkPackage = p:
           pkgs.callPackage ./nix/package.nix (p // {
             inherit stdenv;
@@ -28,14 +28,15 @@
         wallet-artifact = wallet.packages.${system}.ci.artifacts;
         onAttrs = pkgs.lib.optionalAttrs;
       in onAttrs buildPlatform.isLinux {
-        packages.linux.package = mkPackage {
+        packages.linux64.package = mkPackage {
           wallet-package = wallet-artifact.linux64.release;
           platform = "linux64";
         };
+        packages.version = version;
         packages.docker-image = pkgs.callPackage ./nix/docker-image.nix {
           inherit pkgs;
           inherit version;
-          wallet-package = self.outputs.packages.${system}.linux.package;
+          wallet-package = self.outputs.packages.${system}.linux64.package;
           platform = "linux64";
         };
       } // onAttrs buildPlatform.isMacOS {
@@ -51,6 +52,7 @@
             platform = "macos-intel";
           };
         };
+        packages.version = version;
       } // {
         devShells.default = pkgs.mkShell {
           packages = [

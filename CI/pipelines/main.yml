@@ -23,12 +23,18 @@ steps:
     - label: Check Nix files are formatted
       commands:
         - $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-nix-format.sh
+      agents:
+        system: ${linux_agent}
     - label: Check Shell files are formatted
       commands:
         - $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-shell-format.sh
+      agents:
+        system: ${linux_agent}
     - label: Nix develop works
       commands:
         - nix develop --command echo "Nix develop works"
+      agents:
+        system: ${linux_agent}
 
   - group: Linux Setup
     depends_on: []
@@ -48,14 +54,14 @@ steps:
     steps:
     - label: Build package (linux)
       commands:
-        - nix build .#linux.package
+        - nix build .#linux64.package
       artifact_paths:
         - ./result/*
       agents:
         system: ${linux_agent}
     - label: Build Docker Image
       commands:
-        - nix build .#docker-image -o result/docker-image-cardano-deposit-wallet.tar.gz
+        - $CI_SCRIPTS_DIR/build-docker-image.sh
       artifact_paths:
         - ./result/*
       agents:
@@ -100,6 +106,8 @@ steps:
       key: macos-nix
       commands:
         - nix --version
+      agents:
+        system: ${macos_agent}
 
   - group: Macos Artifacts
     key: macos-artifacts
