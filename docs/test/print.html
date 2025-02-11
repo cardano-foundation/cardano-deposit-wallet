@@ -186,7 +186,38 @@
 <li><a href="./specifications.html">Specifications</a> — Formal specifications of the wallet functionality. Read this for a precise understanding of what the wallet does and does not do.</li>
 <li><a href="./contributing.html">Contributing</a> — Information for people who want to work with and contribute to the code.</li>
 </ul>
-<div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
+<h3 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h3>
+<p>This is a full node experience, so all caveats of running a full node apply.</p>
+<p>In particular, for <code>mainnet</code> you will need:</p>
+<ul>
+<li>24 GB RAM (UTxO set is still in memory)</li>
+<li>250 GB disk space (Transaction history is stored in full)</li>
+<li>4 CPU cores (for syncing)</li>
+</ul>
+<p>But for <code>preprod</code> you can get away with:</p>
+<ul>
+<li>2 GB RAM</li>
+<li>5 GB disk space</li>
+<li>2 CPU cores</li>
+</ul>
+<h3 id="using-the-released-bundle"><a class="header" href="#using-the-released-bundle">Using the Released Bundle</a></h3>
+<p>The released code is available in the cardano-deposit-wallet project.</p>
+<p>You will need some tools:</p>
+<ul>
+<li>jq</li>
+<li>wget</li>
+<li>tar</li>
+<li>screen</li>
+<li>a working browser</li>
+</ul>
+<p>Nixers can run a shell with all the tools:</p>
+<pre><code class="language-bash">nix-shell -p jq wget gnutar screen
+</code></pre>
+<ul>
+<li><a href="./installation/package.html">With platform package</a></li>
+<li><a href="./installation/docker.html">With docker image</a></li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
 <div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
 <div style="break-before: page; page-break-before: always;"></div><p>API is not yet active.</p>
