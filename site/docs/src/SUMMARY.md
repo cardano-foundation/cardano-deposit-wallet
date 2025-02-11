@@ -6,6 +6,9 @@
 - [Examples](./examples.md)
 - [Usage](./usage.md)
 - [API](./api.md)
-- [Specifications](./specifications.md)
+- Design
+  - [Problem statement](./design/problem.md)
+  - [Requirements](./design/requirements.md)
+  - [Specification](./design/specification.md)
+  - [Implementation](./design/implementation.md)
 - [Contributing](./contributing.md)
-
