@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Cardano Deposit Wallet (test)</title>
-        <meta name="robots" content="noindex">
+        <title>Specification - Cardano Deposit Wallet (test)</title>
 
 
         <!-- Custom HTML head -->
@@ -13,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -36,7 +35,7 @@
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
-            var path_to_root = "";
+            var path_to_root = "../";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
@@ -89,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Intro</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="design/Specification.lagda.html"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li class="chapter-item expanded "><a href="design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../intro.html">Intro</a></li><li class="chapter-item expanded "><a href="../installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="../examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="../usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="../api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="../design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="../design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="../design/Specification.lagda.html" class="active"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li class="chapter-item expanded "><a href="../design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -145,7 +144,7 @@
                     <h1 class="menu-title">Cardano Deposit Wallet (test)</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
 
@@ -174,230 +173,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>🚧 Work In Progress — DO NOT USE in production 🚧</p>
-<p>The Cardano Deposit Wallet is a full-node wallet targeting businesses that need to track the origin of incoming payments ("deposits").</p>
-<p>This page documents the Cardano Deposit Wallet software.</p>
-<p>Use the sidebar for navigation.</p>
-<ul>
-<li><a href="./installation.html">Installation</a> — Installation instructions. You need to do this in order to run the software.</li>
-<li><a href="./examples.html">Examples</a> — Usage examples. Read this to get started.</li>
-<li><a href="./usage.html">Usage</a> — User manual for the software.</li>
-<li><a href="./api.html">API</a> — API reference.</li>
-<li><a href="./specifications.html">Specifications</a> — Formal specifications of the wallet functionality. Read this for a precise understanding of what the wallet does and does not do.</li>
-<li><a href="./contributing.html">Contributing</a> — Information for people who want to work with and contribute to the code.</li>
-</ul>
-<div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
-<div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
-<div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
-<div style="break-before: page; page-break-before: always;"></div><p>API is not yet active.</p>
-<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="problem-origin-of-incoming-payments"><a class="header" href="#problem-origin-of-incoming-payments">Problem: Origin of incoming payments</a></h1>
-<p>The main goal of the <a href="https://github.com/cardano-foundation/cardano-deposit-wallet">Cardano Deposit Wallet</a> is to offer a solution for the following problem:</p>
-<h1 id="problem-statement"><a class="header" href="#problem-statement">Problem statement</a></h1>
-<p>Some wallet users, typically businesses, would like to identify the origin of incoming payments, typically from their customers.</p>
-<h1 id="status-quo"><a class="header" href="#status-quo">Status Quo</a></h1>
-<h2 id="solution-assign-one-address-to-one-customer"><a class="header" href="#solution-assign-one-address-to-one-customer">Solution: Assign one address to one customer</a></h2>
-<p>The most commonly used solution to tracking the origin of incoming payments is the following:</p>
-<ul>
-<li>
-<p>The customer creates an account with the business.</p>
-</li>
-<li>
-<p>The business generates a unique address and associates it with this customer account.</p>
-</li>
-<li>
-<p>Any incoming payment on that address is treated as originating from that customer.</p>
-</li>
-</ul>
-<p>The <a href="https://github.com/cardano-foundation/cardano-deposit-wallet">Cardano Deposit Wallet</a> implements this solution.</p>
-<p>The <a href="https://github.com/cardano-foundation/cardano-wallet">cardano-wallet</a> software <em>lacks</em> explicit support for this solution, but it is still often used for this purpose. See below.</p>
-<h3 id="user-centralized-cryptocurrency-exchanges-cex"><a class="header" href="#user-centralized-cryptocurrency-exchanges-cex">User: Centralized Cryptocurrency Exchanges (CEX)</a></h3>
-<p>Exchanges enable users to trade cryptocurrencies for both crypto and fiat currencies.</p>
-<p>Typically, CEXes keep track of one account for each customer. A customer can deposit ADA in their account (“top up”) by sending it to a Cardano address that the Exchange has associated with and communicated to the customer.</p>
-<p>CEXes use various wallet setups:</p>
-<ul>
-<li>Single wallet for both deposits and withdrawals.</li>
-<li>Two wallets: one for deposits, the other one for withdrawals.</li>
-</ul>
-<p>In both cases, the wallet responsible for accepting deposits tracks the addresses at which the deposit was made.</p>
-<h3 id="user-small-merchants"><a class="header" href="#user-small-merchants">User: Small merchants</a></h3>
-<p>Small online stores want to know when they receive ADA from a customer who placed an order, so that they can deliver the goods.</p>
-<p>For example, here is a feature request for <a href="https://github.com/cardano-foundation/cardano-wallet">cardano-wallet</a>:</p>
-<ul>
-<li><a href="https://github.com/cardano-foundation/cardano-wallet/issues/2921">Feature to request additional addresses for a wallet #2921</a></li>
-</ul>
-<h2 id="support-in-cardano-wallet"><a class="header" href="#support-in-cardano-wallet">Support in cardano-wallet</a></h2>
-<p><a href="https://github.com/cardano-foundation/cardano-wallet">Cardano-wallet</a> currently <strong>lacks</strong> explicit support for the type of usage described above. Specifically,</p>
-<ul>
-<li>The API documentation for Byron wallets and Shelley wallets implicitly allows funds to be moved between addresses — there is no guarantee that funds sent to a wallet address originate from outside the wallet, they could come from the wallet itself!</li>
-</ul>
-<p>In practice, people use <a href="https://github.com/cardano-foundation/cardano-wallet">cardano-wallet</a> to track  funds incoming at particular addresses anyway, typically by inspecting the transaction history.</p>
-<p>Besides the fundamental limitation above, using <a href="https://github.com/cardano-foundation/cardano-wallet">cardano-wallet</a> in this way has additional drawbacks:</p>
-<p>Byron-style wallets have the following drawbacks:</p>
-<ul>
-<li>Addresses that have been created and imported cannot be restored from a single seed phrase.</li>
-</ul>
-<ul>
-<li>
-<p>The Base58 encoding used for Byron addresses tolerates less errors than Bech32, making loss of funds more likely for customers.</p>
-</li>
-<li>
-<p>Address generation relies on implementation details of Haskell’s <code>StdGen</code> pseudorandom number generator.</p>
-</li>
-</ul>
-<p>Shelley-style wallet has the following drawbacks:</p>
-<ul>
-<li>
-<p>Making a transaction to generate new addresses incurs a transaction fee.</p>
-</li>
-<li>
-<p>Wallets with an address gap ≠ 20 do not comply with the BIP-44 standard for account discovery; they cannot be fully restored without knowledge of the address gap.</p>
-</li>
-</ul>
-<h1 id="alternative-solutions"><a class="header" href="#alternative-solutions">Alternative solutions</a></h1>
-<p>The problem statement could also be addressed by other means. For example:</p>
-<ul>
-<li>
-<p>Transaction metadata could be augmented with identifying information about the origin of incoming payments.</p>
-</li>
-<li>
-<p>Identifying information could be added to the addresses.</p>
-</li>
-</ul>
-<h2 id="solution-transaction-metadata"><a class="header" href="#solution-transaction-metadata">Solution: Transaction metadata</a></h2>
-<p>In traditional banking, transaction metadata is typically used to identify the origin of an incoming payment.</p>
-<p>Also, for some cryptocurrencies, Exchanges do a single address and distinguish users by transaction metadata. This is the case for Kraken and the <a href="https://en.wikipedia.org/wiki/Stellar_(payment_network)">Stellar Lumens</a> blockchain.</p>
-<p>However, the notion of “one address — one customer” appears to be established for ADA by now, probably also because current user interfaces (such as Daedalus) lack good ways to add transaction metadata.</p>
-<h2 id="solution-identity-from-sender-addresses"><a class="header" href="#solution-identity-from-sender-addresses">Solution: Identity from sender addresses</a></h2>
-<p>One could require customers to send money from a specific address. However, that would require a feature where the user wallet is able to send from a specific address. To our knowledge, such a feature has not been implemented, and it seems to interfere with intentional anonymity of addresses.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="requirements-deposit-wallet"><a class="header" href="#requirements-deposit-wallet">Requirements: Deposit Wallet</a></h1>
-<h1 id="synopsis"><a class="header" href="#synopsis">Synopsis</a></h1>
-<p>This documents describes high-level requirements on the <a href="https://github.com/cardano-foundation/cardano-deposit-wallet">Cardano Deposit Wallet</a>.</p>
-<p>The <a href="https://github.com/cardano-foundation/cardano-deposit-wallet">Cardano Deposit Wallet</a> is a full-node wallet targeting businesses that need to track the origin of incoming payments ("deposits").</p>
-<p>Such a wallet is useful to businesses who want to match incoming payments to customers. The matching works as follows:</p>
-<ul>
-<li>The customer creates an account with the business.</li>
-<li>In the wallet, the business generates a unique address and associates it with this customer account.</li>
-<li>Any incoming payment on that address is treated as originating from that customer.</li>
-</ul>
-<h1 id="motivation"><a class="header" href="#motivation">Motivation</a></h1>
-<p>See <a href="design/./problem.html">Problem statement</a>.</p>
-<h1 id="requirements"><a class="header" href="#requirements">Requirements</a></h1>
-<h2 id="synopsis-1"><a class="header" href="#synopsis-1">Synopsis</a></h2>
-<p>Compared to <a href="https://github.com/cardano-foundation/cardano-wallet">cardano-wallet</a>, the Deposit Wallet</p>
-<ul>
-<li>
-<p>Officially supports a mapping between addresses to customers.</p>
-</li>
-<li>
-<p>Improves performance when handling many addresses and large UTxO sets.</p>
-</li>
-<li>
-<p>Supports a larger number of customers (up to 2³¹ ~ 2.1 Billion) in a single wallet.</p>
-</li>
-<li>
-<p>Uses the Bech32 encoding for customer addresses, which is more resilient against spelling mistakes.</p>
-</li>
-<li>
-<p>Basic User Interface for Wallet Usability and Demonstration.</p>
-</li>
-</ul>
-<h2 id="details"><a class="header" href="#details">Details</a></h2>
-<h3 id="main"><a class="header" href="#main">Main</a></h3>
-<p><strong>Known customers</strong>:</p>
-<ul>
-<li>
-<p>The wallet maintains a one-to-one mapping between customers and addresses.</p>
-</li>
-<li>
-<p>Customers are represented as numerical indices starting at <code>0</code>.</p>
-</li>
-<li>
-<p>The maximum number of customers is at leaset 2³¹ ~ 2.1 Billion.</p>
-</li>
-<li>
-<p>Addresses are encoded using Bech32, which is more resilient against spelling mistakes.</p>
-</li>
-<li>
-<p>Addresses are derived deterministically from a public key using <a href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki">BIP-32</a>-style key derivation.</p>
-</li>
-</ul>
-<p>Incoming transactions:</p>
-<ul>
-<li>
-<p>A deposit made at an address is treated as originating from the corresponding customer.</p>
-</li>
-<li>
-<p>We can <strong>query</strong> the wallet for a recent history of deposits made by each known customer.</p>
-</li>
-</ul>
-<p>Outgoing transactions:</p>
-<ul>
-<li>
-<p>Outgoing funds are not distinguished by customer — once funds have gone into the wallet, they are all part of a single wallet balance.</p>
-</li>
-<li>
-<p>A transaction created by the wallet does <strong>not send</strong> funds to a <strong>known customer</strong> unless the wallet user explicitly wants that customer as payment destination.</p>
-</li>
-</ul>
-<p>Signatures:</p>
-<ul>
-<li>
-<p>The wallet stores a public key from which customer addresses are derived deterministically.</p>
-</li>
-<li>
-<p>Optionally, the wallet stores a private key in order to sign outgoing transactions. This private key is encrypted with a passphrase.</p>
-</li>
-</ul>
-<h3 id="technical"><a class="header" href="#technical">Technical</a></h3>
-<p>Incoming transactions:</p>
-<ul>
-<li>
-<p>Rollbacks of the blockchain are supported and do not cause an inconsistent wallet state.</p>
-</li>
-<li>
-<p>The query for the history of deposits is atomic with respect to rollbacks.</p>
-</li>
-<li>
-<p>Variant queries for the history of deposits are supported</p>
-</li>
-</ul>
-<p>Outgoing transactions:</p>
-<ul>
-<li>
-<p>The wallet can create a valid transaction if sufficient funds are available.</p>
-</li>
-<li>
-<p>The wallet can sign the transaction if the optional private key is stored.</p>
-</li>
-</ul>
-<p>API:</p>
-<ul>
-<li>
-<p>REST API that exposes the wallet functionality</p>
-</li>
-<li>
-<p>web UI for testing purposes</p>
-</li>
-</ul>
-<h3 id="non-functional"><a class="header" href="#non-functional">Non-Functional</a></h3>
-<p>Performance</p>
-<ul>
-<li>
-<p>The wallet state is persisted to disk and does not need to be recreated by synchronizing to the blockchain.</p>
-</li>
-<li>
-<p>Time-complexity of reading a new block should be</p>
-<ul>
-<li>
-<p>logarithmic in the size of the address↔︎customer mapping</p>
-</li>
-<li>
-<p>logarithmic in the size of the current wallet UTxO</p>
-</li>
-</ul>
-</li>
-</ul>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="specification-customer-deposit-wallet"><a class="header" href="#specification-customer-deposit-wallet">Specification: Customer Deposit Wallet</a></h1>
+                        <h1 id="specification-customer-deposit-wallet"><a class="header" href="#specification-customer-deposit-wallet">Specification: Customer Deposit Wallet</a></h1>
 <p>Revision 2025-02-06</p>
 <h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
 <p>This document specifies the core functionality of a <strong>customer deposit wallet</strong>,
@@ -414,7 +190,7 @@ once funds have gone into the wallet, they are all part of a
 <p>A deposit wallet is useful for businesses who need to track a large
 number of customers, such as centralized exchanges (CEX) or e-shops on
 Cardano.</p>
-<h2 id="motivation-1"><a class="header" href="#motivation-1">Motivation</a></h2>
+<h2 id="motivation"><a class="header" href="#motivation">Motivation</a></h2>
 <p>On Cardano, a transaction that spends money from a wallet typically has transaction outputs that return change to the wallet.
 For the Deposit Wallet,
 it is critically important that these <strong>change outputs</strong> are <strong>not</strong>
@@ -495,18 +271,18 @@ open import Haskell.Reasoning
 </code></pre>
 <p>and also</p>
 <ul>
-<li><a href="design/Specification/Common.lagda.html">Specification.Common</a>
+<li><a href="Specification/Common.lagda.html">Specification.Common</a>
 — Minor additional Haskell concepts.</li>
 </ul>
 <p>In addition, we also need to import concepts that are specific to Cardano:</p>
 <ul>
-<li><a href="design/Specification/Cardano.lagda.html">Specification.Cardano</a>
+<li><a href="Specification/Cardano.lagda.html">Specification.Cardano</a>
 <ul>
-<li><a href="design/Specification/Cardano/Chain.lagda.html">Specification.Cardano.Chain</a>
+<li><a href="Specification/Cardano/Chain.lagda.html">Specification.Cardano.Chain</a>
 — Types <code>ChainPoint</code>, <code>Slot</code>.</li>
-<li><a href="design/Specification/Cardano/Tx.lagda.html">Specification.Cardano.Tx</a>
+<li><a href="Specification/Cardano/Tx.lagda.html">Specification.Cardano.Tx</a>
 — Transaction type <code>Tx</code>.</li>
-<li><a href="design/Specification/Cardano/Value.lagda.html">Specification.Cardano.Value</a>
+<li><a href="Specification/Cardano/Value.lagda.html">Specification.Cardano.Value</a>
 — Monetary <code>Value</code>. Includes both native coins (ADA) and
 user-defined assets, such as stablecoins or NFTs.</li>
 </ul>
@@ -754,7 +530,7 @@ that are available for spending.</p>
 this means keeping track of unspent transaction outputs (UTxO).
 This topic is discussed in more detail in</p>
 <ul>
-<li><a href="design/Specification/Wallet/UTxO.lagda.html">Specification.Wallet.UTxO</a></li>
+<li><a href="Specification/Wallet/UTxO.lagda.html">Specification.Wallet.UTxO</a></li>
 </ul>
 <p>Here, we only introduce basic concepts of UTxO management,
 as we want to focus on the relation between customer addresses
@@ -847,7 +623,7 @@ receivedTx : Address → Tx → Value
 <p>which total the value spend, respectively received,
 at a given address when a transaction is applied to a <code>UTxO</code>.
 These functions are from
-<a href="design/./Specification/Wallet/UTxO.lagda.html">Specification.Wallet.UTxO</a>.
+<a href="./Specification/Wallet/UTxO.lagda.html">Specification.Wallet.UTxO</a>.
 We group them in a function</p>
 <pre><code class="language-agda">    summarizeTx : Address → Tx → UTxO → ValueTransfer
     summarizeTx addr tx u = record
@@ -924,7 +700,7 @@ This is in contrast to alternative wallet styles that track a per-customer balan
 <p>Formalizing the high-level requirements for outgoing transactions is laborious.
 The first requirement is difficult to implement,
 we defer its discussion to
-<a href="design/Specification/Wallet/Payment.lagda.html">Specification.Wallet.Payment</a>.
+<a href="Specification/Wallet/Payment.lagda.html">Specification.Wallet.Payment</a>.
 The second requirement would need a more detailed
 formalization of the Cardano ledger UTXO and UTXOW rules,
 which is out of scope here.</p>
@@ -1000,19 +776,18 @@ then for all <code>address</code>es,
 if that address belongs to a known customer,
 but does not appear in the <code>destinations</code>,
 then it shall not appear in the transaction outputs either.</p>
-<div style="break-before: page; page-break-before: always;"></div><p>Implementation.</p>
-<p>Miscellaneous details, such as</p>
-<ul>
-<li>Agda2hs. Status of specification.</li>
-<li><code>Pure</code>, <code>IO</code>, <code>REST</code>, and <code>HTTP</code> modules.</li>
-</ul>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="contributing"><a class="header" href="#contributing">Contributing</a></h1>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../design/requirements.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
+                            <a rel="next prefetch" href="../design/implementation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -1020,7 +795,13 @@ then it shall not appear in the transaction outputs either.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../design/requirements.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
+                    <a rel="next prefetch" href="../design/implementation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
@@ -1033,21 +814,16 @@ then it shall not appear in the transaction outputs either.</p>
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
 
-        <script>
-        window.addEventListener('load', function() {
-            window.setTimeout(window.print, 100);
-        });
-        </script>
 
     </div>
     </body>
