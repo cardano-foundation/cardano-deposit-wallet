@@ -9,6 +9,6 @@
 - [Design](./design.md)
   - [Problem statement](./design/problem.md)
   - [Requirements](./design/requirements.md)
-  - [Specification](./design/specification.md)
+  - [Specification](./design/Specification.lagda.md)
   - [Implementation](./design/implementation.md)
 - [Contributing](./contributing.md)
