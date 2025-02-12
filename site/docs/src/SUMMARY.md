@@ -21,4 +21,5 @@
     - [Specification.Wallet.Payment](./design/Specification/Wallet/Payment.lagda.md)
     - [Specification.Wallet.UTxO](./design/Specification/Wallet/UTxO.lagda.md)
   - [Implementation](./design/implementation.md)
+  - [Roadmap](./design/roadmap.md)
 - [Contributing](./contributing.md)
