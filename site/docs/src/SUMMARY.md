@@ -6,7 +6,7 @@
 - [Examples](./examples.md)
 - [Usage](./usage.md)
 - [API](./api.md)
-- Design
+- [Design](./design.md)
   - [Problem statement](./design/problem.md)
   - [Requirements](./design/requirements.md)
   - [Specification](./design/specification.md)
