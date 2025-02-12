@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Intro</a></li><li class="chapter-item expanded "><a href="installation.html" class="active"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="design/Specification.lagda.html"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li class="chapter-item expanded "><a href="design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li><li class="chapter-item expanded "><a href="design/roadmap.html"><strong aria-hidden="true">5.5.</strong> Roadmap</a></li></ol></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Intro</a></li><li class="chapter-item expanded "><a href="installation.html" class="active"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="specifications.html"><strong aria-hidden="true">5.</strong> Specifications</a></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -173,7 +173,46 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>TODO</p>
+                        <h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
+<h3 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h3>
+<p>This is a full node experience, so all caveats of running a full node apply.</p>
+<p>In particular, for <code>mainnet</code> you will need:</p>
+<ul>
+<li>24 GB RAM (UTxO set is still in memory)</li>
+<li>250 GB disk space (Transaction history is stored in full)</li>
+<li>4 CPU cores (for syncing)</li>
+</ul>
+<p>But for <code>preprod</code> you can get away with:</p>
+<ul>
+<li>2 GB RAM</li>
+<li>5 GB disk space</li>
+<li>2 CPU cores</li>
+</ul>
+<h3 id="using-the-released-bundle"><a class="header" href="#using-the-released-bundle">Using the Released Bundle</a></h3>
+<p>The released code is available in the cardano-deposit-wallet project.</p>
+<p>You will need some tools:</p>
+<ul>
+<li>jq</li>
+<li>wget</li>
+<li>tar</li>
+<li>screen</li>
+<li>a working browser</li>
+</ul>
+<p>Nixers can run a shell with all the tools:</p>
+<pre><code class="language-bash">nix-shell -p jq wget gnutar screen
+</code></pre>
+<p>We are going to use preprod network in these instructions. Small changes are needed to run on other networks.</p>
+<p>Create a directory for the node state or use the current directory:</p>
+<pre><code class="language-bash test">NODE_DB=${NODE_DB:-$(pwd)/node-db}
+export NODE_DB
+mkdir -p "$NODE_DB"
+rm -rf "$NODE_DB/preprod"
+</code></pre>
+<p>You have 2 choices.</p>
+<ul>
+<li><a href="./installation/package.html">With released platform package</a> (recommended). We do not ship for Windows, so you have to use docker solution.</li>
+<li><a href="./intallation/docker.html">With docker image</a></li>
+</ul>
 
                     </main>
 
