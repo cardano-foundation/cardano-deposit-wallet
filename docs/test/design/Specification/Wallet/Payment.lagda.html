@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Specification.Common - Cardano Deposit Wallet (test)</title>
+        <title>Specification.Wallet.Payment - Cardano Deposit Wallet (test)</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../../favicon.svg">
-        <link rel="shortcut icon" href="../../favicon.png">
-        <link rel="stylesheet" href="../../css/variables.css">
-        <link rel="stylesheet" href="../../css/general.css">
-        <link rel="stylesheet" href="../../css/chrome.css">
-        <link rel="stylesheet" href="../../css/print.css" media="print">
+        <link rel="icon" href="../../../favicon.svg">
+        <link rel="shortcut icon" href="../../../favicon.png">
+        <link rel="stylesheet" href="../../../css/variables.css">
+        <link rel="stylesheet" href="../../../css/general.css">
+        <link rel="stylesheet" href="../../../css/chrome.css">
+        <link rel="stylesheet" href="../../../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="../../fonts/fonts.css">
+        <link rel="stylesheet" href="../../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="../../highlight.css">
-        <link rel="stylesheet" href="../../tomorrow-night.css">
-        <link rel="stylesheet" href="../../ayu-highlight.css">
+        <link rel="stylesheet" href="../../../highlight.css">
+        <link rel="stylesheet" href="../../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,7 +35,7 @@
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
-            var path_to_root = "../../";
+            var path_to_root = "../../../";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../../intro.html">Intro</a></li><li class="chapter-item expanded "><a href="../../installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="../../examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="../../usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="../../api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="../../design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="../../design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="../../design/Specification.lagda.html"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../design/Specification/Cardano.lagda.html"><strong aria-hidden="true">5.3.1.</strong> Specification.Cardano</a></li><li class="chapter-item expanded "><a href="../../design/Specification/Cardano/Chain.lagda.html"><strong aria-hidden="true">5.3.2.</strong> Specification.Cardano.Chain</a></li><li class="chapter-item expanded "><a href="../../design/Specification/Cardano/Tx.lagda.html"><strong aria-hidden="true">5.3.3.</strong> Specification.Cardano.Tx</a></li><li class="chapter-item expanded "><a href="../../design/Specification/Cardano/Value.lagda.html"><strong aria-hidden="true">5.3.4.</strong> Specification.Cardano.Value</a></li><li class="chapter-item expanded "><a href="../../design/Specification/Common.lagda.html" class="active"><strong aria-hidden="true">5.3.5.</strong> Specification.Common</a></li><li class="chapter-item expanded "><a href="../../design/Specification/Wallet/Payment.lagda.html"><strong aria-hidden="true">5.3.6.</strong> Specification.Wallet.Payment</a></li><li class="chapter-item expanded "><a href="../../design/Specification/Cardano/Wallet/UTxO.lagda.html"><strong aria-hidden="true">5.3.7.</strong> Specification.Wallet.UTxO</a></li></ol></li><li class="chapter-item expanded "><a href="../../design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="../../contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../../../intro.html">Intro</a></li><li class="chapter-item expanded "><a href="../../../installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="../../../examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="../../../usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="../../../api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="../../../design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="../../../design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="../../../design/Specification.lagda.html"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../design/Specification/Cardano.lagda.html"><strong aria-hidden="true">5.3.1.</strong> Specification.Cardano</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Cardano/Chain.lagda.html"><strong aria-hidden="true">5.3.2.</strong> Specification.Cardano.Chain</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Cardano/Tx.lagda.html"><strong aria-hidden="true">5.3.3.</strong> Specification.Cardano.Tx</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Cardano/Value.lagda.html"><strong aria-hidden="true">5.3.4.</strong> Specification.Cardano.Value</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Common.lagda.html"><strong aria-hidden="true">5.3.5.</strong> Specification.Common</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Wallet/Payment.lagda.html" class="active"><strong aria-hidden="true">5.3.6.</strong> Specification.Wallet.Payment</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Cardano/Wallet/UTxO.lagda.html"><strong aria-hidden="true">5.3.7.</strong> Specification.Wallet.UTxO</a></li></ol></li><li class="chapter-item expanded "><a href="../../../design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="../../../contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -144,7 +144,7 @@
                     <h1 class="menu-title">Cardano Deposit Wallet (test)</h1>
 
                     <div class="right-buttons">
-                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
 
@@ -173,66 +173,113 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="specification-common-concepts"><a class="header" href="#specification-common-concepts">Specification: Common concepts</a></h1>
-<p>This document introduces common concepts used during the specification.</p>
-<pre><code class="language-agda">module Specification.Common where
-</code></pre>
+                        <h1 id="specification-creating-payments-success"><a class="header" href="#specification-creating-payments-success">Specification: Creating Payments Success</a></h1>
+<p>This document discusses the success conditions of a function
+<code>createPayment</code> that creates a payment by
+selecting transaction outputs from a <code>UTxO</code>.</p>
 <h2 id="imports"><a class="header" href="#imports">Imports</a></h2>
-<p>We rely on common Haskell types, such as pairs, lists, …</p>
 <pre><code class="language-agda">open import Haskell.Prelude
 open import Haskell.Reasoning
-open import Haskell.Data.Maybe using (isJust) public
+open import Haskell.Data.Maybe using (isJust)
+
+import Specification.Cardano.Value
+
+module
+  Specification.Wallet.Payment
+    (ValueSig : Specification.Cardano.Value.Signature)
+  where
+
+open Specification.Cardano.Value.Signature ValueSig
 </code></pre>
-<h2 id="additions"><a class="header" href="#additions">Additions</a></h2>
-<p>However, we also require a few convenience concepts
-not covered by the imports above.</p>
-<p>The logical combinator "if and only if"</p>
-<pre><code class="language-agda">_⇔_ : Set → Set → Set
-x ⇔ y = (x → y) ⋀ (y → x)
+<h2 id="signature"><a class="header" href="#signature">Signature</a></h2>
+<p>A signature records data types, operations,
+and the properties that these operations should satisfy.</p>
+<pre><code class="language-agda">record Signature : Set₁ where
+  field
 </code></pre>
-<p>The predicate <code>_∈_</code> records whether an item is an element of a list</p>
-<pre><code class="language-agda">_∈_ : ∀ {a : Set} {{_ : Eq a}} → a → List a → Set
-x ∈ xs = elem x xs ≡ True
+<p>Besides <code>Value</code>, we assume several other data types and functions</p>
+<pre><code class="language-agda">    Address : Set
+    PParams : Set
+    Tx      : Set
+    UTxO    : Set
+
+    balance : UTxO → Value
 </code></pre>
-<p>The predicate <code>isSubsequenceOf</code> records whether
-the elements of one list are contained in the other list,
-in sequence.</p>
-<pre><code class="language-agda">isSubsequenceOf : ∀ {a : Set} {{_ : Eq a}} → List a → List a → Bool
-isSubsequenceOf [] _ = True
-isSubsequenceOf _ [] = False
-isSubsequenceOf (x ∷ xs) (y ∷ ys) =
-    if x == y
-    then isSubsequenceOf xs ys
-    else isSubsequenceOf (x ∷ xs) ys
+<h3 id="createpayment"><a class="header" href="#createpayment"><code>createPayment</code></a></h3>
+<p>The main purpose of a wallet is to send and receive
+funds to other people.</p>
+<p>Given a list of monetary <code>Value</code> and <code>Address</code> to send them to,
+the function</p>
+<pre><code class="language-agda">    createPayment
+      : List (Address × Value)
+      → PParams → UTxO → Maybe Tx
 </code></pre>
-<p>The function <code>nub</code> is missing from <code>agda2hs</code>:</p>
-<pre><code class="language-agda">nub : {{Eq a}} → List a → List a
-nub [] = []
-nub (x ∷ xs) = x ∷ filter (x /=_) (nub xs)
+<p>creates a transaction by selecting transaction outputs from
+the curently available <code>UTxO</code> of the wallet.</p>
+<p>The main property desired of this function is that it always
+succeeds in creating a transaction as long as the wallet has
+sufficient funds.</p>
+<p>One way of formalizing this property would be as follows:
+For simplicity, let us assume that there is a maximum fee
+which covers any transaction:</p>
+<pre><code class="language-agda">    maxFee : PParams → Value
 </code></pre>
-<p>The function <code>delete</code> deletes the first occurence
-of the item from the list.</p>
-<pre><code class="language-agda">delete : ⦃ Eq a ⦄ → a → List a → List a
-delete _ []       = []
-delete x (y ∷ ys) = if x == y then ys else y ∷ delete x ys
+<p>Then, the idea is that we can always create a transaction,
+as long as the available <code>UTxO</code> exceed the value to be paid out
+plus the maximum fee:</p>
+<pre><code class="language-agda">  totalValue : List (Address × Value) → Value
+  totalValue = foldr add empty ∘ map snd
+
+  field
+    prop-createPayment-success
+      : ∀ (utxo : UTxO)
+          (pp : PParams)
+          (destinations : List (Address × Value))
+      → largerOrEqual
+          (balance utxo)
+          (add (totalValue destinations) (maxFee pp))
+        ≡ True
+      → isJust (createPayment destinations pp utxo) ≡ True
 </code></pre>
-<p>The operator <code>_\\_</code> is list difference.
-In the result <code>xs \\ ys</code>,
-the first occurrence of each element of <code>ys</code>
-in turn (if any) has been removed from <code>@xs</code>.</p>
-<pre><code class="language-agda">_\\_ : ⦃ Eq a ⦄ → List a → List a → List a
-_\\_ = foldl (flip delete)
-</code></pre>
+<p>Unfortunately however, this property cannot hold as written
+on Cardano.
+Besides this condition of insufficient funds,
+there are other reasons for failure:</p>
+<ul>
+<li>Wallet UTxO is poor
+<ul>
+<li>Few UTxO which are too close to minimum ADA quantity</li>
+<li>UTxO with too many native assets</li>
+</ul>
+</li>
+<li>Destinations are poor
+<ul>
+<li><code>Value</code> does not carry minimum ADA quantity</li>
+<li><code>Value</code> size too large (native assets, <code>Datum</code>, …)</li>
+</ul>
+</li>
+<li>Combination of both:
+<ul>
+<li>Too many UTxO with small ADA amount
+that we need to cover a large <code>Value</code> payment.
+Example: "Have 1 million x 1 ADA coins, want to send 1 x 1'000'000 ADA coin."</li>
+</ul>
+</li>
+</ul>
+<p>We currently do not know a formal property
+that guarantees success of <code>createPayment</code>,
+but also admits an implementation,
+as this requires handling the above potential failure cases.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../design/Specification/Cardano/Value.lagda.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../design/Specification/Common.lagda.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../../design/Specification/Wallet/Payment.lagda.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../../design/Specification/Cardano/Wallet/UTxO.lagda.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -242,11 +289,11 @@ _\\_ = foldl (flip delete)
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../design/Specification/Cardano/Value.lagda.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../design/Specification/Common.lagda.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../../design/Specification/Wallet/Payment.lagda.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../../design/Specification/Cardano/Wallet/UTxO.lagda.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -261,13 +308,13 @@ _\\_ = foldl (flip delete)
         </script>
 
 
-        <script src="../../elasticlunr.min.js"></script>
-        <script src="../../mark.min.js"></script>
-        <script src="../../searcher.js"></script>
+        <script src="../../../elasticlunr.min.js"></script>
+        <script src="../../../mark.min.js"></script>
+        <script src="../../../searcher.js"></script>
 
-        <script src="../../clipboard.min.js"></script>
-        <script src="../../highlight.js"></script>
-        <script src="../../book.js"></script>
+        <script src="../../../clipboard.min.js"></script>
+        <script src="../../../highlight.js"></script>
+        <script src="../../../book.js"></script>
 
         <!-- Custom JS scripts -->
 
