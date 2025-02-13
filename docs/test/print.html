@@ -369,9 +369,9 @@ To compile different commits directly from the repository, you can set <code>REV
 the current system.</p>
 <pre><code class="language-bash build package">REPOSITORY="github:cardano-foundation/cardano-deposit-wallet"
 
-if [ -z "$REF" ]; then
+if [ -z "${REF:-}" ]; then
     DEFAULT_FLAKE_URL="$REPOSITORY"
-elif [ -z "$REV" ]; then
+elif [ -z "${REV:-}" ]; then
     DEFAULT_FLAKE_URL="$REPOSITORY?ref=$REF"
 else
     DEFAULT_FLAKE_URL="$REPOSITORY?rev=$REV"
