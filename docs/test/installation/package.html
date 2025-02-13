@@ -180,19 +180,19 @@
 <pre><code class="language-bash">export PACKAGED_FOR=macos-silicon
 </code></pre>
 <pre><code class="language-bash">export PACKAGED_FOR=macos-intel
-</code></pre>
-<p>Now you can choose if to download the latest version of the cardano-deposit-wallet
-tarball or use a local package or build the package locally.</p>
-<h2 id="download-the-cardano-deposit-wallet-latest-version-tarball-or-use-a-local-package"><a class="header" href="#download-the-cardano-deposit-wallet-latest-version-tarball-or-use-a-local-package">Download the cardano-deposit-wallet latest version tarball or use a local package.</a></h2>
-<pre><code class="language-bash download package">WALLET_VERSION=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit-wallet/releases/latest | jq -r .tag_name)
+Now you can choose to download the latest version of the cardano-deposit-wallet tarball or use a local package or build the package locally.
+
+## Download the latest version of the cardano-deposit-wallet tarball or use a local package.
+
+```bash download package
+WALLET_VERSION=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit-wallet/releases/latest | jq -r .tag_name)
 WALLET_PACKAGE=cardano-deposit-wallet-$WALLET_VERSION-$PACKAGED_FOR.tar.gz
 wget -q https://github.com/cardano-foundation/cardano-deposit-wallet/releases/download/$WALLET_VERSION/$WALLET_PACKAGE
 export WALLET_PACKAGE
 </code></pre>
 <p>Alternatively</p>
 <h2 id="build-the-package-locally-with-the-following-command"><a class="header" href="#build-the-package-locally-with-the-following-command">Build the package locally with the following command:</a></h2>
-<p>Set the flake variable if you are working on a clone or leave it as it is to use
-the github repository directly.</p>
+<p>Set the <code>FLAKE</code> variable if you are working on a clone, or leave it as it is to use the GitHub repository directly.</p>
 <pre><code class="language-bash build package">SYSTEM=${SYSTEM:-"x86_64-linux"}
 FLAKE=${FLAKE:-"github:cardano-foundation/cardano-deposit-wallet"}
 VERSION=$(nix eval --raw $FLAKE#version)
