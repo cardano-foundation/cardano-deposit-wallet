@@ -89,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Intro</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="installation/mithril.html"><strong aria-hidden="true">1.1.</strong> Mithril Installation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="installation/mithril/download.html"><strong aria-hidden="true">1.1.1.</strong> Download</a></li><li class="chapter-item expanded "><a href="installation/mithril/preprod.html"><strong aria-hidden="true">1.1.2.</strong> Preprod</a></li></ol></li><li class="chapter-item expanded "><a href="installation/package.html"><strong aria-hidden="true">1.2.</strong> Package Installation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="installation/package/build.html"><strong aria-hidden="true">1.2.1.</strong> Build</a></li><li class="chapter-item expanded "><a href="installation/package/download.html"><strong aria-hidden="true">1.2.2.</strong> Download</a></li></ol></li><li class="chapter-item expanded "><a href="installation/docker.html"><strong aria-hidden="true">1.3.</strong> Docker Installation</a></li><li class="chapter-item expanded "><a href="installation/run.html"><strong aria-hidden="true">1.4.</strong> Run</a></li></ol></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="design/specification.html"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li class="chapter-item expanded "><a href="design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Intro</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="installation/mithril.html"><strong aria-hidden="true">1.1.</strong> Mithril Installation</a></li><li class="chapter-item expanded "><a href="installation/package.html"><strong aria-hidden="true">1.2.</strong> Package Installation</a></li><li class="chapter-item expanded "><a href="installation/docker.html"><strong aria-hidden="true">1.3.</strong> Docker Installation</a></li></ol></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="design/specification.html"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li class="chapter-item expanded "><a href="design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -224,80 +224,17 @@ rm -rf "$NODE_DB/preprod"
 <p>You have 2 choices.</p>
 <ul>
 <li><a href="./installation/package.html">With released platform package</a> (recommended). We do not ship for Windows, so you have to use docker solution.</li>
-<li><a href="./intallation/docker.html">With docker image</a></li>
+<li><a href="./installation/docker.html">With docker image</a></li>
 </ul>
-<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h2 id="download-the-mithril-executable"><a class="header" href="#download-the-mithril-executable">Download the Mithril executable</a></h2>
-<pre><code class="language-bash download mithril">case $PACKAGED_FOR in
-    linux64)
-        MITHRIL_PLATFORM=linux-x64
-        ;;
-    macos-silicon)
-        MITHRIL_PLATFORM=macos-arm64
-        ;;
-    macos-intel)
-        MITHRIL_PLATFORM=macos-x64
-        ;;
-    *)
-        echo "Unsupported platform: $PACKAGED_FOR"
-        exit 1
-        ;;
-esac
-LATEST_MITHRIL=$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r .tag_name)
-MITHRIL_NAME=mithril-$LATEST_MITHRIL-$MITHRIL_PLATFORM
-wget -q https://github.com/input-output-hk/mithril/releases/download/$LATEST_MITHRIL/$MITHRIL_NAME.tar.gz
-MITHRIL_DIR=$(pwd)/$MITHRIL_NAME
-mkdir -p "$MITHRIL_DIR"
-tar xvzf "$MITHRIL_NAME.tar.gz" -C "$MITHRIL_DIR" &gt; /dev/null
-rm -f "$MITHRIL_NAME.tar.gz"
-export PATH="$MITHRIL_DIR":$PATH
-</code></pre>
-<blockquote>
-<p>NixOS will refuse to run Mithril unless <code>programs.nix-ld.enable = true;</code> is in the configuration.</p>
-</blockquote>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="populate-the-node-state-with-preprod-data"><a class="header" href="#populate-the-node-state-with-preprod-data">Populate the node state with preprod data</a></h2>
-<pre><code class="language-bash populate preprod">export AGGREGATOR_ENDPOINT=https://aggregator.release-preprod.api.mithril.network/aggregator
-export GENESIS_VERIFICATION_KEY=5b3132372c37332c3132342c3136312c362c3133372c3133312c3231332c3230372c3131372c3139382c38352c3137362c3139392c3136322c3234312c36382c3132332c3131392c3134352c31332c3233322c3234332c34392c3232392c322c3234392c3230352c3230352c33392c3233352c34345d
-digest=$(mithril-client cdb snapshot list --json | jq -r .[0].digest)
-(cd "${NODE_DB}" &amp;&amp; mithril-client cdb download "$digest" &amp;&amp; mv db preprod)
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div><p>To use the following instructions you will need to set <code>PACKAGED_FOR</code> to the platform you are using:</p>
-<pre><code class="language-bash">export PACKAGED_FOR=linux64
-</code></pre>
-<pre><code class="language-bash">export PACKAGED_FOR=macos-silicon
-</code></pre>
-<pre><code class="language-bash">export PACKAGED_FOR=macos-intel
-</code></pre>
-<p>Now you can choose if to download the latest version of the cardano-deposit-wallet
-tarball or use a local package.</p>
-<ul>
-<li><a href="installation/./package/download.html">Download the cardano-deposit-wallet latest version tarball</a></li>
-<li><a href="installation/./package/build.html">Use a local package</a></li>
-</ul>
-<div style="break-before: page; page-break-before: always;"></div><p>Build the package locally with the following command:</p>
-<p>Set the flake variable if you are working on a clone or leave it as it is to use
-the github repository directly.</p>
-<pre><code class="language-bash build package">SYSTEM=${SYSTEM:-"x86_64-linux"}
-FLAKE=${FLAKE:-"github:cardano-foundation/cardano-deposit-wallet"}
-VERSION=$(nix eval --raw $FLAKE#version)
-export WALLET_PACKAGE="result/cardano-deposit-wallet-$VERSION-$PACKAGED_FOR.tar.gz"
-nix build $FLAKE#$PACKAGED_FOR.package
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div><p>Download the cardano-deposit-wallet latest version tarball or use a local package.</p>
-<pre><code class="language-bash download package">WALLET_VERSION=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit-wallet/releases/latest | jq -r .tag_name)
-WALLET_PACKAGE=cardano-deposit-wallet-$WALLET_VERSION-$PACKAGED_FOR.tar.gz
-wget -q https://github.com/cardano-foundation/cardano-deposit-wallet/releases/download/$WALLET_VERSION/$WALLET_PACKAGE
-export WALLET_PACKAGE
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="docker-installation"><a class="header" href="#docker-installation">Docker Installation</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><p>Unpack the tarball</p>
+<p>Unpack the tarball</p>
 <pre><code class="language-bash explode package">tar xvzf "$WALLET_PACKAGE" &gt; /dev/null
 WALLET_DIR=$(pwd)
 export WALLET_DIR
 export PATH=$WALLET_DIR:$PATH
 </code></pre>
 <p>It's recommended to retrieve the node state from Mithril to avoid long waiting times.</p>
-<p><a href="installation/../mithril/download.html">Download  Mithril</a>
-<a href="installation/../mithril/preprod.html">Populate the node state with preprod data</a></p>
+<p><a href="../mithril/download.html">Download  Mithril</a>
+<a href="../mithril/preprod.html">Populate the node state with preprod data</a></p>
 <p>I am going to use <code>screen</code> to keep the processes running in the background.</p>
 <p>If you are using this instructions as a script you should install cleanups to
 ensure the screen sessions are closed.
@@ -353,7 +290,65 @@ curl -s "http://localhost:$DEPOSIT_PORT" &gt; /dev/null
 <pre><code class="language-bash clean up">screen -S "$NODE_SESSION" -X quit
 screen -S "$WALLET_SESSION" -X quit
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="download-the-mithril-executable"><a class="header" href="#download-the-mithril-executable">Download the Mithril executable</a></h2>
+<pre><code class="language-bash download mithril">case $PACKAGED_FOR in
+    linux64)
+        MITHRIL_PLATFORM=linux-x64
+        ;;
+    macos-silicon)
+        MITHRIL_PLATFORM=macos-arm64
+        ;;
+    macos-intel)
+        MITHRIL_PLATFORM=macos-x64
+        ;;
+    *)
+        echo "Unsupported platform: $PACKAGED_FOR"
+        exit 1
+        ;;
+esac
+LATEST_MITHRIL=$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r .tag_name)
+MITHRIL_NAME=mithril-$LATEST_MITHRIL-$MITHRIL_PLATFORM
+wget -q https://github.com/input-output-hk/mithril/releases/download/$LATEST_MITHRIL/$MITHRIL_NAME.tar.gz
+MITHRIL_DIR=$(pwd)/$MITHRIL_NAME
+mkdir -p "$MITHRIL_DIR"
+tar xvzf "$MITHRIL_NAME.tar.gz" -C "$MITHRIL_DIR" &gt; /dev/null
+rm -f "$MITHRIL_NAME.tar.gz"
+export PATH="$MITHRIL_DIR":$PATH
+</code></pre>
+<blockquote>
+<p>NixOS will refuse to run Mithril unless <code>programs.nix-ld.enable = true;</code> is in the configuration.</p>
+</blockquote>
+<h2 id="populate-the-node-state-with-preprod-data"><a class="header" href="#populate-the-node-state-with-preprod-data">Populate the node state with preprod data</a></h2>
+<pre><code class="language-bash populate preprod">export AGGREGATOR_ENDPOINT=https://aggregator.release-preprod.api.mithril.network/aggregator
+export GENESIS_VERIFICATION_KEY=5b3132372c37332c3132342c3136312c362c3133372c3133312c3231332c3230372c3131372c3139382c38352c3137362c3139392c3136322c3234312c36382c3132332c3131392c3134352c31332c3233322c3234332c34392c3232392c322c3234392c3230352c3230352c33392c3233352c34345d
+digest=$(mithril-client cdb snapshot list --json | jq -r .[0].digest)
+(cd "${NODE_DB}" &amp;&amp; mithril-client cdb download "$digest" &amp;&amp; mv db preprod)
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><p>To use the following instructions you will need to set <code>PACKAGED_FOR</code> to the platform you are using:</p>
+<pre><code class="language-bash">export PACKAGED_FOR=linux64
+</code></pre>
+<pre><code class="language-bash">export PACKAGED_FOR=macos-silicon
+</code></pre>
+<pre><code class="language-bash">export PACKAGED_FOR=macos-intel
+</code></pre>
+<p>Now you can choose if to download the latest version of the cardano-deposit-wallet
+tarball or use a local package or to build the package locally.</p>
+<h2 id="build-the-package-locally-with-the-following-command"><a class="header" href="#build-the-package-locally-with-the-following-command">Build the package locally with the following command:</a></h2>
+<p>Set the flake variable if you are working on a clone or leave it as it is to use
+the github repository directly.</p>
+<pre><code class="language-bash build package">SYSTEM=${SYSTEM:-"x86_64-linux"}
+FLAKE=${FLAKE:-"github:cardano-foundation/cardano-deposit-wallet"}
+VERSION=$(nix eval --raw $FLAKE#version)
+export WALLET_PACKAGE="result/cardano-deposit-wallet-$VERSION-$PACKAGED_FOR.tar.gz"
+nix build $FLAKE#$PACKAGED_FOR.package
+</code></pre>
+<h2 id="download-the-cardano-deposit-wallet-latest-version-tarball-or-use-a-local-package"><a class="header" href="#download-the-cardano-deposit-wallet-latest-version-tarball-or-use-a-local-package">Download the cardano-deposit-wallet latest version tarball or use a local package.</a></h2>
+<pre><code class="language-bash download package">WALLET_VERSION=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit-wallet/releases/latest | jq -r .tag_name)
+WALLET_PACKAGE=cardano-deposit-wallet-$WALLET_VERSION-$PACKAGED_FOR.tar.gz
+wget -q https://github.com/cardano-foundation/cardano-deposit-wallet/releases/download/$WALLET_VERSION/$WALLET_PACKAGE
+export WALLET_PACKAGE
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
 <div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
 <div style="break-before: page; page-break-before: always;"></div><p>API is not yet active.</p>
 <div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="problem-origin-of-incoming-payments"><a class="header" href="#problem-origin-of-incoming-payments">Problem: Origin of incoming payments</a></h1>

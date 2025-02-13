@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Intro</a></li><li class="chapter-item expanded "><a href="installation.html" class="active"><strong aria-hidden="true">1.</strong> Installation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="installation/mithril.html"><strong aria-hidden="true">1.1.</strong> Mithril Installation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="installation/mithril/download.html"><strong aria-hidden="true">1.1.1.</strong> Download</a></li><li class="chapter-item expanded "><a href="installation/mithril/preprod.html"><strong aria-hidden="true">1.1.2.</strong> Preprod</a></li></ol></li><li class="chapter-item expanded "><a href="installation/package.html"><strong aria-hidden="true">1.2.</strong> Package Installation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="installation/package/build.html"><strong aria-hidden="true">1.2.1.</strong> Build</a></li><li class="chapter-item expanded "><a href="installation/package/download.html"><strong aria-hidden="true">1.2.2.</strong> Download</a></li></ol></li><li class="chapter-item expanded "><a href="installation/docker.html"><strong aria-hidden="true">1.3.</strong> Docker Installation</a></li><li class="chapter-item expanded "><a href="installation/run.html"><strong aria-hidden="true">1.4.</strong> Run</a></li></ol></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="design/specification.html"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li class="chapter-item expanded "><a href="design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Intro</a></li><li class="chapter-item expanded "><a href="installation.html" class="active"><strong aria-hidden="true">1.</strong> Installation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="installation/mithril.html"><strong aria-hidden="true">1.1.</strong> Mithril Installation</a></li><li class="chapter-item expanded "><a href="installation/package.html"><strong aria-hidden="true">1.2.</strong> Package Installation</a></li><li class="chapter-item expanded "><a href="installation/docker.html"><strong aria-hidden="true">1.3.</strong> Docker Installation</a></li></ol></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="design/specification.html"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li class="chapter-item expanded "><a href="design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -211,8 +211,72 @@ rm -rf "$NODE_DB/preprod"
 <p>You have 2 choices.</p>
 <ul>
 <li><a href="./installation/package.html">With released platform package</a> (recommended). We do not ship for Windows, so you have to use docker solution.</li>
-<li><a href="./intallation/docker.html">With docker image</a></li>
+<li><a href="./installation/docker.html">With docker image</a></li>
 </ul>
+<p>Unpack the tarball</p>
+<pre><code class="language-bash explode package">tar xvzf "$WALLET_PACKAGE" &gt; /dev/null
+WALLET_DIR=$(pwd)
+export WALLET_DIR
+export PATH=$WALLET_DIR:$PATH
+</code></pre>
+<p>It's recommended to retrieve the node state from Mithril to avoid long waiting times.</p>
+<p><a href="../mithril/download.html">Download  Mithril</a>
+<a href="../mithril/preprod.html">Populate the node state with preprod data</a></p>
+<p>I am going to use <code>screen</code> to keep the processes running in the background.</p>
+<p>If you are using this instructions as a script you should install cleanups to
+ensure the screen sessions are closed.
+Otherwise, you can skip this step and cleanup the screen sessions manually at the end.</p>
+<pre><code class="language-bash install cleanups">cleanup() {
+    screen -S "$NODE_SESSION" -X quit || true
+    screen -S "$WALLET_SESSION" -X quit || true
+}
+trap cleanup EXIT
+trap cleanup SIGINT
+</code></pre>
+<p>Now you can start the node that comes bundled with the wallet.</p>
+<pre><code class="language-bash start node">NODE_SESSION="node-session-$(shuf -i 1000000-9999999 -n 1)"
+NODE_CONFIGS="$WALLET_DIR/configs/preprod"
+export NODE_CONFIGS
+screen -dmS "$NODE_SESSION" cardano-node run \
+    --config "$NODE_CONFIGS/config.json" \
+    --database-path "$NODE_DB/preprod" \
+    --socket-path "$NODE_DB/preprod/node.socket" \
+    --topology "$NODE_CONFIGS/topology.json"
+</code></pre>
+<p>You can observe the node logs.</p>
+<pre><code class="language-bash">screen -r "$NODE_SESSION"
+</code></pre>
+<p>Detach from the screen with <code>Ctrl-a d</code>.</p>
+<p>Now you can start the wallet.</p>
+<pre><code class="language-bash start wallet">WALLET_SESSION="wallet-session-$(shuf -i 1000000-9999999 -n 1)"
+DEPOSIT_PORT=$(shuf -i 1024-65000 -n 1)
+export DEPOSIT_PORT
+LEGACY_PORT=$(shuf -i 1024-65000 -n 1)
+screen -dmS "$WALLET_SESSION" cardano-wallet serve \
+    --node-socket "$NODE_DB/preprod/node.socket" \
+    --testnet "$NODE_CONFIGS/byron-genesis.json" \
+    --ui-deposit-port "$DEPOSIT_PORT" \
+    --port "$LEGACY_PORT"
+</code></pre>
+<blockquote>
+<p>ATM the legacy port is required even if we are not using it. Once the deposit
+wallet is extracted from the wallet, the legacy port will be removed.</p>
+</blockquote>
+<p>You can observe the wallet logs with:</p>
+<pre><code class="language-bash">screen -r "$WALLET_SESSION"
+</code></pre>
+<p>Detach from the screen with <code>Ctrl-a d</code>.</p>
+<p>Use <code>curl</code> to check the UI is up:</p>
+<pre><code class="language-bash test home page">sleep 10
+curl -s "http://localhost:$DEPOSIT_PORT" &gt; /dev/null
+</code></pre>
+<p>Now you can connect to the web UI with:</p>
+<pre><code class="language-bash">xdg-open "http://localhost:$DEPOSIT_PORT"
+</code></pre>
+<p>Clean up the screen sessions with:</p>
+<pre><code class="language-bash clean up">screen -S "$NODE_SESSION" -X quit
+screen -S "$WALLET_SESSION" -X quit
+</code></pre>
 
                     </main>
 
