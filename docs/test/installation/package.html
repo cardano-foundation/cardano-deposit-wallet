@@ -173,7 +173,8 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>To use the following instructions you will need to set <code>PACKAGED_FOR</code> to the platform you are using:</p>
+                        <h1 id="how-to-get-a-usable-cardano-deposit-wallet-package"><a class="header" href="#how-to-get-a-usable-cardano-deposit-wallet-package">How to get a usable cardano-deposit-wallet package</a></h1>
+<p>To use the following instructions you will need to set <code>PACKAGED_FOR</code> to the platform you are using:</p>
 <pre><code class="language-bash">export PACKAGED_FOR=linux64
 </code></pre>
 <pre><code class="language-bash">export PACKAGED_FOR=macos-silicon
@@ -181,7 +182,14 @@
 <pre><code class="language-bash">export PACKAGED_FOR=macos-intel
 </code></pre>
 <p>Now you can choose if to download the latest version of the cardano-deposit-wallet
-tarball or use a local package or to build the package locally.</p>
+tarball or use a local package or build the package locally.</p>
+<h2 id="download-the-cardano-deposit-wallet-latest-version-tarball-or-use-a-local-package"><a class="header" href="#download-the-cardano-deposit-wallet-latest-version-tarball-or-use-a-local-package">Download the cardano-deposit-wallet latest version tarball or use a local package.</a></h2>
+<pre><code class="language-bash download package">WALLET_VERSION=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit-wallet/releases/latest | jq -r .tag_name)
+WALLET_PACKAGE=cardano-deposit-wallet-$WALLET_VERSION-$PACKAGED_FOR.tar.gz
+wget -q https://github.com/cardano-foundation/cardano-deposit-wallet/releases/download/$WALLET_VERSION/$WALLET_PACKAGE
+export WALLET_PACKAGE
+</code></pre>
+<p>Alternatively</p>
 <h2 id="build-the-package-locally-with-the-following-command"><a class="header" href="#build-the-package-locally-with-the-following-command">Build the package locally with the following command:</a></h2>
 <p>Set the flake variable if you are working on a clone or leave it as it is to use
 the github repository directly.</p>
@@ -190,12 +198,6 @@ FLAKE=${FLAKE:-"github:cardano-foundation/cardano-deposit-wallet"}
 VERSION=$(nix eval --raw $FLAKE#version)
 export WALLET_PACKAGE="result/cardano-deposit-wallet-$VERSION-$PACKAGED_FOR.tar.gz"
 nix build $FLAKE#$PACKAGED_FOR.package
-</code></pre>
-<h2 id="download-the-cardano-deposit-wallet-latest-version-tarball-or-use-a-local-package"><a class="header" href="#download-the-cardano-deposit-wallet-latest-version-tarball-or-use-a-local-package">Download the cardano-deposit-wallet latest version tarball or use a local package.</a></h2>
-<pre><code class="language-bash download package">WALLET_VERSION=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit-wallet/releases/latest | jq -r .tag_name)
-WALLET_PACKAGE=cardano-deposit-wallet-$WALLET_VERSION-$PACKAGED_FOR.tar.gz
-wget -q https://github.com/cardano-foundation/cardano-deposit-wallet/releases/download/$WALLET_VERSION/$WALLET_PACKAGE
-export WALLET_PACKAGE
 </code></pre>
 
                     </main>
