@@ -201,7 +201,6 @@
 <li>5 GB disk space</li>
 <li>2 CPU cores</li>
 </ul>
-<h2 id="cli-installation-instructions"><a class="header" href="#cli-installation-instructions">CLI installation instructions</a></h2>
 <p>You will need some tools to complete the installation:</p>
 <ul>
 <li>jq</li>
@@ -228,7 +227,7 @@ mkdir -p "$NODE_DB"
 rm -rf "$NODE_DB/preprod"
 </code></pre>
 <p>Now you have two choices on how to proceed:</p>
-<h2 id="using-a-package-for-your-system"><a class="header" href="#using-a-package-for-your-system">Using a package for your system.</a></h2>
+<h2 id="use-a-package-for-your-system"><a class="header" href="#use-a-package-for-your-system">Use a package for your system.</a></h2>
 <p>Not all platforms are supported, but we have packages for <code>linux64</code>, <code>macos-silicon</code>, and <code>macos-intel</code>.</p>
 <ul>
 <li><a href="./installation/package.html">Using a platform package</a>. As we do not ship for Windows, you will have to use a Docker solution.</li>
@@ -248,7 +247,7 @@ export PATH=$WALLET_DIR:$PATH
 <h2 id="node-database-initialization"><a class="header" href="#node-database-initialization">Node database initialization</a></h2>
 <p>It is recommended to retrieve the node state from Mithril to avoid long waiting times.</p>
 <p><a href="./installation/mithril.html">Mithril node database setup</a></p>
-<h2 id="screen-and-cleanup"><a class="header" href="#screen-and-cleanup">Screen and cleanup</a></h2>
+<h2 id="manage-processes"><a class="header" href="#manage-processes">Manage processes</a></h2>
 <p>We are going to use <code>screen</code> to keep the processes running in the background, but you can use any other tool you prefer.</p>
 <p>If you are using these instructions as a script, you should install cleanups to ensure the screen sessions are closed.</p>
 <p>Otherwise, you can skip the next step and clean up the screen sessions manually at the end.</p>
@@ -294,22 +293,19 @@ You can observe the wallet logs with:</p>
 </code></pre>
 <p>Detach from the screen with <code>Ctrl-a d</code>.</p>
 <h2 id="test-the-web-ui"><a class="header" href="#test-the-web-ui">Test the web UI</a></h2>
-<p>Use <code>curl</code> to check if the UI is up:
-sleep 10
-curl -s "http://localhost:$DEPOSIT_PORT" &gt; /dev/null</p>
-<pre><code>
-## Open the web UI with your browser
-
-Now you can connect to the web UI with:
-
-Now you can connect to the web UI using:
-xdg-open "http://localhost:$DEPOSIT_PORT"
+<p>Use <code>curl</code> to check if the UI is up</p>
+<pre><code class="language-bash test home page">sleep 10
+curl -s "http://localhost:$DEPOSIT_PORT" &gt; /dev/null
 </code></pre>
-<h2 id="manual-cleanup"><a class="header" href="#manual-cleanup">Manual cleanup</a></h2>
-<p>Clean up the screen sessions using:
-screen -S "$NODE_SESSION" -X quit
-screen -S "$WALLET_SESSION" -X quit</p>
-<pre><code></code></pre>
+<h2 id="open-the-web-ui-with-your-browser"><a class="header" href="#open-the-web-ui-with-your-browser">Open the web UI with your browser</a></h2>
+<p>Now you can connect to the web UI with:</p>
+<pre><code class="language-bash open web ui">xdg-open "http://localhost:$DEPOSIT_PORT"
+</code></pre>
+<h2 id="cleanup-screen-sessions"><a class="header" href="#cleanup-screen-sessions">Cleanup screen sessions</a></h2>
+<p>Clean up the screen sessions using:</p>
+<pre><code class="language-bash clean up">screen -S "$NODE_SESSION" -X quit
+screen -S "$WALLET_SESSION" -X quit
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="download-the-mithril-executable"><a class="header" href="#download-the-mithril-executable">Download the Mithril executable</a></h2>
 <pre><code class="language-bash download mithril">case $PACKAGED_FOR in
     linux64)
@@ -344,7 +340,7 @@ export GENESIS_VERIFICATION_KEY=5b3132372c37332c3132342c3136312c362c3133372c3133
 digest=$(mithril-client cdb snapshot list --json | jq -r .[0].digest)
 (cd "${NODE_DB}" &amp;&amp; mithril-client cdb download "$digest" &amp;&amp; mv db preprod)
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="how-to-get-a-usable-cardano-deposit-wallet-package"><a class="header" href="#how-to-get-a-usable-cardano-deposit-wallet-package">How to get a usable cardano-deposit-wallet package</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="get-a-usable-cardano-deposit-wallet-package"><a class="header" href="#get-a-usable-cardano-deposit-wallet-package">Get a usable cardano-deposit-wallet package</a></h1>
 <p>To use the following instructions you will need to set <code>PACKAGED_FOR</code> to the platform you are using:</p>
 <pre><code class="language-bash">export PACKAGED_FOR=linux64
 </code></pre>
@@ -353,14 +349,14 @@ digest=$(mithril-client cdb snapshot list --json | jq -r .[0].digest)
 <pre><code class="language-bash">export PACKAGED_FOR=macos-intel
 </code></pre>
 <p>Now you can choose to download the latest version of the cardano-deposit-wallet tarball or use a local package or build the package locally.</p>
-<h2 id="download-the-latest-version-of-the-cardano-deposit-wallet-tarball-or-use-a-local-package"><a class="header" href="#download-the-latest-version-of-the-cardano-deposit-wallet-tarball-or-use-a-local-package">Download the latest version of the cardano-deposit-wallet tarball or use a local package.</a></h2>
+<h2 id="download-the-latest-version-of-the-cardano-deposit-wallet-tarball-or-use-a-local-package"><a class="header" href="#download-the-latest-version-of-the-cardano-deposit-wallet-tarball-or-use-a-local-package">Download the latest version of the cardano-deposit-wallet tarball or use a local package</a></h2>
 <pre><code class="language-bash download package">WALLET_VERSION=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit-wallet/releases/latest | jq -r .tag_name)
 WALLET_PACKAGE=cardano-deposit-wallet-$WALLET_VERSION-$PACKAGED_FOR.tar.gz
 wget -q https://github.com/cardano-foundation/cardano-deposit-wallet/releases/download/$WALLET_VERSION/$WALLET_PACKAGE
 export WALLET_PACKAGE
 </code></pre>
 <p>Alternatively</p>
-<h2 id="build-the-package-locally-with-the-following-command"><a class="header" href="#build-the-package-locally-with-the-following-command">Build the package locally with the following command:</a></h2>
+<h2 id="build-the-package-locally"><a class="header" href="#build-the-package-locally">Build the package locally</a></h2>
 <p>Set the <code>FLAKE</code> variable if you are working on a local clone, or leave it as it is to use the GitHub repository directly at main branch.</p>
 <p>To compile different branches directly from the repository, you can set <code>REF</code> to the branch name.
 To compile different commits directly from the repository, you can set <code>REV</code> to the commit hash.</p>
