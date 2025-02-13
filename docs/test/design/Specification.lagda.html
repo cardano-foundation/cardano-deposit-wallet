@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../intro.html">Intro</a></li><li class="chapter-item expanded "><a href="../installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="../examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="../usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="../api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="../design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="../design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="../design/Specification.lagda.html" class="active"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li class="chapter-item expanded "><a href="../design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li><li class="chapter-item expanded "><a href="../design/roadmap.html"><strong aria-hidden="true">5.5.</strong> Roadmap</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../intro.html">Intro</a></li><li class="chapter-item expanded "><a href="../installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="../examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="../usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="../api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="../design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="../design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="../design/Specification.lagda.html" class="active"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li class="chapter-item expanded "><a href="../design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -174,10 +174,10 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="specification-customer-deposit-wallet"><a class="header" href="#specification-customer-deposit-wallet">Specification: Customer Deposit Wallet</a></h1>
-<p>Revision 2025-02-06</p>
 <p>This document is a COPY.
 The source of truth is currently located at the repository
-<a href="https://github.com/cardano-foundation/cardano-wallet-agda/tree/099b4fb3c672d94c31979fe8d436eadc6fd7ed15">cardano-foundation/cardano-wallet-agda</a>.</p>
+<a href="https://github.com/cardano-foundation/cardano-wallet-agda/tree/b5f11bde33585277aa3628b01fe6f5ee8bed2101">cardano-foundation/cardano-wallet-agda</a>.</p>
+<p>Revision 2025-02-13</p>
 <h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
 <p>This document specifies the core functionality of a <strong>customer deposit wallet</strong>,
 or <strong>deposit wallet</strong> for short.</p>
@@ -351,7 +351,7 @@ This list is meant for reference
     field
 
       deriveCustomerAddress : XPub → Customer → Address
-      fromXPubAndMax        : XPub → Word31 → WalletState
+      fromXPubAndCount      : XPub → Word31 → WalletState
       listCustomers         : WalletState → List (Customer × Address)
 
       applyTx       : ChainPoint → Tx → WalletState → WalletState
@@ -386,7 +386,7 @@ as a numerical index:</p>
 the following operations:</p>
 <pre><code>deriveCustomerAddress : XPub → Customer → Address
 
-fromXPubAndMax        : XPub → Word31 → WalletState
+fromXPubAndCount      : XPub → Word31 → WalletState
 listCustomers         : WalletState → List (Customer × Address)
 </code></pre>
 <p>Here,</p>
@@ -396,8 +396,8 @@ listCustomers         : WalletState → List (Customer × Address)
 for a given customer index.</p>
 </li>
 <li>
-<p><code>fromXPubAndMax xpub cmax</code> creates an empty <code>WalletState</code>
-at genesis which keeps track of customers indices <code>0</code> to <code>cmax</code>.
+<p><code>fromXPubAndCount xpub count</code> creates an empty <code>WalletState</code>
+at genesis which keeps track of <code>count</code> many customers, starting at index <code>0</code>.
 Their addresses are derived deterministically from the public key <code>xpub</code>.</p>
 </li>
 <li>
@@ -434,28 +434,28 @@ The following definitions make this mapping easier to discuss:</p>
         : ∀ (w : WalletState)
         → isBijection (listCustomers w) ≡ True
 </code></pre>
-<p>The relation between <code>listCustomers</code> and <code>fromXPubAndMax</code>
+<p>The relation between <code>listCustomers</code> and <code>fromXPubAndCount</code>
 is specified as follows:
-First, the mapping precisely contains customers indices <code>0</code> to <code>cmax</code>:</p>
-<pre><code class="language-agda">      prop-listCustomers-fromXPubAndMax-max
-        : ∀ (c : Customer) (xpub : XPub) (cmax : Word31)
-        → knownCustomer c (fromXPubAndMax xpub cmax)
-          ≡ (0 &lt;= c &amp;&amp; c &lt;= cmax)
+First, the mapping precisely contains <code>count</code> many customers, starting at index <code>0</code>:</p>
+<pre><code class="language-agda">      prop-listCustomers-fromXPubAndCount-range
+        : ∀ (c : Customer) (xpub : XPub) (count : Word31)
+        → knownCustomer c (fromXPubAndCount xpub count)
+          ≡ (0 &lt;= c &amp;&amp; c &lt; count)
 </code></pre>
 <p>Second, the addresses are derived deterministically from
 the public key and the customer index.</p>
-<pre><code class="language-agda">      prop-listCustomers-fromXPubAndMax-xpub
-        : ∀ (c : Customer)
-            (xpub : XPub)
-            (cmax : Word31)
-            (addr : Address)
-        → customerAddress c (fromXPubAndMax xpub cmax)
+<pre><code class="language-agda">      prop-listCustomers-fromXPubAndCount-xpub
+        : ∀ (c     : Customer)
+            (xpub  : XPub)
+            (count : Word31)
+            (addr  : Address)
+        → customerAddress c (fromXPubAndCount xpub count)
           ≡ Just addr
         → deriveCustomerAddress xpub c
           ≡ addr
 </code></pre>
 <p>The idea is that these properties hold not only for the initial state
-at <code>fromXPubAndMax</code>, but also for any state obtained through
+at <code>fromXPubAndCount</code>, but also for any state obtained through
 other operations such as <code>applyTx</code>.</p>
 <p>For compatibility with hardware wallets and the <a href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki">BIP-32</a> standard,
 we derive the <code>Address</code> of each customer from the root private key
@@ -499,12 +499,12 @@ applied; we express this property as:</p>
               → getWalletSlot (applyTx point tx w)
                 ≡ slot
 </code></pre>
-<p>An initial <code>WalletState</code> created with <code>fromXPubAndMax</code>
+<p>An initial <code>WalletState</code> created with <code>fromXPubAndCount</code>
 starts at genesis:</p>
-<pre><code class="language-agda">      prop-getWalletSlot-fromXPubAndMax
-        : ∀ (xpub : XPub)
-            (cmax : Customer)
-        → getWalletSlot (fromXPubAndMax xpub cmax)
+<pre><code class="language-agda">      prop-getWalletSlot-fromXPubAndCount
+        : ∀ (xpub  : XPub)
+            (count : Word31)
+        → getWalletSlot (fromXPubAndCount xpub count)
           ≡ genesis
 </code></pre>
 <p>For completeness, we decree that <code>applyTx</code> with a past <code>Slot</code>
@@ -662,9 +662,11 @@ customers that are not known will not be tracked:</p>
 </code></pre>
 <p>Finally, a wallet that was just initialized does
 not contain a history of transactions, yet:</p>
-<pre><code class="language-agda">      prop-getCustomerHistory-fromXPubAndMax
-        : ∀ (xpub : XPub) (cmax : Customer) (c : Customer)
-        → getCustomerHistory (fromXPubAndMax xpub cmax) c
+<pre><code class="language-agda">      prop-getCustomerHistory-fromXPubAndCount
+        : ∀ (xpub : XPub)
+            (count : Word31)
+            (c : Customer)
+        → getCustomerHistory (fromXPubAndCount xpub count) c
           ≡ []
 </code></pre>
 <p>The above properties provide a specification of
