@@ -24,6 +24,7 @@ else
 fi
 
 recipe="$1"
+
 nix run ./CI/scripts/runmd#runmd -- $LOGGING -r "$recipe" -d ./site/docs/src >"$script"
 
 chmod +x "$script"

@@ -7,6 +7,7 @@ env:
   CI_DIR: "./CI"
   CI_SCRIPTS_DIR: "./CI/scripts"
   DOCS_SCRIPT: "nix develop $CI_DIR#docs --command"
+  DOCS_TEST_DIR: "./site/docs/test"
   TESTS_SCRIPT: "nix develop $CI_DIR#tests --command"
   CHECKS_SCRIPT: "nix develop $CI_DIR#checks --command"
   linux_agent: "x86_64-linux"
@@ -92,6 +93,83 @@ steps:
         system: ${linux_agent}
       env:
         PACKAGED_FOR: linux64
+
+  - group: Docs Tests
+    depends_on:
+      - linux-setup
+    steps:
+    - block: Run Docs Tests
+      depends_on: []
+      if: build.branch != "main"
+    - label: Test installation from flake instructions(linux64)
+      command: |
+        export FLAKE=$(pwd)
+        $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
+            $DOCS_TEST_DIR/build-and-install-package-with-mithril.yml
+      agents:
+        system: ${linux_agent}
+      env:
+        PACKAGED_FOR: linux64
+    - label: Test installation from package instructions (linux64)
+      command: |
+        $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
+            $DOCS_TEST_DIR/download-and-install-package.yml
+      agents:
+        system: ${linux_agent}
+      env:
+        PACKAGED_FOR: linux64
+    - label: Test Mithril download (macos-silicon)
+      command: |
+        $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
+            $DOCS_TEST_DIR/download-mithril.yml
+      agents:
+        system: ${macos_agent}
+      env:
+        PACKAGED_FOR: macos-silicon
+    - label: Test Mithril download (macos-intel)
+      command: |
+        $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
+            $DOCS_TEST_DIR/download-mithril.yml
+      agents:
+        system: ${macos_agent}
+      env:
+        PACKAGED_FOR: macos-silicon
+
+    - label: Test installation from flake docs (macos-silicon)
+      command: |
+        export FLAKE=$(pwd)
+        $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
+            $DOCS_TEST_DIR/build-and-install-package-without-mithril.yml
+      agents:
+        system: ${macos_agent}
+      env:
+        PACKAGED_FOR: macos-silicon
+    - label: Test installation from package docs (macos-silicon)
+      command: |
+        $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
+            $DOCS_TEST_DIR/download-and-install-package.yml
+      agents:
+        system: ${macos_agent}
+      env:
+        PACKAGED_FOR: macos-silicon
+    - label: Test installation from flake docs (macos-intel)
+      command: |
+        export FLAKE=$(pwd)
+        $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
+            $DOCS_TEST_DIR/build-and-install-package-without-mithril.yml
+      agents:
+        system: ${macos_agent}
+      env:
+        PACKAGED_FOR: macos-intel
+        SYSTEM: ${macos_intel}
+    - label: Test installation from package docs (macos-intel)
+      command: |
+        $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
+            $DOCS_TEST_DIR/download-and-install-package.yml
+      agents:
+        system: ${macos_agent}
+      env:
+        PACKAGED_FOR: macos-intel
 
   - group: Docker Tests
     depends_on:
