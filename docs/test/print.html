@@ -379,7 +379,7 @@ fi
 
 FLAKE=${FLAKE:-$DEFAULT_FLAKE_URL}
 
-if [ -z "$SYSTEM" ]; then
+if [ -z "${SYSTEM:-}" ]; then
     SYSTEM_FLAG=""
 else
     SYSTEM_FLAG="--system $SYSTEM"
