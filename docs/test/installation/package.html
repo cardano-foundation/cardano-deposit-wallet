@@ -174,15 +174,18 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="get-a-usable-cardano-deposit-wallet-package"><a class="header" href="#get-a-usable-cardano-deposit-wallet-package">Get a usable cardano-deposit-wallet package</a></h1>
-<p>To use the following instructions you will need to set <code>PACKAGED_FOR</code> to the platform you are using:</p>
+<p>To use the following instructions you will need to set <code>PACKAGED_FOR</code> to the
+platform you are using:</p>
 <pre><code class="language-bash">export PACKAGED_FOR=linux64
 </code></pre>
 <pre><code class="language-bash">export PACKAGED_FOR=macos-silicon
 </code></pre>
 <pre><code class="language-bash">export PACKAGED_FOR=macos-intel
 </code></pre>
-<p>Now you can choose to download the latest version of the cardano-deposit-wallet tarball or use a local package or build the package locally.</p>
-<h2 id="download-the-latest-version-of-the-cardano-deposit-wallet-tarball-or-use-a-local-package"><a class="header" href="#download-the-latest-version-of-the-cardano-deposit-wallet-tarball-or-use-a-local-package">Download the latest version of the cardano-deposit-wallet tarball or use a local package</a></h2>
+<p>Now you can choose to download the latest version of the cardano-deposit-wallet
+tarball or use a local package or build the package locally.</p>
+<h2 id="download-the-latest-version-of-the-cardano-deposit-wallet-tarball-or-use-a"><a class="header" href="#download-the-latest-version-of-the-cardano-deposit-wallet-tarball-or-use-a">Download the latest version of the cardano-deposit-wallet tarball or use a</a></h2>
+<p>local package</p>
 <pre><code class="language-bash download package">WALLET_VERSION=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit-wallet/releases/latest | jq -r .tag_name)
 WALLET_PACKAGE=cardano-deposit-wallet-$WALLET_VERSION-$PACKAGED_FOR.tar.gz
 wget -q https://github.com/cardano-foundation/cardano-deposit-wallet/releases/download/$WALLET_VERSION/$WALLET_PACKAGE
@@ -190,12 +193,15 @@ export WALLET_PACKAGE
 </code></pre>
 <p>Alternatively</p>
 <h2 id="build-the-package-locally"><a class="header" href="#build-the-package-locally">Build the package locally</a></h2>
-<p>Set the <code>FLAKE</code> variable if you are working on a local clone, or leave it as it is to use the GitHub repository directly at main branch.</p>
-<p>To compile different branches directly from the repository, you can set <code>REF</code> to the branch name.
-To compile different commits directly from the repository, you can set <code>REV</code> to the commit hash.</p>
-<p>You may want to override the <code>SYSTEM</code> variable if you are cross-compiling on the mac.</p>
-<p><code>SYSTEM</code> can be set to <code>x86_64-darwin</code>, or <code>aarch64-darwin</code>. If not set it will default to
-the current system.</p>
+<p>Set the <code>FLAKE</code> variable if you are working on a local clone, or leave it as
+it is to use the GitHub repository directly at main branch.</p>
+<p>To compile different branches directly from the repository, you can set <code>REF</code>
+to the branch name. To compile different commits directly from the repository,
+you can set <code>REV</code> to the commit hash.</p>
+<p>You may want to override the <code>SYSTEM</code> variable if you are compiling for
+different processor architectures on macOS.</p>
+<p><code>SYSTEM</code> can be set to <code>x86_64-darwin</code>, or <code>aarch64-darwin</code>. If not set it
+will default to the current system.</p>
 <pre><code class="language-bash build package">REPOSITORY="github:cardano-foundation/cardano-deposit-wallet"
 
 if [ -z "${REF:-}" ]; then
