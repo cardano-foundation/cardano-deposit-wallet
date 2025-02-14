@@ -17,7 +17,8 @@ env:
 steps:
 
   - group: Checks
-    depends_on: []
+    depends_on:
+      - linux-setup
     key: checks
     steps:
     - label: Check Nix files are formatted
@@ -35,6 +36,12 @@ steps:
         - nix develop --command echo "Nix develop works"
       agents:
         system: ${linux_agent}
+    - label: Runmd tool works
+      commands:
+        - nix flake check $CI_SCRIPTS_DIR/runmd
+      agents:
+        system: ${linux_agent}
+
 
   - group: Linux Setup
     depends_on: []
