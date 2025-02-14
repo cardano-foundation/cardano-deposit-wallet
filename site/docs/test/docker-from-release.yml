@@ -1,0 +1,12 @@
+- path: installation/docker.md
+  matches:
+    - get latest tag
+    - pull docker image
+    - download docker-compose
+    - setup environment
+    - create directories
+    - auto cleanup
+    - start service
+    - check wallet
+    - stop service
+    - cleanup
