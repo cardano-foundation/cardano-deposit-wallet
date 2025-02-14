@@ -63,7 +63,7 @@ screen -L -Logfile "$home/wallet.log" -dmS "${wallet_session}" ./cardano-wallet 
 	--port "$LEGACY_PORT"
 
 # wait for the wallet and the node to settle
-sleep 10
+sleep 15
 
 # check the wallet is syncing
 STATUS=$(wget -qO- "http://localhost:$LEGACY_PORT/v2/network/information" | jq .sync_progress.status)

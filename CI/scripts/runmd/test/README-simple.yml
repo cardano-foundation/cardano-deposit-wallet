@@ -1,0 +1,8 @@
+- path: README.md
+  matches:
+  - recipe.yaml file
+  - there directory
+  - a.md file
+  - b.md file
+  - run
+  - test

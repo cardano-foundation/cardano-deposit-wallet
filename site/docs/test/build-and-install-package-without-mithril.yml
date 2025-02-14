@@ -1,0 +1,14 @@
+- path: installation.md
+  matches:
+  - node-db directory
+- path: installation/package.md
+  matches:
+  - build package
+- path: installation.md
+  matches:
+  - explode package
+  - install cleanups
+  - start node
+  - start wallet
+  - test home page
+  - clean up

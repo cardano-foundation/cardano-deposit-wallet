@@ -3,6 +3,9 @@
 [Intro](./intro.md)
 
 - [Installation](./installation.md)
+    - [Mithril Installation](./installation/mithril.md)
+    - [Package Installation](./installation/package.md)
+    - [Docker Installation](./installation/docker.md)
 - [Examples](./examples.md)
 - [Usage](./usage.md)
 - [API](./api.md)

@@ -1,0 +1,4 @@
+- path: installation/mithril.md
+  matches:
+  - download mithril
+  - test mithril
