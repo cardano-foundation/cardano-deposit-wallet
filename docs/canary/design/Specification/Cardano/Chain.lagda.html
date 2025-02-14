@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Implementation - Cardano Deposit Wallet (canary)</title>
+        <title>Specification.Cardano.Chain - Cardano Deposit Wallet (canary)</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../favicon.svg">
-        <link rel="shortcut icon" href="../favicon.png">
-        <link rel="stylesheet" href="../css/variables.css">
-        <link rel="stylesheet" href="../css/general.css">
-        <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
+        <link rel="icon" href="../../../favicon.svg">
+        <link rel="shortcut icon" href="../../../favicon.png">
+        <link rel="stylesheet" href="../../../css/variables.css">
+        <link rel="stylesheet" href="../../../css/general.css">
+        <link rel="stylesheet" href="../../../css/chrome.css">
+        <link rel="stylesheet" href="../../../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="../fonts/fonts.css">
+        <link rel="stylesheet" href="../../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="../highlight.css">
-        <link rel="stylesheet" href="../tomorrow-night.css">
-        <link rel="stylesheet" href="../ayu-highlight.css">
+        <link rel="stylesheet" href="../../../highlight.css">
+        <link rel="stylesheet" href="../../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,7 +35,7 @@
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
-            var path_to_root = "../";
+            var path_to_root = "../../../";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../intro.html">Intro</a></li><li class="chapter-item expanded "><a href="../installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="../examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="../usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="../api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="../design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="../design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="../design/Specification.lagda.html"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../design/Specification/Cardano.lagda.html"><strong aria-hidden="true">5.3.1.</strong> Specification.Cardano</a></li><li class="chapter-item expanded "><a href="../design/Specification/Cardano/Chain.lagda.html"><strong aria-hidden="true">5.3.2.</strong> Specification.Cardano.Chain</a></li><li class="chapter-item expanded "><a href="../design/Specification/Cardano/Tx.lagda.html"><strong aria-hidden="true">5.3.3.</strong> Specification.Cardano.Tx</a></li><li class="chapter-item expanded "><a href="../design/Specification/Cardano/Value.lagda.html"><strong aria-hidden="true">5.3.4.</strong> Specification.Cardano.Value</a></li><li class="chapter-item expanded "><a href="../design/Specification/Common.lagda.html"><strong aria-hidden="true">5.3.5.</strong> Specification.Common</a></li><li class="chapter-item expanded "><a href="../design/Specification/Wallet/Payment.lagda.html"><strong aria-hidden="true">5.3.6.</strong> Specification.Wallet.Payment</a></li><li class="chapter-item expanded "><a href="../design/Specification/Wallet/UTxO.lagda.html"><strong aria-hidden="true">5.3.7.</strong> Specification.Wallet.UTxO</a></li></ol></li><li class="chapter-item expanded "><a href="../design/implementation.html" class="active"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../../../intro.html">Intro</a></li><li class="chapter-item expanded "><a href="../../../installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="../../../examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="../../../usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="../../../api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="../../../design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="../../../design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="../../../design/Specification.lagda.html"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../design/Specification/Cardano.lagda.html"><strong aria-hidden="true">5.3.1.</strong> Specification.Cardano</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Cardano/Chain.lagda.html" class="active"><strong aria-hidden="true">5.3.2.</strong> Specification.Cardano.Chain</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Cardano/Tx.lagda.html"><strong aria-hidden="true">5.3.3.</strong> Specification.Cardano.Tx</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Cardano/Value.lagda.html"><strong aria-hidden="true">5.3.4.</strong> Specification.Cardano.Value</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Common.lagda.html"><strong aria-hidden="true">5.3.5.</strong> Specification.Common</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Wallet/Payment.lagda.html"><strong aria-hidden="true">5.3.6.</strong> Specification.Wallet.Payment</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Wallet/UTxO.lagda.html"><strong aria-hidden="true">5.3.7.</strong> Specification.Wallet.UTxO</a></li></ol></li><li class="chapter-item expanded "><a href="../../../design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="../../../contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -144,7 +144,7 @@
                     <h1 class="menu-title">Cardano Deposit Wallet (canary)</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
 
@@ -173,22 +173,64 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>Implementation.</p>
-<p>Miscellaneous details, such as</p>
-<ul>
-<li>Agda2hs. Status of specification.</li>
-<li><code>Pure</code>, <code>IO</code>, <code>REST</code>, and <code>HTTP</code> modules.</li>
-</ul>
+                        <h1 id="specification-chain"><a class="header" href="#specification-chain">Specification: Chain</a></h1>
+<p>This document provides a partial specification of
+types related to identifying points on the blockchain,
+as needed by the Deposit Wallet.</p>
+<pre><code class="language-agda">module Specification.Cardano.Chain where
+</code></pre>
+<h2 id="imports"><a class="header" href="#imports">Imports</a></h2>
+<pre><code class="language-agda">open import Haskell.Prelude
+open import Haskell.Reasoning
+</code></pre>
+<h2 id="signature"><a class="header" href="#signature">Signature</a></h2>
+<p>A signature records data types, operations,
+and the properties that these operations should satisfy.</p>
+<pre><code class="language-agda">record Signature : Set₁ where
+  field
+</code></pre>
+<p>The type</p>
+<pre><code class="language-agda">    Slot : Set
+</code></pre>
+<p>that represents time intervals in which one block
+can be forged.</p>
+<p>The type</p>
+<pre><code class="language-agda">    ChainPoint : Set
+</code></pre>
+<p>represents a point on the blockchain, i.e. the unique hash
+and <code>Slot</code> of a block that has been forged.</p>
+<p>The <code>Slot</code> type supports equality and comparison:</p>
+<pre><code class="language-agda">    instance
+      iEqSlot  : Eq Slot
+      iOrdSlot : Ord Slot
+</code></pre>
+<p>This comparison is a total order:</p>
+<pre><code class="language-agda">      iIsLawfulOrdSlot : IsLawfulOrd Slot {{iOrdSlot}}
+</code></pre>
+<p>The smallest <code>Slot</code> is called <code>genesis</code>,
+which technically does not correspond to a block,
+but represents the genesis parameters of the blockchain.</p>
+<pre><code class="language-agda">    genesis : Slot
+
+    prop-genesis-&lt;=
+      : ∀ (x : Slot)
+      → (_&lt;=_ {{iOrdSlot}} genesis x) ≡ True
+</code></pre>
+<p>The <code>ChainPoint</code> type supports an operation</p>
+<pre><code class="language-agda">    slotFromChainPoint : ChainPoint → Slot
+</code></pre>
+<p>that retrieves the <code>Slot</code> of the block that is referenced
+by the <code>ChainPoint</code>.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../design/Specification/Wallet/UTxO.lagda.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../design/Specification/Cardano.lagda.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../contributing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../../design/Specification/Cardano/Tx.lagda.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -198,11 +240,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../design/Specification/Wallet/UTxO.lagda.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../design/Specification/Cardano.lagda.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../contributing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../../design/Specification/Cardano/Tx.lagda.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -217,13 +259,13 @@
         </script>
 
 
-        <script src="../elasticlunr.min.js"></script>
-        <script src="../mark.min.js"></script>
-        <script src="../searcher.js"></script>
+        <script src="../../../elasticlunr.min.js"></script>
+        <script src="../../../mark.min.js"></script>
+        <script src="../../../searcher.js"></script>
 
-        <script src="../clipboard.min.js"></script>
-        <script src="../highlight.js"></script>
-        <script src="../book.js"></script>
+        <script src="../../../clipboard.min.js"></script>
+        <script src="../../../highlight.js"></script>
+        <script src="../../../book.js"></script>
 
         <!-- Custom JS scripts -->
 

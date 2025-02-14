@@ -1,0 +1,324 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Specification.Wallet.Payment - Cardano Deposit Wallet (canary)</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../../favicon.svg">
+        <link rel="shortcut icon" href="../../../favicon.png">
+        <link rel="stylesheet" href="../../../css/variables.css">
+        <link rel="stylesheet" href="../../../css/general.css">
+        <link rel="stylesheet" href="../../../css/chrome.css">
+        <link rel="stylesheet" href="../../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../../highlight.css">
+        <link rel="stylesheet" href="../../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../../../intro.html">Intro</a></li><li class="chapter-item expanded "><a href="../../../installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="../../../examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="../../../usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="../../../api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="../../../design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="../../../design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="../../../design/Specification.lagda.html"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../../design/Specification/Cardano.lagda.html"><strong aria-hidden="true">5.3.1.</strong> Specification.Cardano</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Cardano/Chain.lagda.html"><strong aria-hidden="true">5.3.2.</strong> Specification.Cardano.Chain</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Cardano/Tx.lagda.html"><strong aria-hidden="true">5.3.3.</strong> Specification.Cardano.Tx</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Cardano/Value.lagda.html"><strong aria-hidden="true">5.3.4.</strong> Specification.Cardano.Value</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Common.lagda.html"><strong aria-hidden="true">5.3.5.</strong> Specification.Common</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Wallet/Payment.lagda.html" class="active"><strong aria-hidden="true">5.3.6.</strong> Specification.Wallet.Payment</a></li><li class="chapter-item expanded "><a href="../../../design/Specification/Wallet/UTxO.lagda.html"><strong aria-hidden="true">5.3.7.</strong> Specification.Wallet.UTxO</a></li></ol></li><li class="chapter-item expanded "><a href="../../../design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="../../../contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Cardano Deposit Wallet (canary)</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="specification-creating-payments-success"><a class="header" href="#specification-creating-payments-success">Specification: Creating Payments Success</a></h1>
+<p>This document discusses the success conditions of a function
+<code>createPayment</code> that creates a payment by
+selecting transaction outputs from a <code>UTxO</code>.</p>
+<h2 id="imports"><a class="header" href="#imports">Imports</a></h2>
+<pre><code class="language-agda">open import Haskell.Prelude
+open import Haskell.Reasoning
+open import Haskell.Data.Maybe using (isJust)
+
+import Specification.Cardano.Value
+
+module
+  Specification.Wallet.Payment
+    (ValueSig : Specification.Cardano.Value.Signature)
+  where
+
+open Specification.Cardano.Value.Signature ValueSig
+</code></pre>
+<h2 id="signature"><a class="header" href="#signature">Signature</a></h2>
+<p>A signature records data types, operations,
+and the properties that these operations should satisfy.</p>
+<pre><code class="language-agda">record Signature : Set₁ where
+  field
+</code></pre>
+<p>Besides <code>Value</code>, we assume several other data types and functions</p>
+<pre><code class="language-agda">    Address : Set
+    PParams : Set
+    Tx      : Set
+    UTxO    : Set
+
+    balance : UTxO → Value
+</code></pre>
+<h3 id="createpayment"><a class="header" href="#createpayment"><code>createPayment</code></a></h3>
+<p>The main purpose of a wallet is to send and receive
+funds to other people.</p>
+<p>Given a list of monetary <code>Value</code> and <code>Address</code> to send them to,
+the function</p>
+<pre><code class="language-agda">    createPayment
+      : List (Address × Value)
+      → PParams → UTxO → Maybe Tx
+</code></pre>
+<p>creates a transaction by selecting transaction outputs from
+the curently available <code>UTxO</code> of the wallet.</p>
+<p>The main property desired of this function is that it always
+succeeds in creating a transaction as long as the wallet has
+sufficient funds.</p>
+<p>One way of formalizing this property would be as follows:
+For simplicity, let us assume that there is a maximum fee
+which covers any transaction:</p>
+<pre><code class="language-agda">    maxFee : PParams → Value
+</code></pre>
+<p>Then, the idea is that we can always create a transaction,
+as long as the available <code>UTxO</code> exceed the value to be paid out
+plus the maximum fee:</p>
+<pre><code class="language-agda">  totalValue : List (Address × Value) → Value
+  totalValue = foldr add empty ∘ map snd
+
+  field
+    prop-createPayment-success
+      : ∀ (utxo : UTxO)
+          (pp : PParams)
+          (destinations : List (Address × Value))
+      → largerOrEqual
+          (balance utxo)
+          (add (totalValue destinations) (maxFee pp))
+        ≡ True
+      → isJust (createPayment destinations pp utxo) ≡ True
+</code></pre>
+<p>Unfortunately however, this property cannot hold as written
+on Cardano.
+Besides this condition of insufficient funds,
+there are other reasons for failure:</p>
+<ul>
+<li>Wallet UTxO is poor
+<ul>
+<li>Few UTxO which are too close to minimum ADA quantity</li>
+<li>UTxO with too many native assets</li>
+</ul>
+</li>
+<li>Destinations are poor
+<ul>
+<li><code>Value</code> does not carry minimum ADA quantity</li>
+<li><code>Value</code> size too large (native assets, <code>Datum</code>, …)</li>
+</ul>
+</li>
+<li>Combination of both:
+<ul>
+<li>Too many UTxO with small ADA amount
+that we need to cover a large <code>Value</code> payment.
+Example: "Have 1 million x 1 ADA coins, want to send 1 x 1'000'000 ADA coin."</li>
+</ul>
+</li>
+</ul>
+<p>We currently do not know a formal property
+that guarantees success of <code>createPayment</code>,
+but also admits an implementation,
+as this requires handling the above potential failure cases.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../../design/Specification/Common.lagda.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../../design/Specification/Wallet/UTxO.lagda.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../../design/Specification/Common.lagda.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../../design/Specification/Wallet/UTxO.lagda.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../../elasticlunr.min.js"></script>
+        <script src="../../../mark.min.js"></script>
+        <script src="../../../searcher.js"></script>
+
+        <script src="../../../clipboard.min.js"></script>
+        <script src="../../../highlight.js"></script>
+        <script src="../../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
