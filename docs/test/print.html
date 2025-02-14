@@ -89,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Intro</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="installation/mithril.html"><strong aria-hidden="true">1.1.</strong> Mithril Installation</a></li><li class="chapter-item expanded "><a href="installation/package.html"><strong aria-hidden="true">1.2.</strong> Package Installation</a></li><li class="chapter-item expanded "><a href="installation/docker.html"><strong aria-hidden="true">1.3.</strong> Docker Installation</a></li></ol></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="design/specification.html"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li class="chapter-item expanded "><a href="design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Intro</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="installation/mithril.html"><strong aria-hidden="true">1.1.</strong> Mithril Installation</a></li><li class="chapter-item expanded "><a href="installation/package.html"><strong aria-hidden="true">1.2.</strong> Package Installation</a></li><li class="chapter-item expanded "><a href="installation/docker.html"><strong aria-hidden="true">1.3.</strong> Docker Installation</a></li></ol></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">2.</strong> Examples</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="api.html"><strong aria-hidden="true">4.</strong> API</a></li><li class="chapter-item expanded "><a href="design.html"><strong aria-hidden="true">5.</strong> Design</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="design/problem.html"><strong aria-hidden="true">5.1.</strong> Problem statement</a></li><li class="chapter-item expanded "><a href="design/requirements.html"><strong aria-hidden="true">5.2.</strong> Requirements</a></li><li class="chapter-item expanded "><a href="design/Specification.lagda.html"><strong aria-hidden="true">5.3.</strong> Specification</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="design/Specification/Cardano.lagda.html"><strong aria-hidden="true">5.3.1.</strong> Specification.Cardano</a></li><li class="chapter-item expanded "><a href="design/Specification/Cardano/Chain.lagda.html"><strong aria-hidden="true">5.3.2.</strong> Specification.Cardano.Chain</a></li><li class="chapter-item expanded "><a href="design/Specification/Cardano/Tx.lagda.html"><strong aria-hidden="true">5.3.3.</strong> Specification.Cardano.Tx</a></li><li class="chapter-item expanded "><a href="design/Specification/Cardano/Value.lagda.html"><strong aria-hidden="true">5.3.4.</strong> Specification.Cardano.Value</a></li><li class="chapter-item expanded "><a href="design/Specification/Common.lagda.html"><strong aria-hidden="true">5.3.5.</strong> Specification.Common</a></li><li class="chapter-item expanded "><a href="design/Specification/Wallet/Payment.lagda.html"><strong aria-hidden="true">5.3.6.</strong> Specification.Wallet.Payment</a></li><li class="chapter-item expanded "><a href="design/Specification/Wallet/UTxO.lagda.html"><strong aria-hidden="true">5.3.7.</strong> Specification.Wallet.UTxO</a></li></ol></li><li class="chapter-item expanded "><a href="design/implementation.html"><strong aria-hidden="true">5.4.</strong> Implementation</a></li></ol></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">6.</strong> Contributing</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -617,7 +617,993 @@ nix build $SYSTEM_FLAG $FLAKE#$PACKAGED_FOR.package
 </ul>
 </li>
 </ul>
-<div style="break-before: page; page-break-before: always;"></div><p>Specification</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="specification-customer-deposit-wallet"><a class="header" href="#specification-customer-deposit-wallet">Specification: Customer Deposit Wallet</a></h1>
+<p>This document is a COPY.
+The source of truth is currently located at the repository
+<a href="https://github.com/cardano-foundation/cardano-wallet-agda/tree/b5f11bde33585277aa3628b01fe6f5ee8bed2101">cardano-foundation/cardano-wallet-agda</a>.</p>
+<p>Revision 2025-02-13</p>
+<h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
+<p>This document specifies the core functionality of a <strong>customer deposit wallet</strong>,
+or <strong>deposit wallet</strong> for short.</p>
+<p>A deposit wallet's main purpose is to track the <strong>origin of incoming funds</strong>:</p>
+<ol>
+<li>Each <strong>customer</strong> is assigned a <strong>unique address</strong> belonging to the wallet,
+and a deposit made at this address is treated as originating from
+that customer.</li>
+<li>Outgoing funds are not distinguished by customer:
+once funds have gone into the wallet, they are all part of a
+<strong>single wallet balance</strong>.</li>
+</ol>
+<p>A deposit wallet is useful for businesses who need to track a large
+number of customers, such as centralized exchanges (CEX) or e-shops on
+Cardano.</p>
+<h2 id="motivation-1"><a class="header" href="#motivation-1">Motivation</a></h2>
+<p>On Cardano, a transaction that spends money from a wallet typically has transaction outputs that return change to the wallet.
+For the Deposit Wallet,
+it is critically important that these <strong>change outputs</strong> are <strong>not</strong>
+assigned to any <strong>known customer addresses</strong>
+— otherwise they would be treated as originating from a customer!</p>
+<p>However, this property is not guaranteed for other wallet software,
+such as <a href="https://github.com/cardano-foundation/cardano-wallet">cardano-wallet</a> — and this led to a very <strong>expensive bug</strong>,
+where customers were credited with funds that they had never deposited.</p>
+<p>The main motivation for this specification is therefore to
+explicitly state that this property should hold,
+to formulate it with precision,
+and to do so in a way that is amenable to compiler-checked proof.</p>
+<p>More precisely, we use <a href="https://github.com/agda/agda">Agda</a> to formally define data structures and
+functions that allow us ultimately to state and prove the
+aforementioned property.</p>
+<h2 id="high-level-requirements"><a class="header" href="#high-level-requirements">High-level Requirements</a></h2>
+<p>We now outline high-level requirements
+for the Deposit Wallet — these include generic requirements on wallet software, but also the crucial property mentioned above.
+The rest of this document turns these high-level requirements into actual machine-checkable code!</p>
+<p>We require that the wallet has a notion of <strong>known customers</strong>, specifically</p>
+<ul>
+<li>Each customer is represented by a numerical index starting at <code>0</code>.</li>
+<li>The wallet maintains a one-to-one mapping between known customers and addresses.</li>
+</ul>
+<p>For <strong>incoming transactions</strong>,</p>
+<ul>
+<li>We can query the wallet for a recent history of <strong>deposits</strong> made by each known customer.</li>
+</ul>
+<p>For <strong>outgoing transactions</strong>,</p>
+<ol>
+<li>The wallet can create a transaction <strong>successfully</strong> if it has <strong>sufficients funds</strong>
+to cover the payments and a small amount of fees.</li>
+<li>The transaction will be <strong>accepted</strong> by the Cardano <strong>ledger</strong>.</li>
+<li>The transaction <strong>reflects</strong> the <strong>intention</strong>,
+i.e. only the desired payments are made,
+and all other transaction outputs belong to the wallet.</li>
+<li>Last but not least, the transaction does <strong>not send funds</strong> to a <strong>known customer</strong>
+unless that customer is specifically mentioned
+as payment destination.</li>
+</ol>
+<h1 id="setup"><a class="header" href="#setup">Setup</a></h1>
+<p>This document is a <a href="https://agda.readthedocs.io/en/v2.6.4/tools/literate-programming.html">literate Agda</a> file: It contains prose that
+describes and explains the specification, but it also contains definitions
+and logical properties that can be checked by the proof assistant <a href="https://github.com/agda/agda">Agda</a>.</p>
+<p>When implementing this specification,
+we intend to create a <strong>machine-checked proof</strong>
+that our implementation matches this specification.
+However, this specification only covers the <strong>core functionality</strong> of
+the software application to be implemented, not the full software.
+We proceed as follows:</p>
+<ul>
+<li>
+<p>The full software application will be implemented in <a href="https://www.haskell.org">Haskell</a>.
+Sizeable parts of the functionality will be tested, not proven.</p>
+</li>
+<li>
+<p>However, the core functionality that is covered by this specification
+will be implemented using <a href="https://github.com/agda/agda">Agda</a> and exported to Haskell
+via the <a href="https://github.com/agda/agda2hs">agda2hs</a> transpiler.
+This core functionality will be proven, not tested.</p>
+</li>
+<li>
+<p>In turn, proofs about the core functionality will depend on the
+assumption that more basic data types provided by Haskell libraries,
+such as the <a href="https://hackage.haskell.org/package/containers-0.7/docs/Data-Set.html">Data.Set</a> type,
+have implementations that match a specification.
+For the time being, we accept that this is an assumption
+and that the library implementations have only been tested.
+We <code>postulate</code> specifications in Agda as far as needed.</p>
+</li>
+</ul>
+<pre><code class="language-agda">module Specification where
+</code></pre>
+<h2 id="imports"><a class="header" href="#imports">Imports</a></h2>
+<p>In order to formulate the specification, we need to import standard Haskell vocabulary</p>
+<pre><code class="language-agda">open import Haskell.Prelude
+open import Haskell.Reasoning
+</code></pre>
+<p>and also</p>
+<ul>
+<li><a href="design/Specification/Common.lagda.html">Specification.Common</a>
+— Minor additional Haskell concepts.</li>
+</ul>
+<p>In addition, we also need to import concepts that are specific to Cardano:</p>
+<ul>
+<li><a href="design/Specification/Cardano.lagda.html">Specification.Cardano</a>
+<ul>
+<li><a href="design/Specification/Cardano/Chain.lagda.html">Specification.Cardano.Chain</a>
+— Types <code>ChainPoint</code>, <code>Slot</code>.</li>
+<li><a href="design/Specification/Cardano/Tx.lagda.html">Specification.Cardano.Tx</a>
+— Transaction type <code>Tx</code>.</li>
+<li><a href="design/Specification/Cardano/Value.lagda.html">Specification.Cardano.Value</a>
+— Monetary <code>Value</code>. Includes both native coins (ADA) and
+user-defined assets, such as stablecoins or NFTs.</li>
+</ul>
+</li>
+</ul>
+<!--
+```agda
+open import Haskell.Data.Word.Odd using (Word31)
+
+open import Specification.Common using
+  (_⇔_; _∈_; isSubsequenceOf; _\\_; isJust; nub)
+
+import Specification.Cardano
+import Specification.Wallet.UTxO
+```
+-->
+<h1 id="specification"><a class="header" href="#specification">Specification</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>This specification of a <strong>customer deposit wallet</strong>
+amounts to the specification of an abstract data type <code>WalletState</code>,
+which represents the entire state of such a wallet.</p>
+<p>The goal of this document is to specify the operations
+on this abstract data type and the logical properties that relate them.</p>
+<p>We define a <code>module</code> <code>DepositWallet</code> which is parametrized by</p>
+<ul>
+<li>the abstract data type <code>WalletState</code> that we wish to specify,</li>
+<li>a specification <code>SigCardano</code> of Cardano-related concepts
+that we need to formulate this specification, and</li>
+<li>a specification <code>SigWallet</code> of wallet-related concepts that are
+not the focus of this document.</li>
+</ul>
+<pre><code class="language-agda">module
+  DepositWallet
+    (WalletState : Set)
+    (XPub : Set)
+    (SigCardano : Specification.Cardano.Signature)
+    (SigWallet  : Specification.Wallet.UTxO.Signature SigCardano)
+  where
+
+  open Specification.Cardano.Signature SigCardano
+  open Specification.Wallet.UTxO.Signature SigWallet
+</code></pre>
+<h2 id="operations"><a class="header" href="#operations">Operations</a></h2>
+<p>We now list all auxiliary data types and all
+operations supported by the abstract data type <code>WalletState</code>.
+This list is meant for reference
+— we will explain each of them in detail in the subsequent sections.</p>
+<p>Auxiliary data types:</p>
+<pre><code class="language-agda">  Customer = Word31
+
+  record ValueTransfer : Set where
+    field
+      spent    : Value
+      received : Value
+
+  open ValueTransfer
+
+  TxSummary : Set
+  TxSummary = Slot × TxId × ValueTransfer
+</code></pre>
+<p>Operations:</p>
+<pre><code class="language-agda">  record Operations : Set where
+    field
+
+      deriveCustomerAddress : XPub → Customer → Address
+      fromXPubAndCount      : XPub → Word31 → WalletState
+      listCustomers         : WalletState → List (Customer × Address)
+
+      applyTx       : ChainPoint → Tx → WalletState → WalletState
+      getWalletSlot : WalletState → Slot
+      totalUTxO     : WalletState → UTxO
+      isOurs        : WalletState → Address → Bool
+
+      getCustomerHistory
+        : WalletState → Customer → List TxSummary
+
+      createPayment
+        : List (Address × Value)
+        → PParams → WalletState → Maybe TxBody
+</code></pre>
+<h2 id="properties"><a class="header" href="#properties">Properties</a></h2>
+<p>In subsequent sections, we will specify the properties that
+the operations should satisfy.</p>
+<p>The following record collects the properties:</p>
+<pre><code class="language-agda">  record Properties (O : Operations) : Set₁ where
+    open Operations O
+</code></pre>
+<h3 id="mapping-between-customers-and-addresses"><a class="header" href="#mapping-between-customers-and-addresses">Mapping between Customers and Addresses</a></h3>
+<p>The defining feature of the deposit wallet
+is that it keeps track of a mapping between customers and addresses.
+We begin by specifying this mapping.</p>
+<p>The type <code>Customer</code> denotes a unique identifier for a customer.
+For reasons explained later, we choose to represent this type
+as a numerical index:</p>
+<pre><code>Customer = Word31
+</code></pre>
+<p>The mapping between customers and addresses is maintained by
+the following operations:</p>
+<pre><code>deriveCustomerAddress : XPub → Customer → Address
+
+fromXPubAndCount      : XPub → Word31 → WalletState
+listCustomers         : WalletState → List (Customer × Address)
+</code></pre>
+<p>Here,</p>
+<ul>
+<li>
+<p><code>deriveCustomerAddress</code> deterministically creates an address
+for a given customer index.</p>
+</li>
+<li>
+<p><code>fromXPubAndCount xpub count</code> creates an empty <code>WalletState</code>
+at genesis which keeps track of <code>count</code> many customers, starting at index <code>0</code>.
+Their addresses are derived deterministically from the public key <code>xpub</code>.</p>
+</li>
+<li>
+<p><code>listCustomers</code> returns the mapping between customers and addresses
+currently maintained by the <code>WalletState</code>.</p>
+</li>
+</ul>
+<p>In order to make the specification clear and simple,
+we do not allow the mapping between customers and addresses
+to change after creation
+— the idea is that <code>listCustomers</code> will always return the same result,
+no matter how the <code>WalletState</code> is changed subsequently.</p>
+<p>The result of the function <code>listCustomers</code> contains
+the entire mapping between customers and addresses.
+The following definitions make this mapping easier to discuss:</p>
+<pre><code class="language-agda">    customerAddress : Customer → WalletState → Maybe Address
+    customerAddress c = lookup c ∘ listCustomers
+
+    knownCustomer : Customer → WalletState → Bool
+    knownCustomer c = isJust ∘ customerAddress c
+
+    knownCustomerAddress : Address → WalletState → Bool
+    knownCustomerAddress a = elem a ∘ map snd ∘ listCustomers
+</code></pre>
+<p>We require that the mapping is a bijection</p>
+<pre><code class="language-agda">    unique : {{Eq a}} → List a → Bool
+    unique xs = nub xs == xs
+
+    isBijection : ∀ {{_ : Eq a}} {{_ : Eq b}} → List (a × b) → Bool
+    isBijection xys = unique (map fst xys) &amp;&amp; unique (map snd xys)
+
+    field
+      prop-listCustomers-isBijection
+        : ∀ (w : WalletState)
+        → isBijection (listCustomers w) ≡ True
+</code></pre>
+<p>The relation between <code>listCustomers</code> and <code>fromXPubAndCount</code>
+is specified as follows:
+First, the mapping precisely contains <code>count</code> many customers, starting at index <code>0</code>:</p>
+<pre><code class="language-agda">      prop-listCustomers-fromXPubAndCount-range
+        : ∀ (c : Customer) (xpub : XPub) (count : Word31)
+        → knownCustomer c (fromXPubAndCount xpub count)
+          ≡ (0 &lt;= c &amp;&amp; c &lt; count)
+</code></pre>
+<p>Second, the addresses are derived deterministically from
+the public key and the customer index.</p>
+<pre><code class="language-agda">      prop-listCustomers-fromXPubAndCount-xpub
+        : ∀ (c     : Customer)
+            (xpub  : XPub)
+            (count : Word31)
+            (addr  : Address)
+        → customerAddress c (fromXPubAndCount xpub count)
+          ≡ Just addr
+        → deriveCustomerAddress xpub c
+          ≡ addr
+</code></pre>
+<p>The idea is that these properties hold not only for the initial state
+at <code>fromXPubAndCount</code>, but also for any state obtained through
+other operations such as <code>applyTx</code>.</p>
+<p>For compatibility with hardware wallets and the <a href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki">BIP-32</a> standard,
+we derive the <code>Address</code> of each customer from the root private key
+of the wallet in a deterministic fashion.
+Specifically, using the notation of <a href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki">BIP-32</a> in pseudo-code,
+we require that</p>
+<pre><code>deriveCustomerAddress : WalletState → Word31 → Address
+  deriveCustomerAddress s ix = rootXPrv s / 1857' / 1815' / 0' / 0 / ix
+</code></pre>
+<p>Here, <code>1857</code> is a new “purpose” identifier; we cannot reuse the <a href="https://cips.cardano.org/cips/cip1852/">CIP-1852</a> standard, because it behaves differently when discovering funds in blocks.</p>
+<p>This method of deriving addresses is also the reason why we choose
+a concrete representation of <code>Customer</code> as <code>Word31</code>.</p>
+<h3 id="transactions-and-slots"><a class="header" href="#transactions-and-slots">Transactions and slots</a></h3>
+<p>Transactions are used to spend from or send funds to a wallet.
+The type <code>Tx</code> represents a transaction.
+The <code>WalletState</code> may keep a history of transactions.
+In order to keep a history, we need a notion of time
+— we use the type <code>Slot</code> to keep track of time,
+as this type represents a time interval in which
+one block can be forged.</p>
+<p>In order to apply a <code>Tx</code> to the <code>WalletState</code>,
+we specify a function</p>
+<pre><code>applyTx : ChainPoint → Tx → WalletState → WalletState
+</code></pre>
+<p>The first argument of this function is the <code>ChainPoint</code>
+that references the block in which the transaction was included.
+To get the <code>Slot</code> of this block,
+use the function <code>slotFromChainPoint</code>.</p>
+<p>Transactions have to be applied in increasing <code>Slot</code> order.
+For this reason, we also specify a function</p>
+<pre><code>getWalletSlot : WalletState → Slot
+</code></pre>
+<p>that records the last <code>Slot</code> for which a transaction was
+applied; we express this property as:</p>
+<pre><code class="language-agda">      prop-getWalletSlot-applyTx
+        : ∀ (w     : WalletState)
+            (point : ChainPoint)
+            (tx    : Tx)
+        → let slot = slotFromChainPoint point
+          in  (getWalletSlot w &lt;= slot) ≡ True
+              → getWalletSlot (applyTx point tx w)
+                ≡ slot
+</code></pre>
+<p>An initial <code>WalletState</code> created with <code>fromXPubAndCount</code>
+starts at genesis:</p>
+<pre><code class="language-agda">      prop-getWalletSlot-fromXPubAndCount
+        : ∀ (xpub  : XPub)
+            (count : Word31)
+        → getWalletSlot (fromXPubAndCount xpub count)
+          ≡ genesis
+</code></pre>
+<p>For completeness, we decree that <code>applyTx</code> with a past <code>Slot</code>
+are a no-op on the <code>WalletState</code>:</p>
+<pre><code class="language-agda">      prop-getWalletSlot-applyTx-past
+        : ∀ (w     : WalletState)
+            (point : ChainPoint)
+            (tx    : Tx)
+        → (getWalletSlot w &lt;= slotFromChainPoint point) ≡ False
+        → applyTx point tx w
+          ≡ w
+</code></pre>
+<p>Finally, we specify that the mapping between customers
+and addresses is unchanged by transactions:</p>
+<pre><code class="language-agda">      prop-listCustomers-applyTx
+        : ∀ (w     : WalletState)
+            (point : ChainPoint)
+            (tx    : Tx)
+        → listCustomers (applyTx point tx w)
+            ≡ listCustomers w
+</code></pre>
+<h3 id="wallet-balance-and-transactions"><a class="header" href="#wallet-balance-and-transactions">Wallet balance and transactions</a></h3>
+<p>The primary purpose of a wallet is to keep track of funds
+that are available for spending.</p>
+<p>On the Cardano blockchain,
+this means keeping track of unspent transaction outputs (UTxO).
+This topic is discussed in more detail in</p>
+<ul>
+<li><a href="design/Specification/Wallet/UTxO.lagda.html">Specification.Wallet.UTxO</a></li>
+</ul>
+<p>Here, we only introduce basic concepts of UTxO management,
+as we want to focus on the relation between customer addresses
+and funds in the wallet.</p>
+<p>The basics of <code>UTxO</code> management are as follows:
+The total UTxO of the wallet that can be spent is given by the function</p>
+<pre><code>totalUTxO : WalletState → UTxO
+</code></pre>
+<p>A transaction of type <code>Tx</code> may spend some outputs
+and create new ones.
+We assume that a function</p>
+<pre><code>applyTxToUTxO : (Address → Bool) → Tx → UTxO → UTxO
+</code></pre>
+<p>applies the transaction to the <code>UTxO</code>.
+Here, the first argument is a predicate that specifies which output
+addresses of a transactions belong to the wallet.
+For the Deposit Wallet,
+the addresses belonging to the wallet are given by a function</p>
+<pre><code>isOurs : WalletState → Address → Bool
+</code></pre>
+<p>Now, we extend the discussion to the entire <code>WalletState</code>:
+First, we consider the predicate <code>isOurs</code>.
+We require that all known customer addresses belong to the wallet</p>
+<pre><code class="language-agda">      prop-knownCustomerAddress-isOurs
+        : ∀ (addr : Address)
+            (w    : WalletState)
+        → knownCustomerAddress addr w ≡ True
+        → isOurs w addr ≡ True
+</code></pre>
+<p>However, there may be additional addresses belonging to the wallet,
+in particular change addresses.</p>
+<p>Second, we consider the application of a transaction.
+We require that <code>applyTx</code>
+is equivalent to <code>applyTxToUTxO</code> on the <code>totalUTxO</code>:</p>
+<pre><code class="language-agda">      prop-totalUTxO-applyTx
+        : ∀ (point : ChainPoint)
+            (tx    : Tx)
+            (w     : WalletState)
+        → (getWalletSlot w &lt;= slotFromChainPoint point) ≡ True
+        → totalUTxO (applyTx point tx w)
+            ≡ applyTxToUTxO (isOurs w) tx (totalUTxO w)
+</code></pre>
+<h3 id="tracking-incoming-funds"><a class="header" href="#tracking-incoming-funds">Tracking incoming funds</a></h3>
+<p>The wallet tracks all addresses in <code>listCustomers</code>
+whenever new blocks are incorporated into the wallet state.</p>
+<p>The result of tracking is given by the operation</p>
+<pre><code>getCustomerHistory : WalletState → Customer → List TxSummary
+</code></pre>
+<p>For a given customer,
+this operation returns a list of transaction summaries.
+A transaction summary (<code>TxSummary</code>)
+reports the total <code>Value</code> spent or received
+by the customer within a specific transaction.
+The summary also includes the transaction id (<code>TxId</code>)
+and the <code>Slot</code> at which the transaction was included in the blockchain.</p>
+<pre><code>record ValueTransfer : Set where
+  field
+    spent    : Value
+    received : Value
+
+open ValueTransfer
+
+TxSummary : Set
+TxSummary = Slot × TxId × ValueTransfer
+</code></pre>
+<p>Note that the deposit wallet does not support
+delegation and reward accounts
+— the <code>spent</code> field only records value spent from transaction
+outputs.</p>
+<p>The main purpose of the function <code>getCustomerHistory</code> is to
+track the origin of incoming funds.
+When a transactions makes a payment to an <code>address</code>
+that belongs to a known customer <code>c</code>,
+<code>customerAddress c ≡ Just address</code>,
+a transaction summary with the corresponding transaction id
+will show up in the result of <code>getCustomerHistory</code>
+for the customer <code>c</code>.
+This summary will record the total value that this customer
+<code>received</code> in this transaction.</p>
+<p>Note that the <code>spent</code> field in the <code>TxSummary</code> is for information only
+— the deposit wallet does not distinguish customers when spending,
+funds are taken out from customer addresses at random.
+See the discussion of <code>createPayment</code> in a later section.</p>
+<p>In order to specify the behavior of <code>getCustomerHistory</code>
+more precisely,
+we assume two functions</p>
+<pre><code>spentTx    : Address → Tx → UTxO → Value
+receivedTx : Address → Tx → Value
+</code></pre>
+<p>which total the value spend, respectively received,
+at a given address when a transaction is applied to a <code>UTxO</code>.
+These functions are from
+<a href="design/./Specification/Wallet/UTxO.lagda.html">Specification.Wallet.UTxO</a>.
+We group them in a function</p>
+<pre><code class="language-agda">    summarizeTx : Address → Tx → UTxO → ValueTransfer
+    summarizeTx addr tx u = record
+      { spent    = spentTx addr tx u
+      ; received = receivedTx addr tx
+      }
+</code></pre>
+<p>Now, we require that applying a transaction to the
+wallet state will add the summary of this transaction to
+<code>getCustomerHistory</code>:</p>
+<pre><code class="language-agda">    field
+      prop-getCustomerHistory-applyTx
+        : ∀ (c       : Customer)
+            (address : Address)
+            (point   : ChainPoint)
+            (tx      : Tx)
+            (w       : WalletState)
+        → (c , address) ∈ listCustomers w
+        → let slot = slotFromChainPoint point
+          in  (getWalletSlot w &lt;= slot) ≡ True
+            → getCustomerHistory (applyTx point tx w) c
+              ≡ (slot , getTxId tx , summarizeTx address tx (totalUTxO w))
+                ∷ getCustomerHistory w c
+</code></pre>
+<p>On the other hand,
+customers that are not known will not be tracked:</p>
+<pre><code class="language-agda">      prop-getCustomerHistory-knownCustomer
+        : ∀ (w : WalletState)
+            (c : Customer)
+        → knownCustomer c w ≡ False
+        → getCustomerHistory w c
+          ≡ []
+</code></pre>
+<p>Finally, a wallet that was just initialized does
+not contain a history of transactions, yet:</p>
+<pre><code class="language-agda">      prop-getCustomerHistory-fromXPubAndCount
+        : ∀ (xpub : XPub)
+            (count : Word31)
+            (c : Customer)
+        → getCustomerHistory (fromXPubAndCount xpub count) c
+          ≡ []
+</code></pre>
+<p>The above properties provide a specification of
+tracking incoming funds via <code>getCustomerHistory</code>.
+For larger transaction histories,
+this function may not offer the best performance
+— for example, it does not limit the list of transactions,
+and we cannot query recent transactions by customers.
+However, we only specify one function here,
+because these other queries can be specified
+in terms of the result of <code>getCustomerHistory</code> alone,
+without further reference to the <code>WalletState</code>.</p>
+<h3 id="creating-transactions"><a class="header" href="#creating-transactions">Creating transactions</a></h3>
+<p>The main purpose of a wallet is to keep track of funds available
+for spending — and to provide a method for spending them when desired.
+For the latter task, we specify an operation</p>
+<pre><code>createPayment
+  : List (Address × Value)
+  → PParams → WalletState → Maybe TxBody
+</code></pre>
+<p>which maybe constructs a transaction that sends given <code>Value</code>s
+to given destination <code>Address</code>es.
+Here, <code>PParams</code> are protocol parameters such as maximum transaction size
+or fee size that are needed to construct a valid transaction.</p>
+<p>In the beginning of this document,
+we have stated four high-level requirements
+that transactions created by the deposit wallet should respect.
+However, there are also requirements that we do not impose.
+Specifically, we do <strong>not require</strong> that <code>createPayment</code>
+picks any particular <strong>transaction inputs</strong>
+— all funds within the wallet are treated as interchangeable,
+and can be spent as desired.
+In other words, we do not distinguish funds in the wallet by customer anymore
+— we only track the customer when funds move into the wallet.
+This is in contrast to alternative wallet styles that track a per-customer balance.</p>
+<p>Formalizing the high-level requirements for outgoing transactions is laborious.
+The first requirement is difficult to implement,
+we defer its discussion to
+<a href="design/Specification/Wallet/Payment.lagda.html">Specification.Wallet.Payment</a>.
+The second requirement would need a more detailed
+formalization of the Cardano ledger UTXO and UTXOW rules,
+which is out of scope here.</p>
+<p>Fortunately, not meeting the first two requirements
+only makes the software less useable,
+as this would only mean that we cannot create
+some desired transactions
+— but we never create transactions that go against our intentions.
+Hence, we only formalize the third and fourth requirement here.</p>
+<p>We formalize the third requirement in two properties:</p>
+<ul>
+<li>Each payment destination has to appear at least once
+in the transaction outputs.</li>
+<li>Conversely, each transaction output has to be
+a payment output or has to belong to the wallet.</li>
+</ul>
+<p>We formalize the first property as follows:
+Assuming that <code>createPayment</code> applied to the payment <code>destinations</code>
+succeeds, we require that the <code>destinations</code> are a subsequence
+of the transactions outputs:</p>
+<pre><code class="language-agda">    field
+      prop-createPayment-destinations
+        : ∀ (w  : WalletState)
+            (pp : PParams)
+            (destinations : List (Address × Value))
+            (tx : TxBody)
+          → createPayment destinations pp w ≡ Just tx
+          → isSubsequenceOf destinations (outputs tx)
+            ≡ True
+</code></pre>
+<p>Above, we have to be mindful of
+the possibility that payments destinations can be duplicated,
+that is why we use <code>isSubsequenceOf</code> to make sure that
+every one of them is included.
+Strictly speaking, this is unnecessarily restrictive
+on the order of the transaction outputs,
+but the order can always be arranged.</p>
+<p>We formalize the converse property as follows:</p>
+<pre><code class="language-agda">      prop-createPayment-isOurs
+        : ∀ (w  : WalletState)
+            (pp : PParams)
+            (destinations : List (Address × Value))
+            (tx : TxBody)
+          → createPayment destinations pp w ≡ Just tx
+          → all (isOurs w ∘ fst) (outputs tx \\ destinations)
+            ≡ True
+</code></pre>
+<p>This property above states that if <code>createPayment destinations</code>
+succeeds in creating a transaction <code>tx</code>,
+then after removing the <code>destinations</code> from the transaction outputs
+(using the operation <code>(\\)</code> from <code>Data.List</code>),
+all output addresses belong to the wallet.
+Again, we have to be mindful of the possibility that
+the transaction outputs may contain duplicate <code>destinations</code>;
+using the <code>(\\)</code> operation is the most systematic way
+to handle that possibility.</p>
+<p>Finally, we formalize the fourth requirement
+that is specific to the deposit wallet:</p>
+<pre><code class="language-agda">      prop-createPayment-not-known
+        : ∀ (pp : PParams)
+            (w  : WalletState)
+            (destinations : List (Address × Value))
+            (tx : TxBody)
+        → createPayment destinations pp w ≡ Just tx
+        → ∀ (address : Address)
+          → knownCustomerAddress address w ≡ True
+          → ¬ (address ∈ map fst destinations)
+          → ¬ (address ∈ map fst (outputs tx))
+</code></pre>
+<p>This property above states that if <code>createPayment destinations</code>
+succeeds in creating a transaction <code>tx</code>,
+then for all <code>address</code>es,
+if that address belongs to a known customer,
+but does not appear in the <code>destinations</code>,
+then it shall not appear in the transaction outputs either.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="specification-cardano-types"><a class="header" href="#specification-cardano-types">Specification: Cardano Types</a></h1>
+<p>This document provides a partial specification of
+types related to the Cardano blockchain,
+as needed by the Deposit Wallet.</p>
+<pre><code class="language-agda">module Specification.Cardano where
+</code></pre>
+<h2 id="imports-1"><a class="header" href="#imports-1">Imports</a></h2>
+<pre><code class="language-agda">open import Haskell.Prelude
+
+import Specification.Cardano.Chain as ModChain
+import Specification.Cardano.Value as ModValue
+import Specification.Cardano.Tx as ModTx
+</code></pre>
+<h2 id="signature"><a class="header" href="#signature">Signature</a></h2>
+<p>A signature records data types, operations,
+and the properties that these operations should satisfy.</p>
+<pre><code class="language-agda">record Signature : Set₁ where
+  field
+</code></pre>
+<p>We introduce new types</p>
+<pre><code class="language-agda">    CompactAddr : Set
+    {{iEqCompactAddr}} : Eq CompactAddr
+
+    PParams  : Set
+</code></pre>
+<p>and re-export the existing ones from <code>Specification.Cardano.*</code></p>
+<pre><code class="language-agda">  field
+    SigChain : ModChain.Signature
+
+  field
+    SigValue : ModValue.Signature
+  open ModValue.Signature SigValue using (Value)
+
+  field
+    SigTx    : ModTx.Signature CompactAddr Value
+
+  open ModChain.Signature SigChain public
+  open ModValue.Signature SigValue public
+  open ModTx.Signature SigTx public
+</code></pre>
+<p>For improved readability, we use the synonym</p>
+<pre><code class="language-agda">  Address = CompactAddr
+</code></pre>
+<p>to refer to addresses on Cardano.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="specification-chain"><a class="header" href="#specification-chain">Specification: Chain</a></h1>
+<p>This document provides a partial specification of
+types related to identifying points on the blockchain,
+as needed by the Deposit Wallet.</p>
+<pre><code class="language-agda">module Specification.Cardano.Chain where
+</code></pre>
+<h2 id="imports-2"><a class="header" href="#imports-2">Imports</a></h2>
+<pre><code class="language-agda">open import Haskell.Prelude
+open import Haskell.Reasoning
+</code></pre>
+<h2 id="signature-1"><a class="header" href="#signature-1">Signature</a></h2>
+<p>A signature records data types, operations,
+and the properties that these operations should satisfy.</p>
+<pre><code class="language-agda">record Signature : Set₁ where
+  field
+</code></pre>
+<p>The type</p>
+<pre><code class="language-agda">    Slot : Set
+</code></pre>
+<p>that represents time intervals in which one block
+can be forged.</p>
+<p>The type</p>
+<pre><code class="language-agda">    ChainPoint : Set
+</code></pre>
+<p>represents a point on the blockchain, i.e. the unique hash
+and <code>Slot</code> of a block that has been forged.</p>
+<p>The <code>Slot</code> type supports equality and comparison:</p>
+<pre><code class="language-agda">    instance
+      iEqSlot  : Eq Slot
+      iOrdSlot : Ord Slot
+</code></pre>
+<p>This comparison is a total order:</p>
+<pre><code class="language-agda">      iIsLawfulOrdSlot : IsLawfulOrd Slot {{iOrdSlot}}
+</code></pre>
+<p>The smallest <code>Slot</code> is called <code>genesis</code>,
+which technically does not correspond to a block,
+but represents the genesis parameters of the blockchain.</p>
+<pre><code class="language-agda">    genesis : Slot
+
+    prop-genesis-&lt;=
+      : ∀ (x : Slot)
+      → (_&lt;=_ {{iOrdSlot}} genesis x) ≡ True
+</code></pre>
+<p>The <code>ChainPoint</code> type supports an operation</p>
+<pre><code class="language-agda">    slotFromChainPoint : ChainPoint → Slot
+</code></pre>
+<p>that retrieves the <code>Slot</code> of the block that is referenced
+by the <code>ChainPoint</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="specification-transactions"><a class="header" href="#specification-transactions">Specification: Transactions</a></h1>
+<p>This document provides a partial specification of the <code>Tx</code> type
+and related types, as needed by the Deposit Wallet.</p>
+<pre><code class="language-agda">module Specification.Cardano.Tx where
+</code></pre>
+<p>A <code>Tx</code> represents a transaction.
+A transactions creates transaction outputs
+and spends previously created transaction outputs.</p>
+<h2 id="imports-3"><a class="header" href="#imports-3">Imports</a></h2>
+<pre><code class="language-agda">open import Haskell.Prelude
+open import Haskell.Reasoning
+</code></pre>
+<h2 id="signature-2"><a class="header" href="#signature-2">Signature</a></h2>
+<p>A signature records data types, operations,
+and the properties that these operations should satisfy.</p>
+<pre><code class="language-agda">record Signature (Address : Set) (Value : Set) : Set₁ where
+  field
+</code></pre>
+<p>We are concerned with types</p>
+<pre><code class="language-agda">    TxBody : Set
+    Tx     : Set
+    TxId   : Set
+</code></pre>
+<p>that support the following operations:</p>
+<pre><code class="language-agda">    outputs : TxBody → List (Address × Value)
+    getTxId : Tx → TxId
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="specification-value"><a class="header" href="#specification-value">Specification: Value</a></h1>
+<p>This document provides a partial specification of the <code>Value</code> type,
+as needed by the Deposit Wallet.</p>
+<pre><code class="language-agda">module Specification.Cardano.Value where
+</code></pre>
+<p>A <code>Value</code> represents monetary value.
+It is a collection that contains both ADA and optionally custom assets.</p>
+<h2 id="imports-4"><a class="header" href="#imports-4">Imports</a></h2>
+<pre><code class="language-agda">open import Haskell.Prelude
+open import Haskell.Reasoning
+</code></pre>
+<h2 id="signature-3"><a class="header" href="#signature-3">Signature</a></h2>
+<p>A signature records data types, operations,
+and the properties that these operations should satisfy.</p>
+<pre><code class="language-agda">record Signature : Set₁ where
+  field
+</code></pre>
+<p>We are concerned with a single type</p>
+<pre><code class="language-agda">    Value : Set
+</code></pre>
+<p>that supports the following operations:</p>
+<pre><code class="language-agda">    empty         : Value
+    add           : Value → Value → Value
+    largerOrEqual : Value → Value → Bool
+</code></pre>
+<p>and an equality test</p>
+<pre><code class="language-agda">    {{iEqValue}}  : Eq Value
+</code></pre>
+<p>The operation <code>add</code> sums up the monetary values
+contained in the arguments.
+This operation has <code>empty</code> as left- and right identity.</p>
+<pre><code class="language-agda">    prop-add-x-empty
+      : ∀ (x : Value)
+      → add x empty ≡ x
+    
+    prop-add-empty-x
+      : ∀ (x : Value)
+      → add empty x ≡ x
+</code></pre>
+<p>The operation is both associative and commutative:</p>
+<pre><code class="language-agda">    prop-add-assoc
+      : ∀ (x y z : Value)
+      → add (add x y) z ≡ add x (add y z)
+
+    prop-add-sym
+      : ∀ (x y : Value)
+      → add x y ≡ add y x
+</code></pre>
+<p>The operation <code>largerOrEqual x y</code> returns <code>True</code>
+whenever the value <code>x</code> constains as many or strictly more assets
+— both ADA and custom assets — than the value <code>y</code>.</p>
+<p>In particular, adding a third value will not change
+the relation in size:</p>
+<pre><code class="language-agda">    prop-add-monotone
+      : ∀ (x y z : Value)
+      → largerOrEqual (add x z) (add y z)
+        ≡ largerOrEqual x y
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="specification-common-concepts"><a class="header" href="#specification-common-concepts">Specification: Common concepts</a></h1>
+<p>This document introduces common concepts used during the specification.</p>
+<pre><code class="language-agda">module Specification.Common where
+</code></pre>
+<h2 id="imports-5"><a class="header" href="#imports-5">Imports</a></h2>
+<p>We rely on common Haskell types, such as pairs, lists, …</p>
+<pre><code class="language-agda">open import Haskell.Prelude
+open import Haskell.Reasoning
+open import Haskell.Data.Maybe using (isJust) public
+</code></pre>
+<h2 id="additions"><a class="header" href="#additions">Additions</a></h2>
+<p>However, we also require a few convenience concepts
+not covered by the imports above.</p>
+<p>The logical combinator "if and only if"</p>
+<pre><code class="language-agda">_⇔_ : Set → Set → Set
+x ⇔ y = (x → y) ⋀ (y → x)
+</code></pre>
+<p>The predicate <code>_∈_</code> records whether an item is an element of a list</p>
+<pre><code class="language-agda">_∈_ : ∀ {a : Set} {{_ : Eq a}} → a → List a → Set
+x ∈ xs = elem x xs ≡ True
+</code></pre>
+<p>The predicate <code>isSubsequenceOf</code> records whether
+the elements of one list are contained in the other list,
+in sequence.</p>
+<pre><code class="language-agda">isSubsequenceOf : ∀ {a : Set} {{_ : Eq a}} → List a → List a → Bool
+isSubsequenceOf [] _ = True
+isSubsequenceOf _ [] = False
+isSubsequenceOf (x ∷ xs) (y ∷ ys) =
+    if x == y
+    then isSubsequenceOf xs ys
+    else isSubsequenceOf (x ∷ xs) ys
+</code></pre>
+<p>The function <code>nub</code> is missing from <code>agda2hs</code>:</p>
+<pre><code class="language-agda">nub : {{Eq a}} → List a → List a
+nub [] = []
+nub (x ∷ xs) = x ∷ filter (x /=_) (nub xs)
+</code></pre>
+<p>The function <code>delete</code> deletes the first occurence
+of the item from the list.</p>
+<pre><code class="language-agda">delete : ⦃ Eq a ⦄ → a → List a → List a
+delete _ []       = []
+delete x (y ∷ ys) = if x == y then ys else y ∷ delete x ys
+</code></pre>
+<p>The operator <code>_\\_</code> is list difference.
+In the result <code>xs \\ ys</code>,
+the first occurrence of each element of <code>ys</code>
+in turn (if any) has been removed from <code>@xs</code>.</p>
+<pre><code class="language-agda">_\\_ : ⦃ Eq a ⦄ → List a → List a → List a
+_\\_ = foldl (flip delete)
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="specification-creating-payments-success"><a class="header" href="#specification-creating-payments-success">Specification: Creating Payments Success</a></h1>
+<p>This document discusses the success conditions of a function
+<code>createPayment</code> that creates a payment by
+selecting transaction outputs from a <code>UTxO</code>.</p>
+<h2 id="imports-6"><a class="header" href="#imports-6">Imports</a></h2>
+<pre><code class="language-agda">open import Haskell.Prelude
+open import Haskell.Reasoning
+open import Haskell.Data.Maybe using (isJust)
+
+import Specification.Cardano.Value
+
+module
+  Specification.Wallet.Payment
+    (ValueSig : Specification.Cardano.Value.Signature)
+  where
+
+open Specification.Cardano.Value.Signature ValueSig
+</code></pre>
+<h2 id="signature-4"><a class="header" href="#signature-4">Signature</a></h2>
+<p>A signature records data types, operations,
+and the properties that these operations should satisfy.</p>
+<pre><code class="language-agda">record Signature : Set₁ where
+  field
+</code></pre>
+<p>Besides <code>Value</code>, we assume several other data types and functions</p>
+<pre><code class="language-agda">    Address : Set
+    PParams : Set
+    Tx      : Set
+    UTxO    : Set
+
+    balance : UTxO → Value
+</code></pre>
+<h3 id="createpayment"><a class="header" href="#createpayment"><code>createPayment</code></a></h3>
+<p>The main purpose of a wallet is to send and receive
+funds to other people.</p>
+<p>Given a list of monetary <code>Value</code> and <code>Address</code> to send them to,
+the function</p>
+<pre><code class="language-agda">    createPayment
+      : List (Address × Value)
+      → PParams → UTxO → Maybe Tx
+</code></pre>
+<p>creates a transaction by selecting transaction outputs from
+the curently available <code>UTxO</code> of the wallet.</p>
+<p>The main property desired of this function is that it always
+succeeds in creating a transaction as long as the wallet has
+sufficient funds.</p>
+<p>One way of formalizing this property would be as follows:
+For simplicity, let us assume that there is a maximum fee
+which covers any transaction:</p>
+<pre><code class="language-agda">    maxFee : PParams → Value
+</code></pre>
+<p>Then, the idea is that we can always create a transaction,
+as long as the available <code>UTxO</code> exceed the value to be paid out
+plus the maximum fee:</p>
+<pre><code class="language-agda">  totalValue : List (Address × Value) → Value
+  totalValue = foldr add empty ∘ map snd
+
+  field
+    prop-createPayment-success
+      : ∀ (utxo : UTxO)
+          (pp : PParams)
+          (destinations : List (Address × Value))
+      → largerOrEqual
+          (balance utxo)
+          (add (totalValue destinations) (maxFee pp))
+        ≡ True
+      → isJust (createPayment destinations pp utxo) ≡ True
+</code></pre>
+<p>Unfortunately however, this property cannot hold as written
+on Cardano.
+Besides this condition of insufficient funds,
+there are other reasons for failure:</p>
+<ul>
+<li>Wallet UTxO is poor
+<ul>
+<li>Few UTxO which are too close to minimum ADA quantity</li>
+<li>UTxO with too many native assets</li>
+</ul>
+</li>
+<li>Destinations are poor
+<ul>
+<li><code>Value</code> does not carry minimum ADA quantity</li>
+<li><code>Value</code> size too large (native assets, <code>Datum</code>, …)</li>
+</ul>
+</li>
+<li>Combination of both:
+<ul>
+<li>Too many UTxO with small ADA amount
+that we need to cover a large <code>Value</code> payment.
+Example: "Have 1 million x 1 ADA coins, want to send 1 x 1'000'000 ADA coin."</li>
+</ul>
+</li>
+</ul>
+<p>We currently do not know a formal property
+that guarantees success of <code>createPayment</code>,
+but also admits an implementation,
+as this requires handling the above potential failure cases.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="specification-utxo"><a class="header" href="#specification-utxo">Specification: UTxO</a></h1>
+<p>This document provides an entrypoint to the specification
+of UTxO-style accounting for cryptocurrency wallets.</p>
+<p>This topic is discussed in-depth in</p>
+<ul>
+<li>D. Coutts and E. de Vries. <a href="https://iohk.io/en/research/library/papers/formal-specification-for-a-cardano-wallet/">Formal specification for a Cardano wallet</a>. (2018)</li>
+</ul>
+<p>In light of this prior art, the specification of the Deposit Wallet
+focuses on other topics; here, we just collect the most basic notions.</p>
+<pre><code class="language-agda">module Specification.Wallet.UTxO where
+</code></pre>
+<h2 id="imports-7"><a class="header" href="#imports-7">Imports</a></h2>
+<pre><code class="language-agda">open import Haskell.Prelude
+
+import Specification.Cardano
+</code></pre>
+<h2 id="signature-5"><a class="header" href="#signature-5">Signature</a></h2>
+<p>A signature records data types, operations,
+and the properties that these operations should satisfy.</p>
+<pre><code class="language-agda">record
+  Signature
+    (SigCardano : Specification.Cardano.Signature)
+    : Set₁
+  where
+  open Specification.Cardano.Signature SigCardano
+  field
+</code></pre>
+<p>We introduce new types</p>
+<pre><code class="language-agda">    UTxO : Set
+</code></pre>
+<p>and functions</p>
+<pre><code class="language-agda">    balance : UTxO → Value
+
+    applyTxToUTxO : (Address → Bool) → Tx → UTxO → UTxO
+
+    spentTx    : Address → Tx → UTxO → Value
+    receivedTx : Address → Tx → Value
+</code></pre>
+<p>The function <code>balance</code> computes the total value contained in the
+unspent outputs.</p>
+<p>The function <code>applyTxToUTxO isOurs tx utxo</code> applies the given
+transaction <code>tx</code> to the unspent transction outputs in <code>utxo</code>.
+The predicate <code>isOurs</code> indicates whether the address of an output
+belongs to the wallet, typically because the wallet owner knows
+the corresponding signing key.
+Only those outputs that satisfy <code>isOurs</code> are included in the
+updated <code>UTxO</code>.</p>
+<p>The function <code>spentTx</code> computes the <code>Value</code>
+spent by the transaction on the given address
+— without accounting for received value.</p>
+<p>In turn, the function <code>receivedTx</code> computes the <code>Value</code>
+received by the transaction on the given address
+— without accounting for spent value.</p>
+<p>At this level of detail, we cannot formulate any properties
+— we would need a definition of <code>Tx</code> for that purpose.</p>
 <div style="break-before: page; page-break-before: always;"></div><p>Implementation.</p>
 <p>Miscellaneous details, such as</p>
 <ul>
