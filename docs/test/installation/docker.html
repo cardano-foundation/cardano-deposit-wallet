@@ -173,7 +173,52 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>TODO</p>
+                        <h2 id="docker"><a class="header" href="#docker">Docker</a></h2>
+<h3 id="building-and-loading-locally"><a class="header" href="#building-and-loading-locally">Building and loading locally</a></h3>
+<pre><code class="language-bash">export NETWORK=preprod
+export USE_LOCAL_IMAGE=true
+```bash
+git archive --remote=https://github.com/cardano-foundation/cardano-deposit-wallet HEAD run/docker/common | tar -x
+cd run/docker
+</code></pre>
+<p>./run.sh start</p>
+<pre><code>
+### Loading the docker image (here from the release)
+
+```bash start services
+docker load &lt; cardano-deposit-wallet-v0.0.1-docker.tar.gz
+export NETWORK=preprod
+export USE_LOCAL_IMAGE=true
+export VERSION=v0.0.1
+cd run/docker
+./run.sh start
+</code></pre>
+<h3 id="running-the-service-using-docker-image"><a class="header" href="#running-the-service-using-docker-image">Running the service using docker image</a></h3>
+<p>After <code>./run.sh start</code> one should see approximately the below console outputs.</p>
+<pre><code>Starting the service...
+Wallet service port: 40036
+Deposit wallet ui port: 4164
+Wallet service tag: v0.0.1
+[+] Running 3/3
+ ✔ Network preprod_default                     Created                                                                                                                                                        0.1s
+ ✔ Container preprod-cardano-node-1            Started                                                                                                                                                        0.7s
+ ✔ Container preprod-cardano-deposit-wallet-1  Started
+</code></pre>
+<p>Deposit UI should be available in the browser here at <code>http://localhost:4164</code>.
+For more options please call <code>help</code> via</p>
+<pre><code class="language-bash">$ ./run.sh
+Usage: ./run.sh [sync|start|stop|logs|help|node-logs|wallet-logs]
+  sync: Sync the service and wait for it to be ready
+  start: Start the service
+  stop: Stop the service
+  help: Show this help message
+  node-logs: Show the logs of the node service
+  wallet-logs: Show the logs of the wallet service
+</code></pre>
+<p>Inspecting both node or wallet logs can be of use and is available upon <code>./run.sh node-logs</code> and <code>./run.sh wallet-logs</code>, respectively.</p>
+<p>When perfoming a successful, ie.,  graceful, shutdown of the service one should see</p>
+<pre><code class="language-bash stop services">./run.sh stop
+</code></pre>
 
                     </main>
 
