@@ -50,3 +50,14 @@ services:
         compress: "true"
         max-file: "10"
         max-size: "50m"
+
+  mithril:
+    image: ghcr.io/input-output-hk/mithril-client:${MITHRIL_TAG}
+    user: ${USER_ID}:${GROUP_ID}
+    volumes:
+      - ${NODE_DB}:/app/db
+    environment:
+      AGGREGATOR_ENDPOINT: ${AGGREGATOR_ENDPOINT}
+      GENESIS_VERIFICATION_KEY: ${GENESIS_VERIFICATION_KEY}
+    profiles:
+      - mithril
