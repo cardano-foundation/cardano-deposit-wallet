@@ -19,9 +19,15 @@ else
 	LOGGING="-l"
 fi
 
+if [ -z "${ECHOING:-}" ]; then
+	ECHOING=""
+else
+	ECHOING="-e"
+fi
+
 recipe="$1"
 
-nix run ./CI/scripts/runmd#runmd -- $LOGGING -r "$recipe" -d ./site/docs/src >"$script"
+nix run ./CI/scripts/runmd#runmd -- $LOGGING $ECHOING -r "$recipe" -d ./site/docs/src >"$script"
 
 chmod +x "$script"
 
