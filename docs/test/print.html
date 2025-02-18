@@ -406,20 +406,31 @@ VERSION=$(nix eval --raw $FLAKE#version)
 export WALLET_PACKAGE="result/cardano-deposit-wallet-$VERSION-$PACKAGED_FOR.tar.gz"
 nix build $SYSTEM_FLAG $FLAKE#$PACKAGED_FOR.package
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="use-the-latest-release-image-from-docker-hub"><a class="header" href="#use-the-latest-release-image-from-docker-hub">Use the latest release image from docker-hub</a></h2>
-<p>##3 Get latest docker-image released</p>
+<div style="break-before: page; page-break-before: always;"></div><p>You can use 2 different methods to run the cardano-deposit-wallet in a docker container.</p>
+<ol>
+<li><a href="installation/docker.html#get-latest-docker-image-released">Use the latest release image from docker-hub as described</a></li>
+<li><a href="installation/docker.html#build-the-docker-image-locally-from-a-commit-on-the-repository">Build the docker image locally from a commit on the repository as described</a></li>
+</ol>
+<p>Once you have the image you will need to <a href="installation/docker.html#download-the-docker-compose-file">download the docker-compose</a> and <a href="installation/docker.html#setup-the-environment">setup the environment</a>.</p>
+<p>After that you can <a href="installation/docker.html#start-the-service">start the service</a> and check that the <a href="installation/docker.html#check-the-wallet-is-working">wallet is working</a> or use the <a href="installation/docker.html#open-wallet-ui">web UI</a>.
+Instructions here are machine checked and so contains some bash code to execute clean-ups
+which are not necessary for manual execution.</p>
+<h2 id="use-the-latest-release-image-from-docker-hub"><a class="header" href="#use-the-latest-release-image-from-docker-hub">Use the latest release image from docker-hub</a></h2>
+<h3 id="get-latest-docker-image-released"><a class="header" href="#get-latest-docker-image-released">Get latest docker-image released</a></h3>
 <pre><code class="language-bash get latest tag">tag=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit-wallet/releases/latest | jq -r '.tag_name')
 export WALLET_TAG=$tag
 </code></pre>
 <h3 id="pull-the-docker-image"><a class="header" href="#pull-the-docker-image">Pull the docker image</a></h3>
 <pre><code class="language-bash pull docker image">docker pull cardanofoundation/cardano-deposit-wallet:$tag
 </code></pre>
-<h3 id="download-the-docker-compose-file"><a class="header" href="#download-the-docker-compose-file">Download the docker-compose file</a></h3>
-<pre><code class="language-bash download docker-compose">curl -s -o docker-compose.yml https://raw.githubusercontent.com/cardano-foundation/cardano-deposit-wallet/$tag/run/docker/docker-compose.yml
-</code></pre>
-<p>Or you can build the docker image locally.</p>
-<h2 id="build-the-docker-image-locally"><a class="header" href="#build-the-docker-image-locally">Build the docker image locally</a></h2>
+<p>Or, alternatively you can build the docker image locally.</p>
+<h2 id="build-the-docker-image-locally-from-a-commit-on-the-repository"><a class="header" href="#build-the-docker-image-locally-from-a-commit-on-the-repository">Build the docker image locally from a commit on the repository</a></h2>
+<p>You will need a working nix environment to build the docker image. More information on how to install nix can be found <a href="https://nixos.org/download.html">here</a>.
+A solution that runs nix in a docker container will come soon.</p>
 <h3 id="select-the-flake-version"><a class="header" href="#select-the-flake-version">Select the flake version</a></h3>
+<p>To compile different branches directly from the repository, you can set <code>REF</code>
+to the branch name. To compile different commits directly from the repository,
+you can set <code>REV</code> to the commit hash.</p>
 <pre><code class="language-bash select flake version">REPOSITORY="github:cardano-foundation/cardano-deposit-wallet"
 
 if [ -z "${REF:-}" ]; then
@@ -442,16 +453,17 @@ VERSION=$(nix eval --raw $FLAKE#version)
 <h3 id="build-the-docker-image"><a class="header" href="#build-the-docker-image">Build the docker image</a></h3>
 <pre><code class="language-bash build docker image">image="cardano-deposit-wallet-$VERSION-docker.tar.gz"
 
-nix build .#docker-image --out-link "result/$image"
+nix build $FLAKE#docker-image --out-link "result/$image"
 </code></pre>
 <h3 id="load-the-docker-image"><a class="header" href="#load-the-docker-image">Load the docker image</a></h3>
 <pre><code class="language-bash load docker image">docker load -i "result/$image"
-WALLET_TAG=$VERSION
+export WALLET_TAG=$VERSION
 </code></pre>
-<h3 id="download-the-relative-docer-compose"><a class="header" href="#download-the-relative-docer-compose">Download the relative docer-compose</a></h3>
-<pre><code class="language-bash download relative docker-compose">curl -s -o docker-compose.yml https://raw.githubusercontent.com/cardano-foundation/cardano-deposit-wallet/$VERSION/run/docker/docker-compose.yml
+<h2 id="download-the-docker-compose-file"><a class="header" href="#download-the-docker-compose-file">Download the docker-compose file</a></h2>
+<pre><code class="language-bash download docker-compose">curl -s -o docker-compose.yml https://raw.githubusercontent.com/cardano-foundation/cardano-deposit-wallet/$WALLET_TAG/run/docker/docker-compose.yml
 </code></pre>
 <h2 id="setup-the-environment"><a class="header" href="#setup-the-environment">Setup the environment</a></h2>
+<p>Because the <code>docker-compose.yaml</code> is parameterized you will need to set the environment variables before starting the service. You will need to have the variables set in the environment to run any <code>docker compose</code> command.</p>
 <pre><code class="language-bash setup environment">export NETWORK=preprod
 export USE_LOCAL_IMAGE=true
 export DEPOSIT_WALLET_UI_PORT=${DEPOSIT_WALLET_UI_PORT:-4164}
@@ -462,36 +474,49 @@ export WALLET_DB=${WALLET_DB:-./wallet-db}
 export NODE_SOCKET_NAME=${NODE_SOCKET_NAME:-node.socket}
 export USER_ID=$(id -u)
 export GROUP_ID=$(id -g)
+
 </code></pre>
 <h2 id="create-the-directories"><a class="header" href="#create-the-directories">Create the directories</a></h2>
 <pre><code class="language-bash create directories">mkdir -p $WALLET_DB
+rm -rf $WALLET_DB/*
 mkdir -p $NODE_DB
+rm -rf $NODE_DB/*
+</code></pre>
+<h2 id="auto-cleanup"><a class="header" href="#auto-cleanup">Auto cleanup</a></h2>
+<p>In case you are using this instruction as a test script you want to set up the cleanup of the environment otherwise you can skip this step.</p>
+<pre><code class="language-bash auto cleanup">cleanup() {
+    docker compose down || true
+    rm -rf $WALLET_DB
+    rm -rf $NODE_DB
+    rm -f docker-compose.yml
+}
+trap cleanup EXIT
 </code></pre>
 <h2 id="start-the-service"><a class="header" href="#start-the-service">Start the service</a></h2>
-<pre><code class="language-bash start service">docker compose down
-docker compose up -d
+<pre><code class="language-bash start service">docker compose up -d
 </code></pre>
 <h2 id="check-the-wallet-is-working"><a class="header" href="#check-the-wallet-is-working">Check the wallet is working</a></h2>
-<pre><code class="language-bash check wallet">sleep 10
+<pre><code class="language-bash check wallet">sleep 10 # give some time for the containers to start
 if ! curl -s http://localhost:$DEPOSIT_WALLET_UI_PORT | grep -q "Deposit Cardano Wallet";
 then
     echo "Deposit Wallet is not running"
     exit 1
 fi
 </code></pre>
-<p>You can access the wallet UI with your browser.</p>
-<pre><code class="language-bash">xdg-open http://localhost:$DEPOSIT_WALLET_UI_PORT
+<h2 id="open-wallet-ui"><a class="header" href="#open-wallet-ui">Open wallet UI</a></h2>
+<p>Instructions on the web-UI can be found <a href="installation/../usage.html">here</a>.</p>
+<pre><code class="language-bash open wallet ui">xdg-open http://localhost:$DEPOSIT_WALLET_UI_PORT
 </code></pre>
 <h2 id="inspect-the-logs"><a class="header" href="#inspect-the-logs">Inspect the logs</a></h2>
 <pre><code class="language-bash">docker compose logs -f
 </code></pre>
-<h2 id="stop-the-service"><a class="header" href="#stop-the-service">Stop the service</a></h2>
-<p>You will need to have the variables set in the environmen to run any <code>docker compose</code> command.</p>
+<h2 id="stop-the-containers"><a class="header" href="#stop-the-containers">Stop the containers</a></h2>
 <pre><code class="language-bash stop service">docker compose down
 </code></pre>
-<h2 id="clean-up"><a class="header" href="#clean-up">Clean up</a></h2>
-<pre><code class="language-bash clean up">rm -rf $WALLET_DB
+<h2 id="manual-cleanup"><a class="header" href="#manual-cleanup">Manual cleanup</a></h2>
+<pre><code class="language-bash cleanup">rm -rf $WALLET_DB
 rm -rf $NODE_DB
+rm -f docker-compose.yml
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
 <div style="break-before: page; page-break-before: always;"></div><p>TODO</p>
