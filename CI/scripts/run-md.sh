@@ -6,10 +6,6 @@ cwd=$(pwd)
 dir=$(mktemp -d -t ci-XXXXXXXXXX)
 script="$dir/run.sh"
 
-# add shebang and set -euox pipefail to the script
-echo '#!/usr/bin/env bash' >"$script"
-echo 'set -euox pipefail' >>"$script"
-
 cleanup() {
 	cd "$cwd" || exit
 	rm -rf "$dir"
