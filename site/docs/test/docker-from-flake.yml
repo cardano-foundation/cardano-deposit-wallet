@@ -1,0 +1,14 @@
+- path: installation/docker.md
+  matches:
+    - select flake version
+    - build docker image
+    - load docker image
+    - download docker-compose
+    - setup environment
+    - create directories
+    - auto cleanup
+    - mithril node state preload
+    - start service
+    - check wallet
+    - stop service
+    - cleanup

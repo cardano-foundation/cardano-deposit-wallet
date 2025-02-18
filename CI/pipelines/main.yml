@@ -43,7 +43,6 @@ steps:
       agents:
         system: ${linux_agent}
 
-
   - group: Linux Setup
     depends_on: []
     key: linux-setup
@@ -134,7 +133,6 @@ steps:
         system: ${macos_agent}
       env:
         PACKAGED_FOR: macos-silicon
-
     - label: Test installation from flake docs (macos-silicon)
       command: |
         export FLAKE=$(pwd)
@@ -170,6 +168,18 @@ steps:
         system: ${macos_agent}
       env:
         PACKAGED_FOR: macos-intel
+    - label: Test installation from dockerhub docker-image
+      command: |
+        $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
+            $DOCS_TEST_DIR/docker-from-release.yml
+      agents:
+        system: ${linux_agent}
+    - label: Test installation from built docker-image
+      command: |
+        $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
+            $DOCS_TEST_DIR/docker-from-flake.yml
+      agents:
+        system: ${linux_agent}
 
   - group: Docker Tests
     depends_on:

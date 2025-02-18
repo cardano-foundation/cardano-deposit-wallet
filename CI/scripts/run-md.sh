@@ -6,10 +6,6 @@ cwd=$(pwd)
 dir=$(mktemp -d -t ci-XXXXXXXXXX)
 script="$dir/run.sh"
 
-# add shebang and set -euox pipefail to the script
-echo '#!/usr/bin/env bash' >"$script"
-echo 'set -euox pipefail' >>"$script"
-
 cleanup() {
 	cd "$cwd" || exit
 	rm -rf "$dir"
@@ -23,9 +19,15 @@ else
 	LOGGING="-l"
 fi
 
+if [ -z "${ECHOING:-}" ]; then
+	ECHOING=""
+else
+	ECHOING="-e"
+fi
+
 recipe="$1"
 
-nix run ./CI/scripts/runmd#runmd -- $LOGGING -r "$recipe" -d ./site/docs/src >"$script"
+nix run ./CI/scripts/runmd#runmd -- $LOGGING $ECHOING -r "$recipe" -d ./site/docs/src >"$script"
 
 chmod +x "$script"
 
