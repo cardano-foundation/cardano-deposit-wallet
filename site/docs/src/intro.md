@@ -10,5 +10,5 @@ Use the sidebar for navigation.
 - [Examples](./examples.md) — Usage examples. Read this to get started.
 - [Usage](./usage.md) — User manual for the software.
 - [API](./api.md) — API reference.
-- [Specifications](./specifications.md) — Formal specifications of the wallet functionality. Read this for a precise understanding of what the wallet does and does not do.
+- [Design](./design.md) — Design documents. Read this for a precise understanding of what the wallet does and why.
 - [Contributing](./contributing.md) — Information for people who want to work with and contribute to the code.
