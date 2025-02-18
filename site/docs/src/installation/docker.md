@@ -121,6 +121,21 @@ cleanup() {
 trap cleanup EXIT
 ```
 
+## Mithril node state preload (optional)
+
+It's critical that we target the right network with the variables. In this case,
+we are targeting the preprod network.
+See [Mitrhil documentation](https://mithril.network/doc/manual/getting-started/network-configurations)
+for more information.
+
+
+```bash mithril node state preload
+export AGGREGATOR_ENDPOINT=https://aggregator.release-preprod.api.mithril.network/aggregator
+export GENESIS_VERIFICATION_KEY=5b3132372c37332c3132342c3136312c362c3133372c3133312c3231332c3230372c3131372c3139382c38352c3137362c3139392c3136322c3234312c36382c3132332c3131392c3134352c31332c3233322c3234332c34392c3232392c322c3234392c3230352c3230352c33392c3233352c34345d
+export MITHRIL_TAG=2450.0-c6c7eba
+digest=$(docker compose --profile mithril run mithril cdb snapshot list --json | jq -r .[0].digest)
+docker compose --profile mithril run mithril cdb download "$digest"
+```
 ## Start the service
 
 ```bash start service

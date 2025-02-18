@@ -7,6 +7,7 @@
     - setup environment
     - create directories
     - auto cleanup
+    - mithril node state preload
     - start service
     - check wallet
     - stop service
