@@ -203,7 +203,7 @@ you can set <code>REV</code> to the commit hash.</p>
 <pre><code class="language-bash select flake version">REPOSITORY="github:cardano-foundation/cardano-deposit-wallet"
 
 if [ -z "${REV:-}" ]; then
-    DEFAULT_FLAKE_URL="$REPOSITORY"
+    DEFAULT_FLAKE_URL="$REPOSITORY?REF=main"
 else
     DEFAULT_FLAKE_URL="$REPOSITORY?rev=$REV"
 fi
