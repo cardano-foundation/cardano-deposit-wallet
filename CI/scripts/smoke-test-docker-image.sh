@@ -30,7 +30,6 @@ fi
 docker load -i "$cardano_wallet_image"
 
 export NETWORK=preprod
-export SUCCESS_STATUS=syncing
 export USE_LOCAL_IMAGE=true
 
 cp "$home"/run/docker/docker-compose.yml .
