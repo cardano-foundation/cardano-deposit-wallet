@@ -17,8 +17,8 @@ cleanup() {
 	cd "$home"
 	rm -rf "$workdir"
 }
-# trap cleanup EXIT
-# trap cleanup INT
+trap cleanup EXIT
+trap cleanup INT
 
 home=$(pwd)
 workdir=$(mktemp -d)
@@ -55,8 +55,7 @@ screen -L -Logfile "$home/node.log" -dmS "${node_session}" ./cardano-node run \
 # start the wallet
 DEPOSIT_PORT=$(shuf -i 1024-65000 -n 1)
 export DEPOSIT_PORT
-LEGACY_PORT=$(shuf -i 1024-65000 -n 1)
-screen -L -Logfile "$home/wallet.log" -dmS "${wallet_session}" ./cardano-wallet serve \
+screen -L -Logfile "$home/wallet.log" -dmS "${wallet_session}" ./cardano-deposit-wallet serve \
 	--node-socket "$NODE_DB/preprod/node.socket" \
 	--testnet "$NODE_CONFIGS/byron-genesis.json" \
 	--ui-deposit-port "$DEPOSIT_PORT" \
@@ -66,10 +65,11 @@ screen -L -Logfile "$home/wallet.log" -dmS "${wallet_session}" ./cardano-wallet 
 sleep 15
 
 # check the wallet is syncing
-STATUS=$(wget -qO- "http://localhost:$LEGACY_PORT/v2/network/information" | jq .sync_progress.status)
+STATUS=$(curl -s --max-time 5 "localhost:$DEPOSIT_PORT/data/sse" | head -n1 || true)
+echo "Wallet status: $STATUS"
 
 # check the status
-if [ "$STATUS" != "\"syncing\"" ]; then
+if [ "$STATUS" != "event: tip" ]; then
 	echo "Error: Wallet was not syncing. Status: $STATUS"
 	exit 1
 else
