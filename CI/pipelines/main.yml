@@ -61,12 +61,12 @@ steps:
     steps:
     - label: Build Haskell (gcc)
       commands:
-        - nix build ./code#cardano-deposit-wallet-transition:exe:cardano-deposit-wallet
+        - nix build ./code#cardano-deposit-wallet-dynamic
       agents:
         system: ${linux_agent}
     - label: Build Haskell (musl)
       commands:
-        - nix build ./code#x86_64-unknown-linux-musl:cardano-deposit-wallet-transition:exe:cardano-deposit-wallet
+        - nix build ./code#cardano-deposit-wallet-static
       agents:
         system: ${linux_agent}
     - label: Build package (linux)
