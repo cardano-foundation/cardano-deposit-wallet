@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Enforce strict script execution modes
-set -euo pipefail
+set -euox pipefail
 
 # Function to display usage information
 usage() {
@@ -105,30 +105,26 @@ cleanup() {
 case "$1" in
 sync)
 
-	echo "Wallet service port: $WALLET_PORT"
 	echo "Wallet service tag: $WALLET_TAG"
+	echo "Deposit wallet ui port: $DEPOSIT_WALLET_UI_PORT"
 	echo "Syncing the service..."
 	startup
 
 	# Initialize timeout and start time for the sync operation
-	timeout=10000
+	timeout=200
 	start_time=$(date +%s)
 
 	# Commands to query service status and node tip time
-	command=$(printf "docker run --network %s_default alpine/curl curl -s --max-time 5 http://cardano-deposit-wallet:8090/v2/network/information | jq -r" "$NETWORK")
-	query_status="$command  .sync_progress.status"
-	query_time="$command .node_tip.time"
-	query_progress="$command .sync_progress.progress.quantity"
+	command=$(printf "docker run --network %s_default alpine/curl curl -s --max-time 3 cardano-deposit-wallet:8092/data/sse | head -n1 || true" "$NETWORK")
 
 	# Execute and display the full query result
 	trap cleanup ERR INT
 
-	# Define the wanted status and result, can be "syncing" or "ready"
-	SUCCESS_STATUS=${SUCCESS_STATUS:="ready"}
+	SUCCESS_STATUS=${SUCCESS_STATUS:="event: tip"}
 
 	while true; do
 		# Check the sync status
-		status=$(cat <(bash -c "$query_status")) || echo "failed"
+		status=$(cat <(bash -c "$command")) || echo "failed"
 		if [[ $(date +%s) -ge $((start_time + timeout)) ]]; then
 			result="timeout"
 			break
@@ -137,10 +133,6 @@ sync)
 			printf "\n"
 			break
 		else
-			# Display the node tip time as progress
-			time=$(cat <(bash -c "$query_time"))
-			progress=$(cat <(bash -c "$query_progress"))
-			printf "%s%% %s\r" "$progress" "$time"
 			sleep 1
 		fi
 	done
@@ -157,7 +149,6 @@ sync)
 	;;
 start)
 	echo "Starting the service..."
-	echo "Wallet service port: $WALLET_PORT"
 	echo "Deposit wallet ui port: $DEPOSIT_WALLET_UI_PORT"
 	echo "Wallet service tag: $WALLET_TAG"
 	startup
