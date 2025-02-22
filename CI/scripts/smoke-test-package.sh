@@ -17,8 +17,8 @@ cleanup() {
 	cd "$home"
 	rm -rf "$workdir"
 }
-trap cleanup EXIT
-trap cleanup INT
+# trap cleanup EXIT
+# trap cleanup INT
 
 home=$(pwd)
 workdir=$(mktemp -d)
