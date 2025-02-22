@@ -1,7 +1,7 @@
 cabal-version:   3.4
 name:            cardano-deposit-wallet-transition
 version:         0.0.1
-synopsis:        cardano-wallet executable
+synopsis:        cardano-deposit-wallet executable
 license:         Apache-2.0
 author:          hal team
 maintainer:      hal@cardanofoundation.org

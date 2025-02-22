@@ -25,7 +25,7 @@ workdir=$(mktemp -d)
 node_session="node-session-$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13)"
 wallet_session="wallet-session-$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13)"
 
-# download the cardano-wallet package
+# download the cardano-deposit-wallet package
 if [ -n "${BUILDKITE:-}" ]; then
 	VERSION=$(nix eval --raw .#version)
 	cardano_wallet_segment="cardano-deposit-wallet-$VERSION-$PACKAGED_FOR"
@@ -35,7 +35,7 @@ else
 	cardano_wallet_tar="$1"
 fi
 
-# extract the cardano-wallet package
+# extract the cardano-deposit-wallet package
 tar xvzf "$cardano_wallet_tar" -C "$workdir"
 
 cd "$workdir"
@@ -58,8 +58,7 @@ export DEPOSIT_PORT
 screen -L -Logfile "$home/wallet.log" -dmS "${wallet_session}" ./cardano-deposit-wallet serve \
 	--node-socket "$NODE_DB/preprod/node.socket" \
 	--testnet "$NODE_CONFIGS/byron-genesis.json" \
-	--ui-deposit-port "$DEPOSIT_PORT" \
-	--port "$LEGACY_PORT"
+	--ui-deposit-port "$DEPOSIT_PORT"
 
 # wait for the wallet and the node to settle
 sleep 15

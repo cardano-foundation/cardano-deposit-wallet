@@ -26,7 +26,7 @@ else
 	cardano_wallet_image="$1"
 fi
 
-# load the cardano-wallet image
+# load the cardano-deposit-wallet image
 docker load -i "$cardano_wallet_image"
 
 export NETWORK=preprod
