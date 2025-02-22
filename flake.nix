@@ -34,6 +34,7 @@
       version = self.dirtyShortRev or self.shortRev;
       node = cardano-node-runtime.project;
       address = cardano-address.packages;
+      configs = ./configs;
       perSystem = system:
         let
           pkgs = import nixpkgs { inherit system; };
@@ -48,7 +49,7 @@
           devShells =
             import ./nix/devShells.nix { inherit code node pkgs system; };
           linux-artifacts = import ./nix/linux-artifacts.nix {
-            inherit pkgs address code node version;
+            inherit pkgs address code node version configs;
           };
           macos-artifacts = { packages = { }; };
         in {
