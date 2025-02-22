@@ -8,7 +8,7 @@
   matches:
   - download mithril
   - populate preprod
-- path: installation.md
+- path: installation/package.md
   matches:
   - explode package
   - install cleanups
