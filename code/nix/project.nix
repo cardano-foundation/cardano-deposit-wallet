@@ -1,4 +1,4 @@
-{ CHaP, system, indexState, src, haskell-nix, ... }:
+{ CHaP, system, pkgs, indexState, src, haskell-nix, ... }:
 let
   shell = { pkgs, ... }: {
     tools = {
@@ -47,13 +47,28 @@ let
     packages.cardano-crypto-class.components.library.pkgconfig =
       lib.mkForce [[ pkgs.libsodium-vrf pkgs.secp256k1 pkgs.libblst ]];
   };
-  mkProject = { lib, pkgs, ... }: {
+  postInstall = {
+    packages.cardano-deposit-wallet-transition.components.exes.cardano-deposit-wallet.postInstall =
+      rewriteLibsPostInstall;
+  };
+
+  rewriteLibsPostInstall = let
+    lib = pkgs.lib;
+    in
+    lib.optionalString (pkgs.stdenv.hostPlatform.isDarwin) ''
+      export PATH=$PATH:${
+        lib.makeBinPath
+        (with pkgs.buildPackages; [ haskellBuildUtils binutils nix ])
+      }
+      rewrite-libs $out/bin $out/bin/*
+    '';
+  mkProject = ctx@{ lib, pkgs, ... }: {
     name = "cardano-deposit-wallet";
     compiler-nix-name = "ghc966";
     inherit src;
     shell = shell { inherit pkgs; };
     inputMap = { "https://chap.intersectmbo.org/" = CHaP; };
-    modules = [ releaseFlags libOverlay ]
+    modules = [ releaseFlags libOverlay postInstall ]
       ++ lib.optional pkgs.stdenv.hostPlatform.isMusl musl;
   };
   project = haskell-nix.cabalProject' mkProject;

@@ -27,4 +27,5 @@ in import ./nix/project.nix {
   inherit CHaP;
   inherit src;
   inherit (pkgs) haskell-nix;
+  inherit pkgs;
 }

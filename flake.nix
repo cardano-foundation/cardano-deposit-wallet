@@ -51,7 +51,9 @@
           linux-artifacts = import ./nix/linux-artifacts.nix {
             inherit pkgs address code node version configs;
           };
-          macos-artifacts = { packages = { }; };
+          macos-artifacts = import ./nix/macos-artifacts.nix {
+            inherit pkgs address code node version configs;
+          };
         in {
           inherit (devShells) devShells;
         } // onLinux { inherit (linux-artifacts) packages; }
