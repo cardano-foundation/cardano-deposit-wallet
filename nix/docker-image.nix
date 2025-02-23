@@ -1,10 +1,9 @@
-{ pkgs, wallet-package, version, platform, ... }:
-
+{ pkgs, linux-package, version }:
 let
   unpack = ''
     mkdir -p $out
     tar -xvf \
-      ${wallet-package}/cardano-deposit-wallet-${version}-${platform}.tar.gz \
+      ${linux-package}/cardano-deposit-wallet-${version}-linux64.tar.gz \
       -C $out
   '';
 in pkgs.dockerTools.buildImage {

@@ -26,11 +26,10 @@ else
 	cardano_wallet_image="$1"
 fi
 
-# load the cardano-wallet image
+# load the cardano-deposit-wallet image
 docker load -i "$cardano_wallet_image"
 
 export NETWORK=preprod
-export SUCCESS_STATUS=syncing
 export USE_LOCAL_IMAGE=true
 
 cp "$home"/run/docker/docker-compose.yml .

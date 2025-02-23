@@ -1,0 +1,2 @@
+format:
+    nix develop -c fourmolu -i exe

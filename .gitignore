@@ -28,3 +28,4 @@ run/docker/databases
 ignore-me
 .direnv
 tmp
+.cabal-fmt-*
