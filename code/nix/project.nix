@@ -55,11 +55,13 @@ let
     inherit src;
     shell = shell { inherit pkgs; };
     inputMap = { "https://chap.intersectmbo.org/" = CHaP; };
-    modules = [ releaseFlags libOverlay ]
+    modules = [ releaseFlags libOverlay postInstall ]
       ++ lib.optional pkgs.stdenv.hostPlatform.isMusl musl;
   };
   project = haskell-nix.cabalProject' mkProject;
   packages = {
+
+    rewrite-libs = rewrite-libs;
     inherit project;
     cardano-deposit-wallet =
       project.hsPkgs.cardano-deposit-wallet-transition.components.exes.cardano-deposit-wallet;
