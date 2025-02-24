@@ -42,6 +42,11 @@ steps:
         - nix flake check $CI_SCRIPTS_DIR/runmd
       agents:
         system: ${linux_agent}
+    - label: Rewrite-libs tool builds
+      commands:
+        - nix build $CI_SCRIPTS_DIR/rewrite-libs
+      agents:
+        system: ${linux_agent}
 
   - group: Linux Setup
     depends_on: []
