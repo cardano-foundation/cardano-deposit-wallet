@@ -235,7 +235,7 @@ steps:
         system: ${macos_agent}
     - label: Build Package (macos-silicon)
       commands:
-        - nix build .#macos-silicon.package
+        - nix build .#macos.package
       artifact_paths:
         - ./result/*
       agents:
@@ -243,7 +243,7 @@ steps:
 
     - label: Build Package (macos-intel)
       commands:
-        - nix build --system ${macos_intel} .#macos-intel.package
+        - nix build --system ${macos_intel} .#macos.package
       artifact_paths:
         - ./result/*
       agents:
