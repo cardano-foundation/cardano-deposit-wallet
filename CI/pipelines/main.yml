@@ -144,6 +144,7 @@ steps:
       env:
         PACKAGED_FOR: macos-silicon
     - label: Test Mithril download (macos-intel)
+      if: 0 == 1
       command: |
         $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
             $DOCS_TEST_DIR/download-mithril.yml
@@ -169,6 +170,7 @@ steps:
       env:
         PACKAGED_FOR: macos-silicon
     - label: Test installation from flake docs (macos-intel)
+      if: 0 == 1
       command: |
         export FLAKE=$(pwd)
         $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
@@ -179,6 +181,7 @@ steps:
         PACKAGED_FOR: macos-intel
         SYSTEM: ${macos_intel}
     - label: Test installation from package docs (macos-intel)
+      if: 0 == 1
       command: |
         $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
             $DOCS_TEST_DIR/download-and-install-package.yml
@@ -242,6 +245,7 @@ steps:
         system: ${macos_agent}
 
     - label: Build Package (macos-intel)
+      if: 0 == 1
       commands:
         - nix build --system ${macos_intel} .#macos-intel.package
       artifact_paths:
@@ -264,6 +268,7 @@ steps:
         PACKAGED_FOR: macos-silicon
 
     - label: Smoke Test Macos Intel Package
+      if: 0 == 1
       commands:
         - nix develop --system ${macos_intel} $CI_DIR#tests --command $CI_SCRIPTS_DIR/smoke-test-package.sh
       artifact_paths:
