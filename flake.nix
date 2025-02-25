@@ -8,6 +8,8 @@
       url = "github:NixOS/nixpkgs";
       follows = "haskellNix/nixpkgs-unstable";
     };
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    haskell-flake.url = "github:srid/haskell-flake";
     iohkNix = {
       url = "github:input-output-hk/iohk-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -31,6 +33,7 @@
   outputs = inputs@{ self, nixpkgs, flake-utils, cardano-address
     , cardano-node-runtime, ... }:
     let
+      lib = nixpkgs.lib;
       version = self.dirtyShortRev or self.shortRev;
       node = cardano-node-runtime.project;
       address = cardano-address.packages;
@@ -38,6 +41,10 @@
       perSystem = system:
         let
           pkgs = import nixpkgs { inherit system; };
+          rewrite-libs = import ./CI/scripts/rewrite-libs/rewrite-libs.nix {
+            inherit system;
+            inherit (inputs) nixpkgs flake-utils haskellNix;
+          };
           buildPlatform = pkgs.stdenv.buildPlatform;
           onAttrs = pkgs.lib.optionalAttrs;
           onLinux = onAttrs buildPlatform.isLinux;
@@ -45,13 +52,17 @@
           code = import ./code/cardano-deposit-wallet.nix {
             inherit system;
             inherit (inputs) nixpkgs haskellNix iohkNix CHaP flake-utils;
+            rewrite-libs = rewrite-libs.packages.default;
           };
           devShells =
             import ./nix/devShells.nix { inherit code node pkgs system; };
           linux-artifacts = import ./nix/linux-artifacts.nix {
             inherit pkgs address code node version configs;
           };
-          macos-artifacts = { packages = { }; };
+          macos-artifacts = import ./nix/macos-artifacts.nix {
+            inherit pkgs address code node version configs system;
+            rewrite-libs = rewrite-libs.packages.default;
+          };
         in {
           inherit (devShells) devShells;
         } // onLinux { inherit (linux-artifacts) packages; }

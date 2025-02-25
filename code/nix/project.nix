@@ -60,8 +60,6 @@ let
   };
   project = haskell-nix.cabalProject' mkProject;
   packages = {
-
-    rewrite-libs = rewrite-libs;
     inherit project;
     cardano-deposit-wallet =
       project.hsPkgs.cardano-deposit-wallet-transition.components.exes.cardano-deposit-wallet;
