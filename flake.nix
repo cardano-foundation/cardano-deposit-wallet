@@ -60,7 +60,7 @@
             inherit pkgs address code node version configs;
           };
           macos-artifacts = import ./nix/macos-artifacts.nix {
-            inherit pkgs address code node version configs;
+            inherit pkgs address code node version configs system;
             rewrite-libs = rewrite-libs.packages.default;
           };
         in {

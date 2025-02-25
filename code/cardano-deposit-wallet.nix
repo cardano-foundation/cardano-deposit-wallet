@@ -1,5 +1,4 @@
-{ system, nixpkgs, haskellNix, iohkNix, CHaP, flake-utils, rewrite-libs ? null
-, ... }:
+{ system, nixpkgs, haskellNix, iohkNix, CHaP, flake-utils, ... }:
 let
   overlay = final: prev: {
     haskell-nix = prev.haskell-nix // {
@@ -29,5 +28,4 @@ in import ./nix/project.nix {
   inherit src;
   inherit (pkgs) haskell-nix;
   inherit pkgs;
-  inherit rewrite-libs;
 }

@@ -1,4 +1,4 @@
-{ CHaP, system, indexState, src, haskell-nix, rewrite-libs, ... }:
+{ CHaP, system, indexState, src, haskell-nix, ... }:
 let
   shell = { pkgs, ... }: {
     tools = {
@@ -48,18 +48,9 @@ let
       lib.mkForce [[ pkgs.libsodium-vrf pkgs.secp256k1 pkgs.libblst ]];
   };
   postInstall = { lib, pkgs, ... }: {
-    packages.cardano-deposit-wallet-transition.components.exes.cardano-deposit-wallet.postInstall =
-      rewriteLibsPostInstall { inherit lib pkgs; };
     reinstallableLibGhc = true;
   };
 
-  rewriteLibsPostInstall = { lib, pkgs, ... }:
-    lib.optionalString (pkgs.stdenv.hostPlatform.isDarwin) ''
-      export PATH=$PATH:${lib.makeBinPath (with pkgs.buildPackages; [ binutils nix ])}
-      echo "Rewriting library paths"
-      echo ${rewrite-libs}
-      ${rewrite-libs}/bin/rewrite-libs $out/bin $out/bin/*
-    '';
   mkProject = ctx@{ lib, pkgs, ... }: {
     name = "cardano-deposit-wallet";
     compiler-nix-name = "ghc966";
@@ -71,8 +62,6 @@ let
   };
   project = haskell-nix.cabalProject' mkProject;
   packages = {
-
-    rewrite-libs = rewrite-libs;
     inherit project;
     cardano-deposit-wallet-dynamic =
       project.hsPkgs.cardano-deposit-wallet-transition.components.exes.cardano-deposit-wallet;

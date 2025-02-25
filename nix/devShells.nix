@@ -5,7 +5,7 @@ in {
     packages = [
       hsPkgs.cardano-addresses-cli.components.exes.cardano-address
       hsPkgs.bech32.components.exes.bech32
-      code.packages.cardano-deposit-wallet-static
+      code.packages.cardano-deposit-wallet-dynamic
       node.${system}.pkgs.cardano-node
       node.${system}.pkgs.cardano-cli
     ];
