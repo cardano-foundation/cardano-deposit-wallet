@@ -14,7 +14,7 @@ export PACKAGED_FOR=macos-silicon
 ```bash
 export PACKAGED_FOR=macos-intel
 ```
-> ATM the invocation for the dposit wallet differs between released package and
+> ATM the invocation for the deposit wallet differs between released package and
 > the unreleased one. The released package is invoked with `cardano-deposit` and
 > the unreleased one is invoked with `cardano-deposit-wallet`. To be fixed after release
 
@@ -26,6 +26,8 @@ local package
 
 ```bash download package
 COMMAND="cardano-wallet"
+SHELLEY_WALLET_PORT=$(shuf -i 1024-65000 -n 1)
+LEGACY_PORT="--port $SHELLEY_WALLET_PORT"
 WALLET_VERSION=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit-wallet/releases/latest | jq -r .tag_name)
 WALLET_PACKAGE=cardano-deposit-wallet-$WALLET_VERSION-$PACKAGED_FOR.tar.gz
 wget -q https://github.com/cardano-foundation/cardano-deposit-wallet/releases/download/$WALLET_VERSION/$WALLET_PACKAGE
@@ -52,8 +54,8 @@ will default to the current system.
 
 ```bash build package
 COMMAND="cardano-deposit-wallet"
+LEGACY_PORT=""
 REPOSITORY="github:cardano-foundation/cardano-deposit-wallet"
-
 if [ -z "${FLAKE:-}" ]; then
     if [ -n "${REF:-}" ]; then
         FLAKE="$REPOSITORY/$REF"
@@ -141,11 +143,10 @@ Now you can start the wallet:
 WALLET_SESSION="wallet-session-$(shuf -i 1000000-9999999 -n 1)"
 DEPOSIT_PORT=$(shuf -i 1024-65000 -n 1)
 export DEPOSIT_PORT
-LEGACY_PORT=$(shuf -i 1024-65000 -n 1)
 screen -dmS "$WALLET_SESSION" "$COMMAND" serve \
     --node-socket "$NODE_DB/preprod/node.socket" \
     --testnet "$NODE_CONFIGS/byron-genesis.json" \
-    --ui-deposit-port "$DEPOSIT_PORT" \
+    --ui-deposit-port "$DEPOSIT_PORT" $LEGACY_PORT
 ```
 
 > At the moment, the legacy port is required even if we are not using

@@ -249,6 +249,7 @@ steps:
         system: ${macos_agent}
       env:
         PACKAGED_FOR: macos-silicon
+        ECHOING: true
     - label: Test installation from flake docs (macos-intel)
       if: 0 == 1
       command: |
