@@ -2,74 +2,74 @@
   description = "Cardano Deposit Wallet";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    wallet.url =
-      "github:cardano-foundation/cardano-wallet?rev=3acbb2a9e6f44b1a922758785fa17273d3a3e26a";
-    flake-utils.url = "github:numtide/flake-utils";
+    # flake-utils.url = "github:numtide/flake-utils";
+    haskellNix = { url = "github:input-output-hk/haskell.nix"; };
+    nixpkgs = {
+      url = "github:NixOS/nixpkgs";
+      follows = "haskellNix/nixpkgs-unstable";
+    };
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    haskell-flake.url = "github:srid/haskell-flake";
+    iohkNix = {
+      url = "github:input-output-hk/iohk-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    CHaP = {
+      url = "github:intersectmbo/cardano-haskell-packages?ref=repo";
+      flake = false;
+    };
+    flake-utils = {
+      url = "github:hamishmack/flake-utils/hkm/nested-hydraJobs";
+    };
+    cardano-node-runtime = {
+      url = "github:IntersectMBO/cardano-node?ref=10.1.4";
+    };
+    cardano-address = {
+      url = "github:intersectMBO/cardano-addresses?ref=4.0.0";
+    };
+    bech32 = { url = "github:intersectMBO/bech32"; };
   };
 
-  outputs = { self, nixpkgs, flake-utils, wallet, ... }:
-
-    flake-utils.lib.eachSystem [
+  outputs = inputs@{ self, nixpkgs, flake-utils, cardano-address
+    , cardano-node-runtime, ... }:
+    let
+      lib = nixpkgs.lib;
+      version = self.dirtyShortRev or self.shortRev;
+      node = cardano-node-runtime.project;
+      address = cardano-address.packages;
+      configs = ./configs;
+      perSystem = system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+          rewrite-libs = import ./CI/scripts/rewrite-libs/rewrite-libs.nix {
+            inherit system;
+            inherit (inputs) nixpkgs flake-utils haskellNix;
+          };
+          buildPlatform = pkgs.stdenv.buildPlatform;
+          onAttrs = pkgs.lib.optionalAttrs;
+          onLinux = onAttrs buildPlatform.isLinux;
+          onMacOS = onAttrs buildPlatform.isMacOS;
+          code = import ./code/cardano-deposit-wallet.nix {
+            inherit system;
+            inherit (inputs) nixpkgs haskellNix iohkNix CHaP flake-utils;
+            rewrite-libs = rewrite-libs.packages.default;
+          };
+          devShells =
+            import ./nix/devShells.nix { inherit code node pkgs system; };
+          linux-artifacts = import ./nix/linux-artifacts.nix {
+            inherit pkgs address code node version configs;
+          };
+          macos-artifacts = import ./nix/macos-artifacts.nix {
+            inherit pkgs address code node version configs system;
+            rewrite-libs = rewrite-libs.packages.default;
+          };
+        in {
+          inherit (devShells) devShells;
+        } // onLinux { inherit (linux-artifacts) packages; }
+        // onMacOS { inherit (macos-artifacts) packages; };
+    in flake-utils.lib.eachSystem [
       "x86_64-linux"
       "aarch64-darwin"
       "x86_64-darwin"
-    ] (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-        stdenv = pkgs.stdenv;
-        buildPlatform = stdenv.buildPlatform;
-        version = self.dirtyShortRev or self.shortRev;
-        mkPackage = p:
-          pkgs.callPackage ./nix/package.nix (p // {
-            inherit stdenv;
-            inherit version;
-          });
-        wallet-artifact = wallet.packages.${system}.ci.artifacts;
-        onAttrs = pkgs.lib.optionalAttrs;
-      in onAttrs buildPlatform.isLinux {
-        packages.linux64.package = mkPackage {
-          wallet-package = wallet-artifact.linux64.release;
-          platform = "linux64";
-        };
-        packages.version = version;
-        packages.docker-image = pkgs.callPackage ./nix/docker-image.nix {
-          inherit pkgs;
-          inherit version;
-          wallet-package = self.outputs.packages.${system}.linux64.package;
-          platform = "linux64";
-        };
-      } // onAttrs buildPlatform.isMacOS {
-        packages.macos-silicon = onAttrs buildPlatform.isAarch64 {
-          package = mkPackage {
-            wallet-package = wallet-artifact.macos-silicon.release;
-            platform = "macos-silicon";
-          };
-        };
-        packages.macos-intel = onAttrs buildPlatform.isx86_64 {
-          package = mkPackage {
-            wallet-package = wallet-artifact.macos-intel.release;
-            platform = "macos-intel";
-          };
-        };
-        packages.version = version;
-      } // {
-        devShells.default = pkgs.mkShell {
-          packages = [
-            wallet.packages.${system}.cardano-wallet
-            wallet.inputs.cardano-node-runtime.packages.${system}.cardano-node
-            wallet.inputs.cardano-node-runtime.packages.${system}.cardano-cli
-            wallet.packages.${system}.cardano-address
-            wallet.packages.${system}.bech32
-          ];
-          shellHook = ''
-            echo "********* Deposit wallet shell *********"
-            echo "comes with cardano-wallet, cardano-node, cardano-cli, cardano-address and bech32"
-            echo "****************************************"
-
-          '';
-        };
-      }
-
-    );
+    ] perSystem;
 }

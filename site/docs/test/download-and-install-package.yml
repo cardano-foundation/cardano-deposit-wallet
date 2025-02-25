@@ -4,8 +4,6 @@
 - path: installation/package.md
   matches:
   - download package
-- path: installation.md
-  matches:
   - explode package
   - install cleanups
   - start node

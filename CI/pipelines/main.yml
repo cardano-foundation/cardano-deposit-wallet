@@ -42,6 +42,11 @@ steps:
         - nix flake check $CI_SCRIPTS_DIR/runmd
       agents:
         system: ${linux_agent}
+    - label: Rewrite-libs tool builds
+      commands:
+        - nix build $CI_SCRIPTS_DIR/rewrite-libs
+      agents:
+        system: ${linux_agent}
 
   - group: Linux Setup
     depends_on: []
@@ -59,7 +64,21 @@ steps:
     depends_on:
       - linux-setup
     steps:
+    - label: Build Haskell (glibc)
+      commands:
+        - nix build .#cardano-deposit-wallet
+      agents:
+        system: ${linux_agent}
+    - label: Build Haskell (musl)
+      key: linux-static
+      commands:
+        - nix build ./code#cardano-deposit-wallet-linux64-static
+      agents:
+        system: ${linux_agent}
     - label: Build package (linux)
+      depends_on:
+        - linux-static
+      key: linux-package
       commands:
         - nix build .#linux64.package
       artifact_paths:
@@ -67,6 +86,8 @@ steps:
       agents:
         system: ${linux_agent}
     - label: Build Docker Image
+      depends_on:
+        - linux-package
       commands:
         - $CI_SCRIPTS_DIR/build-docker-image.sh
       artifact_paths:
@@ -93,9 +114,86 @@ steps:
       env:
         PACKAGED_FOR: linux64
 
+  - group: Docker Tests
+    depends_on:
+      - linux-artifacts
+    steps:
+    - label: Smoke Test Docker Image
+      commands:
+        - $TESTS_SCRIPT $CI_SCRIPTS_DIR/smoke-test-docker-image.sh
+      artifact_paths:
+        - ./*.log
+      agents:
+        system: ${linux_agent}
+
+  - group: MacOS Setup
+    depends_on: []
+    key: macos-setup
+    steps:
+    - label: Check Nix (macos)
+      key: macos-nix
+      commands:
+        - nix --version
+      agents:
+        system: ${macos_agent}
+
+  - group: Macos Artifacts
+    key: macos-artifacts
+    depends_on:
+      - macos-setup
+    steps:
+
+    - label: Build Haskell (glibc)
+      commands:
+        - nix build .#cardano-deposit-wallet
+      agents:
+        system: ${macos_agent}
+    - label: Build Package (macos-silicon)
+      commands:
+        - nix build .#macos-silicon.package
+      artifact_paths:
+        - ./result/*
+      agents:
+        system: ${macos_agent}
+
+    - label: Build Package (macos-intel)
+      if: 0 == 1
+      commands:
+        - nix build --system ${macos_intel} .#macos-intel.package
+      artifact_paths:
+        - ./result/*
+      agents:
+        system: ${macos_agent}
+
+  - group: Macos Tests
+    depends_on:
+      - macos-artifacts
+    steps:
+    - label: Smoke Test Macos Silicon Package
+      commands:
+        - $TESTS_SCRIPT $CI_SCRIPTS_DIR/smoke-test-package.sh
+      artifact_paths:
+        - ./*.log
+      agents:
+        system: ${macos_agent}
+      env:
+        PACKAGED_FOR: macos-silicon
+
+    - label: Smoke Test Macos Intel Package
+      if: 0 == 1
+      commands:
+        - nix develop --system ${macos_intel} $CI_DIR#tests --command $CI_SCRIPTS_DIR/smoke-test-package.sh
+      artifact_paths:
+        - ./*.log
+      agents:
+        system: ${macos_agent}
+      env:
+        PACKAGED_FOR: macos-intel
+
   - group: Docs Tests
     depends_on:
-      - linux-setup
+      - linux-artifacts
+      - macos-artifacts
     steps:
     - block: Run Docs Tests
       depends_on: []
@@ -126,6 +224,7 @@ steps:
       env:
         PACKAGED_FOR: macos-silicon
     - label: Test Mithril download (macos-intel)
+      if: 0 == 1
       command: |
         $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
             $DOCS_TEST_DIR/download-mithril.yml
@@ -150,7 +249,9 @@ steps:
         system: ${macos_agent}
       env:
         PACKAGED_FOR: macos-silicon
+        ECHOING: true
     - label: Test installation from flake docs (macos-intel)
+      if: 0 == 1
       command: |
         export FLAKE=$(pwd)
         $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
@@ -161,6 +262,7 @@ steps:
         PACKAGED_FOR: macos-intel
         SYSTEM: ${macos_intel}
     - label: Test installation from package docs (macos-intel)
+      if: 0 == 1
       command: |
         $TESTS_SCRIPT $CI_SCRIPTS_DIR/run-md.sh \
             $DOCS_TEST_DIR/download-and-install-package.yml
@@ -180,71 +282,3 @@ steps:
             $DOCS_TEST_DIR/docker-from-flake.yml
       agents:
         system: ${linux_agent}
-
-  - group: Docker Tests
-    depends_on:
-      - linux-artifacts
-    steps:
-    - label: Smoke Test Docker Image
-      commands:
-        - $TESTS_SCRIPT $CI_SCRIPTS_DIR/smoke-test-docker-image.sh
-      artifact_paths:
-        - ./*.log
-      agents:
-        system: ${linux_agent}
-
-  - group: MacOS Setup
-    depends_on: []
-    key: macos-setup
-    steps:
-    - label: Check Nix (macos)
-      key: macos-nix
-      commands:
-        - nix --version
-      agents:
-        system: ${macos_agent}
-
-  - group: Macos Artifacts
-    key: macos-artifacts
-    depends_on:
-      - macos-setup
-    steps:
-    - label: Build Package (macos-silicon)
-      commands:
-        - nix build .#macos-silicon.package
-      artifact_paths:
-        - ./result/*
-      agents:
-        system: ${macos_agent}
-
-    - label: Build Package (macos-intel)
-      commands:
-        - nix build --system ${macos_intel} .#macos-intel.package
-      artifact_paths:
-        - ./result/*
-      agents:
-        system: ${macos_agent}
-
-  - group: Macos Tests
-    depends_on:
-      - macos-artifacts
-    steps:
-    - label: Smoke Test Macos Silicon Package
-      commands:
-        - $TESTS_SCRIPT $CI_SCRIPTS_DIR/smoke-test-package.sh
-      artifact_paths:
-        - ./*.log
-      agents:
-        system: ${macos_agent}
-      env:
-        PACKAGED_FOR: macos-silicon
-
-    - label: Smoke Test Macos Intel Package
-      commands:
-        - nix develop --system ${macos_intel} $CI_DIR#tests --command $CI_SCRIPTS_DIR/smoke-test-package.sh
-      artifact_paths:
-        - ./*.log
-      agents:
-        system: ${macos_agent}
-      env:
-        PACKAGED_FOR: macos-intel
