@@ -115,7 +115,7 @@ sync)
 	start_time=$(date +%s)
 
 	# Commands to query service status and node tip time
-	command=$(printf "docker run --network %s_default alpine/curl curl -s --max-time 3 cardano-deposit-wallet:8092/data/sse | head -n1 || true" "$NETWORK")
+	command=$(printf "docker run --rm --network %s_default alpine/curl curl -s --max-time 3 cardano-deposit-wallet:8092/data/sse | head -n1 || true" "$NETWORK")
 
 	# Execute and display the full query result
 	trap cleanup ERR INT
