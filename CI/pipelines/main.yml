@@ -70,11 +70,14 @@ steps:
       agents:
         system: ${linux_agent}
     - label: Build Haskell (musl)
+      key: linux-static
       commands:
         - nix build ./code#cardano-deposit-wallet-linux64-static
       agents:
         system: ${linux_agent}
     - label: Build package (linux)
+      depends_on:
+        - linux-static
       key: linux-package
       commands:
         - nix build .#linux64.package
