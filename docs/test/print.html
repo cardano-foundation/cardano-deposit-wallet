@@ -300,6 +300,8 @@ tarball or use a local package or build the package locally.</p>
 <h2 id="download-the-latest-version-of-the-cardano-deposit-wallet-tarball-or-use-a"><a class="header" href="#download-the-latest-version-of-the-cardano-deposit-wallet-tarball-or-use-a">Download the latest version of the cardano-deposit-wallet tarball or use a</a></h2>
 <p>local package</p>
 <pre><code class="language-bash download package">COMMAND="cardano-wallet"
+SHELLEY_WALLET_PORT=$(shuf -i 1024-65000 -n 1)
+LEGACY_PORT="--port $SHELLEY_WALLET_PORT"
 WALLET_VERSION=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit-wallet/releases/latest | jq -r .tag_name)
 WALLET_PACKAGE=cardano-deposit-wallet-$WALLET_VERSION-$PACKAGED_FOR.tar.gz
 wget -q https://github.com/cardano-foundation/cardano-deposit-wallet/releases/download/$WALLET_VERSION/$WALLET_PACKAGE
@@ -317,8 +319,8 @@ different processor architectures on macOS.</p>
 <p><code>SYSTEM</code> can be set to <code>x86_64-darwin</code>, or <code>aarch64-darwin</code>. If not set it
 will default to the current system.</p>
 <pre><code class="language-bash build package">COMMAND="cardano-deposit-wallet"
+LEGACY_PORT=""
 REPOSITORY="github:cardano-foundation/cardano-deposit-wallet"
-
 if [ -z "${FLAKE:-}" ]; then
     if [ -n "${REF:-}" ]; then
         FLAKE="$REPOSITORY/$REF"
@@ -382,11 +384,10 @@ screen -dmS "$NODE_SESSION" cardano-node run \
 <pre><code class="language-bash start wallet">WALLET_SESSION="wallet-session-$(shuf -i 1000000-9999999 -n 1)"
 DEPOSIT_PORT=$(shuf -i 1024-65000 -n 1)
 export DEPOSIT_PORT
-LEGACY_PORT=$(shuf -i 1024-65000 -n 1)
 screen -dmS "$WALLET_SESSION" "$COMMAND" serve \
     --node-socket "$NODE_DB/preprod/node.socket" \
     --testnet "$NODE_CONFIGS/byron-genesis.json" \
-    --ui-deposit-port "$DEPOSIT_PORT" \
+    --ui-deposit-port "$DEPOSIT_PORT" $LEGACY_PORT
 </code></pre>
 <blockquote>
 <p>At the moment, the legacy port is required even if we are not using
