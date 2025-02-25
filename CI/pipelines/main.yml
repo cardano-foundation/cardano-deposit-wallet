@@ -66,7 +66,7 @@ steps:
     steps:
     - label: Build Haskell (glibc)
       commands:
-        - nix build ./code#cardano-deposit-wallet
+        - nix build .#cardano-deposit-wallet
       agents:
         system: ${linux_agent}
     - label: Build Haskell (musl)
@@ -145,7 +145,7 @@ steps:
 
     - label: Build Haskell (glibc)
       commands:
-        - nix build ./code#cardano-deposit-wallet
+        - nix build .#cardano-deposit-wallet
       agents:
         system: ${macos_agent}
     - label: Build Package (macos-silicon)
