@@ -244,81 +244,6 @@ base image.</p>
 <ul>
 <li><a href="./installation/docker.html">Using a docker image</a></li>
 </ul>
-<h2 id="unpack-the-wallet-package"><a class="header" href="#unpack-the-wallet-package">Unpack the wallet package</a></h2>
-<p>Once the <code>WALLET_PACKAGE</code> is set, you can unpack it.</p>
-<pre><code class="language-bash explode package">tar xvzf "$WALLET_PACKAGE" &gt; /dev/null
-WALLET_DIR=$(pwd)
-export WALLET_DIR
-export PATH=$WALLET_DIR:$PATH
-</code></pre>
-<h2 id="node-database-initialization"><a class="header" href="#node-database-initialization">Node database initialization</a></h2>
-<p>It is recommended to retrieve the node state from Mithril to avoid long
-waiting times.</p>
-<p><a href="./installation/mithril.html">Mithril node database setup</a></p>
-<h2 id="manage-processes"><a class="header" href="#manage-processes">Manage processes</a></h2>
-<p>We are going to use <code>screen</code> to keep the processes running in the
-background, but you can use any other tool you prefer.</p>
-<p>If you are using these instructions as a script, you should install
-cleanups to ensure the screen sessions are closed.</p>
-<p>Otherwise, you can skip the next step and clean up the screen sessions
-manually at the end.</p>
-<pre><code class="language-bash install cleanups">cleanup() {
-    screen -S "$NODE_SESSION" -X quit || true
-    screen -S "$WALLET_SESSION" -X quit || true
-}
-trap cleanup EXIT
-trap cleanup SIGINT
-</code></pre>
-<h2 id="start-the-node"><a class="header" href="#start-the-node">Start the node</a></h2>
-<p>Now you can start the node that comes bundled with the wallet:</p>
-<pre><code class="language-bash start node">NODE_SESSION="node-session-$(shuf -i 1000000-9999999 -n 1)"
-NODE_CONFIGS="$WALLET_DIR/configs/preprod"
-export NODE_CONFIGS
-screen -dmS "$NODE_SESSION" cardano-node run \
-    --config "$NODE_CONFIGS/config.json" \
-    --database-path "$NODE_DB/preprod" \
-    --socket-path "$NODE_DB/preprod/node.socket" \
-    --topology "$NODE_CONFIGS/topology.json"
-</code></pre>
-<p>You can observe the node logs with:</p>
-<pre><code class="language-bash">screen -r "$NODE_SESSION"
-</code></pre>
-<p>Detach from the screen with <code>Ctrl-a d</code>.</p>
-<h2 id="start-the-wallet"><a class="header" href="#start-the-wallet">Start the wallet</a></h2>
-<p>Now you can start the wallet:</p>
-<pre><code class="language-bash start wallet">WALLET_SESSION="wallet-session-$(shuf -i 1000000-9999999 -n 1)"
-DEPOSIT_PORT=$(shuf -i 1024-65000 -n 1)
-export DEPOSIT_PORT
-LEGACY_PORT=$(shuf -i 1024-65000 -n 1)
-screen -dmS "$WALLET_SESSION" cardano-wallet serve \
-    --node-socket "$NODE_DB/preprod/node.socket" \
-    --testnet "$NODE_CONFIGS/byron-genesis.json" \
-    --ui-deposit-port "$DEPOSIT_PORT" \
-    --port "$LEGACY_PORT"
-</code></pre>
-<blockquote>
-<p>At the moment, the legacy port is required even if we are not using
-it. Once the deposit wallet is extracted from the shelley wallet
-code-base, the legacy port will be removed.</p>
-</blockquote>
-<p>You can observe the wallet logs with:</p>
-<pre><code class="language-bash">screen -r "$WALLET_SESSION"
-</code></pre>
-<p>Detach from the screen with <code>Ctrl-a d</code>.</p>
-<h2 id="test-the-web-ui"><a class="header" href="#test-the-web-ui">Test the web UI</a></h2>
-<p>Use <code>curl</code> to check if the UI is up</p>
-<pre><code class="language-bash test home page">sleep 15
-curl -s "http://localhost:$DEPOSIT_PORT" &gt; /dev/null
-</code></pre>
-<h2 id="open-the-web-ui-with-your-browser"><a class="header" href="#open-the-web-ui-with-your-browser">Open the web UI with your browser</a></h2>
-<p>Now you can connect to the web UI with:</p>
-<pre><code class="language-bash open web ui">xdg-open "http://localhost:$DEPOSIT_PORT"
-</code></pre>
-<h2 id="cleanup-screen-sessions"><a class="header" href="#cleanup-screen-sessions">Cleanup screen sessions</a></h2>
-<p>Clean up the screen sessions using:</p>
-<pre><code class="language-bash clean up">screen -S "$NODE_SESSION" -X quit
-screen -S "$WALLET_SESSION" -X quit
-</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="download-the-mithril-executable"><a class="header" href="#download-the-mithril-executable">Download the Mithril executable</a></h2>
 <pre><code class="language-bash download mithril">case $PACKAGED_FOR in
     linux64)
@@ -365,11 +290,19 @@ platform you are using:</p>
 </code></pre>
 <pre><code class="language-bash">export PACKAGED_FOR=macos-intel
 </code></pre>
+<blockquote>
+<p>ATM the invocation for the deposit wallet differs between released package and
+the unreleased one. The released package is invoked with <code>cardano-deposit</code> and
+the unreleased one is invoked with <code>cardano-deposit-wallet</code>. To be fixed after release</p>
+</blockquote>
 <p>Now you can choose to download the latest version of the cardano-deposit-wallet
 tarball or use a local package or build the package locally.</p>
 <h2 id="download-the-latest-version-of-the-cardano-deposit-wallet-tarball-or-use-a"><a class="header" href="#download-the-latest-version-of-the-cardano-deposit-wallet-tarball-or-use-a">Download the latest version of the cardano-deposit-wallet tarball or use a</a></h2>
 <p>local package</p>
-<pre><code class="language-bash download package">WALLET_VERSION=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit-wallet/releases/latest | jq -r .tag_name)
+<pre><code class="language-bash download package">COMMAND="cardano-wallet"
+SHELLEY_WALLET_PORT=$(shuf -i 1024-65000 -n 1)
+LEGACY_PORT="--port $SHELLEY_WALLET_PORT"
+WALLET_VERSION=$(curl -s https://api.github.com/repos/cardano-foundation/cardano-deposit-wallet/releases/latest | jq -r .tag_name)
 WALLET_PACKAGE=cardano-deposit-wallet-$WALLET_VERSION-$PACKAGED_FOR.tar.gz
 wget -q https://github.com/cardano-foundation/cardano-deposit-wallet/releases/download/$WALLET_VERSION/$WALLET_PACKAGE
 export WALLET_PACKAGE
@@ -385,18 +318,18 @@ you can set <code>REV</code> to the commit hash.</p>
 different processor architectures on macOS.</p>
 <p><code>SYSTEM</code> can be set to <code>x86_64-darwin</code>, or <code>aarch64-darwin</code>. If not set it
 will default to the current system.</p>
-<pre><code class="language-bash build package">REPOSITORY="github:cardano-foundation/cardano-deposit-wallet"
-
-if [ -z "${REF:-}" ]; then
-    DEFAULT_FLAKE_URL="$REPOSITORY"
-elif [ -z "${REV:-}" ]; then
-    DEFAULT_FLAKE_URL="$REPOSITORY?ref=$REF"
-else
-    DEFAULT_FLAKE_URL="$REPOSITORY?rev=$REV"
+<pre><code class="language-bash build package">COMMAND="cardano-deposit-wallet"
+LEGACY_PORT=""
+REPOSITORY="github:cardano-foundation/cardano-deposit-wallet"
+if [ -z "${FLAKE:-}" ]; then
+    if [ -n "${REF:-}" ]; then
+        FLAKE="$REPOSITORY/$REF"
+    elif [ -n "${REV:-}" ]; then
+        FLAKE="$REPOSITORY/$REV"
+    else
+        FLAKE="$REPOSITORY"
+    fi
 fi
-
-FLAKE=${FLAKE:-$DEFAULT_FLAKE_URL}
-
 if [ -z "${SYSTEM:-}" ]; then
     SYSTEM_FLAG=""
 else
@@ -405,6 +338,79 @@ fi
 VERSION=$(nix eval --raw $FLAKE#version)
 export WALLET_PACKAGE="result/cardano-deposit-wallet-$VERSION-$PACKAGED_FOR.tar.gz"
 nix build $SYSTEM_FLAG $FLAKE#$PACKAGED_FOR.package
+</code></pre>
+<h2 id="unpack-the-wallet-package"><a class="header" href="#unpack-the-wallet-package">Unpack the wallet package</a></h2>
+<p>Once the <code>WALLET_PACKAGE</code> is set, you can unpack it.</p>
+<pre><code class="language-bash explode package">tar xvzf "$WALLET_PACKAGE" &gt; /dev/null
+WALLET_DIR=$(pwd)
+export WALLET_DIR
+export PATH=$WALLET_DIR:$PATH
+</code></pre>
+<h2 id="node-database-initialization"><a class="header" href="#node-database-initialization">Node database initialization</a></h2>
+<p>It is recommended to retrieve the node state from Mithril to avoid long
+waiting times.</p>
+<p><a href="installation/./installation/mithril.html">Mithril node database setup</a></p>
+<h2 id="manage-processes"><a class="header" href="#manage-processes">Manage processes</a></h2>
+<p>We are going to use <code>screen</code> to keep the processes running in the
+background, but you can use any other tool you prefer.</p>
+<p>If you are using these instructions as a script, you should install
+cleanups to ensure the screen sessions are closed.</p>
+<p>Otherwise, you can skip the next step and clean up the screen sessions
+manually at the end.</p>
+<pre><code class="language-bash install cleanups">cleanup() {
+    screen -S "$NODE_SESSION" -X quit || true
+    screen -S "$WALLET_SESSION" -X quit || true
+}
+trap cleanup EXIT
+trap cleanup SIGINT
+</code></pre>
+<h2 id="start-the-node"><a class="header" href="#start-the-node">Start the node</a></h2>
+<p>Now you can start the node that comes bundled with the wallet:</p>
+<pre><code class="language-bash start node">NODE_SESSION="node-session-$(shuf -i 1000000-9999999 -n 1)"
+NODE_CONFIGS="$WALLET_DIR/configs/preprod"
+export NODE_CONFIGS
+screen -dmS "$NODE_SESSION" cardano-node run \
+    --config "$NODE_CONFIGS/config.json" \
+    --database-path "$NODE_DB/preprod" \
+    --socket-path "$NODE_DB/preprod/node.socket" \
+    --topology "$NODE_CONFIGS/topology.json"
+</code></pre>
+<p>You can observe the node logs with:</p>
+<pre><code class="language-bash">screen -r "$NODE_SESSION"
+</code></pre>
+<p>Detach from the screen with <code>Ctrl-a d</code>.</p>
+<h2 id="start-the-wallet"><a class="header" href="#start-the-wallet">Start the wallet</a></h2>
+<p>Now you can start the wallet:</p>
+<pre><code class="language-bash start wallet">WALLET_SESSION="wallet-session-$(shuf -i 1000000-9999999 -n 1)"
+DEPOSIT_PORT=$(shuf -i 1024-65000 -n 1)
+export DEPOSIT_PORT
+screen -dmS "$WALLET_SESSION" "$COMMAND" serve \
+    --node-socket "$NODE_DB/preprod/node.socket" \
+    --testnet "$NODE_CONFIGS/byron-genesis.json" \
+    --ui-deposit-port "$DEPOSIT_PORT" $LEGACY_PORT
+</code></pre>
+<blockquote>
+<p>At the moment, the legacy port is required even if we are not using
+it. Once the deposit wallet is extracted from the shelley wallet
+code-base, the legacy port will be removed.</p>
+</blockquote>
+<p>You can observe the wallet logs with:</p>
+<pre><code class="language-bash">screen -r "$WALLET_SESSION"
+</code></pre>
+<p>Detach from the screen with <code>Ctrl-a d</code>.</p>
+<h2 id="test-the-web-ui"><a class="header" href="#test-the-web-ui">Test the web UI</a></h2>
+<p>Use <code>curl</code> to check if the UI is up</p>
+<pre><code class="language-bash test home page">sleep 15
+curl -s "http://localhost:$DEPOSIT_PORT" &gt; /dev/null
+</code></pre>
+<h2 id="open-the-web-ui-with-your-browser"><a class="header" href="#open-the-web-ui-with-your-browser">Open the web UI with your browser</a></h2>
+<p>Now you can connect to the web UI with:</p>
+<pre><code class="language-bash open web ui">xdg-open "http://localhost:$DEPOSIT_PORT"
+</code></pre>
+<h2 id="cleanup-screen-sessions"><a class="header" href="#cleanup-screen-sessions">Cleanup screen sessions</a></h2>
+<p>Clean up the screen sessions using:</p>
+<pre><code class="language-bash clean up">screen -S "$NODE_SESSION" -X quit
+screen -S "$WALLET_SESSION" -X quit
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><p>You can use 2 different methods to run the cardano-deposit-wallet in a docker container.</p>
 <ol>
@@ -503,8 +509,8 @@ for more information.</p>
 <pre><code class="language-bash mithril node state preload">export AGGREGATOR_ENDPOINT=https://aggregator.release-preprod.api.mithril.network/aggregator
 export GENESIS_VERIFICATION_KEY=5b3132372c37332c3132342c3136312c362c3133372c3133312c3231332c3230372c3131372c3139382c38352c3137362c3139392c3136322c3234312c36382c3132332c3131392c3134352c31332c3233322c3234332c34392c3232392c322c3234392c3230352c3230352c33392c3233352c34345d
 export MITHRIL_TAG=2450.0-c6c7eba
-digest=$(docker compose --profile mithril run mithril cdb snapshot list --json | jq -r .[0].digest)
-docker compose --profile mithril run mithril cdb download "$digest"
+digest=$(docker compose --profile mithril run --rm mithril cdb snapshot list --json | jq -r .[0].digest)
+docker compose --profile mithril run --rm mithril cdb download "$digest"
 </code></pre>
 <h2 id="start-the-service"><a class="header" href="#start-the-service">Start the service</a></h2>
 <pre><code class="language-bash start service">docker compose up -d
