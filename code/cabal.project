@@ -1,5 +1,6 @@
 packages:
   ./exe/
+  ./ui/
 
 repository cardano-haskell-packages
   url: https://chap.intersectmbo.org/

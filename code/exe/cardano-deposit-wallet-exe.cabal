@@ -40,11 +40,12 @@ library
     , cardano-wallet-exe:cardano-wallet-exe
     , cardano-wallet-network-layer
     , cardano-wallet-primitive
-    , cardano-wallet-ui
+    , cardano-deposit-wallet-ui
     , contra-tracer
     , cardano-deposit-wallet
     , cardano-deposit-wallet:http
     , cardano-deposit-wallet:rest
+    , cardano-wallet-ui:common
     , network
     , servant-server
     , streaming-commons
