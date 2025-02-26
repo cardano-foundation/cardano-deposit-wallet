@@ -1,6 +1,7 @@
 packages:
   ./exe/
   ./ui/
+  ./lib/
 
 repository cardano-haskell-packages
   url: https://chap.intersectmbo.org/
@@ -65,7 +66,6 @@ source-repository-package
       lib/cardano-api-extra/
       lib/crypto-primitives/
       lib/coin-selection/
-      lib/deposit-wallet/
       lib/delta-chain/
       lib/delta-store/
       lib/delta-table/
