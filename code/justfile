@@ -1,2 +1,8 @@
 format:
     nix develop -c fourmolu -i exe
+
+build t:
+    cabal build -O0 ${{t}}
+
+build-all:
+    cabal build -O0 all

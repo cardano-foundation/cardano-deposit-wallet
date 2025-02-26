@@ -10,9 +10,10 @@ in {
       node.${system}.pkgs.cardano-cli
     ];
     shellHook = ''
-      echo "********* Deposit wallet shell *********************************************************"
-      echo "comes with cardano-deposit-wallet, cardano-node, cardano-cli, cardano-address and bech32"
-      echo "****************************************************************************************"
+      echo "********* Deposit wallet shell **********************************************************"
+      echo " Comes with cardano-deposit-wallet, cardano-node, cardano-cli, cardano-address and bech32"
+      echo " If you need to hack with the deposit wallet, use the `./code` directory flake"
+      echo "*****************************************************************************************"
     '';
   };
 }

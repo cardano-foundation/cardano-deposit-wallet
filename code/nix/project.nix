@@ -28,7 +28,7 @@ let
       configureFlags = map (l: "--ghc-option=-optl=-L${l}/lib") (libs);
     };
   musl = { pkgs, ... }: {
-    packages.cardano-deposit-wallet-transition.components.exes.cardano-deposit-wallet =
+    packages.cardano-deposit-wallet-exe.components.exes.cardano-deposit-wallet =
       (fullyStaticOptions { inherit pkgs; });
     doHaddock = false;
   };
@@ -62,9 +62,9 @@ let
   packages = {
     inherit project;
     cardano-deposit-wallet =
-      project.hsPkgs.cardano-deposit-wallet-transition.components.exes.cardano-deposit-wallet;
+      project.hsPkgs.cardano-deposit-wallet-exe.components.exes.cardano-deposit-wallet;
     cardano-deposit-wallet-linux64-static =
-      project.projectCross.musl64.hsPkgs.cardano-deposit-wallet-transition.components.exes.cardano-deposit-wallet;
+      project.projectCross.musl64.hsPkgs.cardano-deposit-wallet-exe.components.exes.cardano-deposit-wallet;
   };
 in {
   inherit packages;

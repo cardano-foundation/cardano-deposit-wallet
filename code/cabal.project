@@ -1,5 +1,6 @@
 packages:
   ./exe/
+  ./ui/
 
 repository cardano-haskell-packages
   url: https://chap.intersectmbo.org/
@@ -53,8 +54,8 @@ package cardano-addresses
 source-repository-package
     type: git
     location: https://github.com/cardano-foundation/cardano-wallet
-    tag: 2b1122ebabb97ad5790920ff9fb125dfaf7c1a21
-    --sha256: sha256-GuTN//iMaFtUpokwoOHZYJ4P6CgcFD1Yr3dTctmyq6A=
+    tag: 3701dee264d866919872c955714fcda6132e7fc3
+    --sha256: sha256-B+pwc06JPDe9SSYmndgWnpjOph4pZzI7nSivqd+E/7g=
     subdir:
       lib/address-derivation-discovery
       lib/api

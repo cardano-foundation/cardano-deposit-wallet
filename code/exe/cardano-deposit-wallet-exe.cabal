@@ -1,5 +1,5 @@
 cabal-version:   3.4
-name:            cardano-deposit-wallet-transition
+name:            cardano-deposit-wallet-exe
 version:         0.0.1
 synopsis:        cardano-deposit-wallet executable
 license:         Apache-2.0
@@ -40,11 +40,12 @@ library
     , cardano-wallet-exe:cardano-wallet-exe
     , cardano-wallet-network-layer
     , cardano-wallet-primitive
-    , cardano-wallet-ui
+    , cardano-deposit-wallet-ui
     , contra-tracer
     , cardano-deposit-wallet
     , cardano-deposit-wallet:http
     , cardano-deposit-wallet:rest
+    , cardano-wallet-ui:common
     , network
     , servant-server
     , streaming-commons
@@ -63,7 +64,7 @@ executable cardano-deposit-wallet
     , base
     , cardano-wallet
     , cardano-wallet-exe:cardano-wallet-exe
-    , cardano-deposit-wallet-transition
+    , cardano-deposit-wallet-exe
     , cardano-wallet-launcher
     , cardano-wallet-network-layer
     , contra-tracer
