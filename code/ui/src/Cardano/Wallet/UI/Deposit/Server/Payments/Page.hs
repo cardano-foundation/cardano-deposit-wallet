@@ -152,7 +152,8 @@ servePaymentsSign
     -> SignatureForm
     -> Maybe RequestCookies
     -> Handler (CookieResponse RawHtml)
-servePaymentsSign ul r = -- SignatureForm{signatureFormState, signaturePassword} =
+servePaymentsSign ul r =
+    -- SignatureForm{signatureFormState, signaturePassword} =
     withSessionLayer ul $ \layer -> do
         renderHtml
             <$> signalHandler
@@ -160,7 +161,7 @@ servePaymentsSign ul r = -- SignatureForm{signatureFormState, signaturePassword}
                 alertH
                 paymentsChangeH
                 (signatureFormState r)
-                (case r of
+                ( case r of
                     SignatureForm _ s -> Sign s
                     ExternalSignatureForm _ s -> ExternallySign s
                 )

@@ -1,12 +1,12 @@
-cabal-version:   3.4
-name:            cardano-deposit-wallet-exe
-version:         0.0.1
-synopsis:        cardano-deposit-wallet executable
-license:         Apache-2.0
-author:          hal team
-maintainer:      hal@cardanofoundation.org
-category:        Crypto
-build-type:      Simple
+cabal-version: 3.4
+name:          cardano-deposit-wallet-exe
+version:       0.0.1
+synopsis:      cardano-deposit-wallet executable
+license:       Apache-2.0
+author:        hal team
+maintainer:    hal@cardanofoundation.org
+category:      Crypto
+build-type:    Simple
 
 common language
   default-language:   Haskell2010
@@ -37,15 +37,15 @@ library
   hs-source-dirs:  lib
   build-depends:
     , base
-    , cardano-wallet-exe:cardano-wallet-exe
-    , cardano-wallet-network-layer
-    , cardano-wallet-primitive
-    , cardano-deposit-wallet-ui
-    , contra-tracer
     , cardano-deposit-wallet
+    , cardano-deposit-wallet-ui
     , cardano-deposit-wallet:http
     , cardano-deposit-wallet:rest
+    , cardano-wallet-exe
+    , cardano-wallet-network-layer
+    , cardano-wallet-primitive
     , cardano-wallet-ui:common
+    , contra-tracer
     , network
     , servant-server
     , streaming-commons
@@ -62,9 +62,9 @@ executable cardano-deposit-wallet
   default-language: Haskell2010
   build-depends:
     , base
-    , cardano-wallet
-    , cardano-wallet-exe:cardano-wallet-exe
     , cardano-deposit-wallet-exe
+    , cardano-wallet
+    , cardano-wallet-exe
     , cardano-wallet-launcher
     , cardano-wallet-network-layer
     , contra-tracer

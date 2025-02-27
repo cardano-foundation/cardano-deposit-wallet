@@ -107,13 +107,12 @@ data ErrResourceMissing e
       ErrNotInitialized
     | -- | The 'Resource' is currently being initialized.
       ErrStillInitializing
-    | -- | The 'Resource' has not been initialized yet.
-      ErrVanished SomeException
     | -- | The 'Resource' has vanished due to an unhandled exception.
+      ErrVanished SomeException
+    | -- | The 'Resource' has failed to initialize.
       ErrFailedToInitialize e
-    -- | The 'Resource' has failed to initialize.
-    | ErrClosing
-    -- | The 'Resource is currently being closed.
+    | -- | The 'Resource is currently being closed.
+      ErrClosing
     deriving (Show)
 
 -- | Perform an action on a 'Resource' if it is initialized.
@@ -174,7 +173,7 @@ data ErrResourceExists e a
     | -- | The resource 'a' has failed to initialize.
       ErrAlreadyFailedToInitialize e
     | -- | The resource 'a' is currently being closed.
-        ErrAlreadyClosing
+      ErrAlreadyClosing
     deriving (Show)
 
 -- | Initialize a 'Resource' using a @with…@ function.

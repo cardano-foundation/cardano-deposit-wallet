@@ -51,7 +51,8 @@ instance FromHttpApiData Receiver where
 
 instance ToHttpApiData Receiver where
     toUrlPiece Receiver{address, amount} =
-        T.intercalate ","
+        T.intercalate
+            ","
             [ encodeAddress address
             , T.pack $ show amount
             ]

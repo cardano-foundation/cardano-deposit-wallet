@@ -8,12 +8,12 @@ import Prelude
 import Cardano.Wallet.Deposit.Pure
     ( Customer
     )
-import Cardano.Wallet.Deposit.Read
-    ( Address
-    )
 import Cardano.Wallet.Deposit.REST
     ( WalletResource
     , customerAddress
+    )
+import Cardano.Wallet.Deposit.Read
+    ( Address
     )
 import Cardano.Wallet.UI.Common.Layer
     ( SessionLayer (..)

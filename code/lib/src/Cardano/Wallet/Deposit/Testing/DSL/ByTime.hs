@@ -96,8 +96,8 @@ import Data.Time
     ( UTCTime
     )
 
-import qualified Cardano.Wallet.Deposit.Map.Timed as TimedSeq
 import qualified Cardano.Wallet.Deposit.Map.Timed as TimeSeq
+import qualified Cardano.Wallet.Deposit.Map.Timed as TimedSeq
 import qualified Data.Map.Monoidal.Strict as MonoidalMap
 
 byCustomerFromByTime :: ByTime -> ByCustomer

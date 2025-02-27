@@ -32,14 +32,14 @@ import Cardano.Wallet.Deposit.Pure.API.TxHistory
     ( ByTime
     , DownTime
     )
+import Cardano.Wallet.Deposit.REST
+    ( WalletResource
+    , getTxHistoryByTime
+    )
 import Cardano.Wallet.Deposit.Read
     ( Address
     , Slot
     , WithOrigin (..)
-    )
-import Cardano.Wallet.Deposit.REST
-    ( WalletResource
-    , getTxHistoryByTime
     )
 import Cardano.Wallet.Read
     ( TxId
@@ -155,14 +155,14 @@ retrieveAtTimeByCustomer
     retrieveByTime
     DepositsParams{depositsFirstWeekDay, depositsWindow}
     tStart = do
-            transfers' <- lift retrieveByTime
-            let tEnd =
-                    fmap
-                        (nextDiscretizedTime depositsFirstWeekDay depositsWindow)
-                        <$> tStart
-            hoistMaybe
-                $ fmap snd
-                $ lookupFinger tEnd tStart transfers'
+        transfers' <- lift retrieveByTime
+        let tEnd =
+                fmap
+                    (nextDiscretizedTime depositsFirstWeekDay depositsWindow)
+                    <$> tStart
+        hoistMaybe
+            $ fmap snd
+            $ lookupFinger tEnd tStart transfers'
 
 depositCustomersHandler
     :: SessionLayer WalletResource

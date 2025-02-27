@@ -16,16 +16,16 @@ import Cardano.Wallet.Deposit.IO
 import Cardano.Wallet.Deposit.REST
     ( WalletResource
     )
+import Cardano.Wallet.UI.Common.Handlers.SSE
+    ( Message
+    , sse
+    )
 import Cardano.Wallet.UI.Common.Handlers.Session
     ( withSessionLayer
     , withSessionLayerRead
     )
 import Cardano.Wallet.UI.Common.Handlers.Settings
     ( toggleSSE
-    )
-import Cardano.Wallet.UI.Common.Handlers.SSE
-    ( Message
-    , sse
     )
 import Cardano.Wallet.UI.Common.Handlers.State
     ( getState

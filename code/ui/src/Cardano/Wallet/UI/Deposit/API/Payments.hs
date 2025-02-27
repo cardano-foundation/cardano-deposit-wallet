@@ -102,8 +102,7 @@ instance FromForm NewReceiver where
             $ NewReceiver
             $ Receiver{address, amount}
 
-data NewReceiverValidation
-    = NewReceiverValidation
+data NewReceiverValidation = NewReceiverValidation
     { addressValidation :: Maybe Text
     , amountValidation :: Maybe Text
     }

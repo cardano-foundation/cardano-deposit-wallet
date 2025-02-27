@@ -28,10 +28,10 @@ import Cardano.Slotting.Time
     , SystemStart (..)
     , mkSlotLength
     )
-import qualified Cardano.Wallet.Deposit.Pure.Address as Address
 import Cardano.Wallet.Deposit.Pure.API.Address
     ( encodeAddress
     )
+import qualified Cardano.Wallet.Deposit.Pure.Address as Address
 import Cardano.Wallet.Deposit.Pure.State.Creation
     ( accountXPubFromCredentials
     , createMnemonicFromWords
@@ -86,7 +86,8 @@ import Data.Time.Clock.POSIX
     ( posixSecondsToUTCTime
     )
 import Test.Cardano.Ledger.Core.Arbitrary
-    ()
+    (
+    )
 import Test.Hspec
     ( Spec
     , describe
@@ -198,7 +199,8 @@ accepts l t = case validate l t of
     Right _ -> pure ()
 
 mnemonics :: Text
-mnemonics = "vital minimum victory start lunch find city peanut shiver soft hedgehog artwork mushroom loud found"
+mnemonics =
+    "vital minimum victory start lunch find city peanut shiver soft hedgehog artwork mushroom loud found"
 
 spec :: Spec
 spec = do

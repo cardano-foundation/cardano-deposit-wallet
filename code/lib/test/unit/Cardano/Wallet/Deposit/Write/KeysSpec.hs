@@ -24,12 +24,6 @@ import Cardano.Wallet.Address.BIP32_Ed25519
     , sign
     , toXPub
     )
-import "customer-deposit-wallet-pure" Cardano.Wallet.Address.Encoding
-    ( EnterpriseAddr (..)
-    , NetworkTag (..)
-    , compactAddrFromEnterpriseAddr
-    , credentialFromXPub
-    )
 import Cardano.Wallet.Deposit.Write.Keys
     ( enterpriseAddressFromVKey
     , signedDSIGNfromXSignature
@@ -50,6 +44,12 @@ import Test.QuickCheck
     , withMaxSuccess
     , (===)
     )
+import "customer-deposit-wallet-pure" Cardano.Wallet.Address.Encoding
+    ( EnterpriseAddr (..)
+    , NetworkTag (..)
+    , compactAddrFromEnterpriseAddr
+    , credentialFromXPub
+    )
 
 import qualified Cardano.Crypto.Hash.Blake2b as Hash
 import qualified Cardano.Crypto.Hash.Class as Hash
@@ -65,19 +65,22 @@ import qualified Data.ByteString as BS
 spec :: Spec
 spec = do
     describe "commutes with ledger" $ do
-        it "address" $ lessCryptography $ property $
-            \xpub networkTag ->
+        it "address"
+            $ lessCryptography
+            $ property
+            $ \xpub networkTag ->
                 let network = toLedgerNetwork networkTag
                 in  enterpriseAddressFromVKey network (vkeyFromXPub xpub)
                         === enterpriseAddressFromXPub networkTag xpub
 
-        it "verify" $ lessCryptography $ property $
-            \(Blind xprv) hash ->
+        it "verify"
+            $ lessCryptography
+            $ property
+            $ \(Blind xprv) hash ->
                 let xpub = toXPub xprv
                     xsig = sign xprv (Hash.hashToBytes hash)
-                in
-                    True ===
-                        L.verifySignedDSIGN
+                in  True
+                        === L.verifySignedDSIGN
                             (vkeyFromXPub xpub)
                             hash
                             (signedDSIGNfromXSignature xsig)
@@ -91,8 +94,8 @@ lessCryptography = withMaxSuccess 20
 enterpriseAddressFromXPub :: NetworkTag -> XPub -> Read.CompactAddr
 enterpriseAddressFromXPub networkTag =
     compactAddrFromEnterpriseAddr
-    . EnterpriseAddrC networkTag
-    . credentialFromXPub
+        . EnterpriseAddrC networkTag
+        . credentialFromXPub
 
 toLedgerNetwork :: NetworkTag -> L.Network
 toLedgerNetwork MainnetTag = L.Mainnet

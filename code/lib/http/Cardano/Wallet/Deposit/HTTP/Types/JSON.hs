@@ -34,13 +34,13 @@ import Cardano.Wallet.Deposit.HTTP.Types.OpenAPI
 import Cardano.Wallet.Deposit.Pure
     ( Customer
     )
-import Cardano.Wallet.Deposit.Read
-    ( Address
-    , ChainPoint (..)
-    )
 import Cardano.Wallet.Deposit.REST.Wallet.Create
     ( PostWalletViaMnemonic
     , PostWalletViaXPub
+    )
+import Cardano.Wallet.Deposit.Read
+    ( Address
+    , ChainPoint (..)
     )
 import Control.Applicative
     ( (<|>)

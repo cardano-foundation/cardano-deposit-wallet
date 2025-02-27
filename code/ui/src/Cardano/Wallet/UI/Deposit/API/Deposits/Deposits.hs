@@ -19,7 +19,8 @@ import Cardano.Wallet.Read
     ( WithOrigin (..)
     )
 import Cardano.Wallet.UI.Deposit.API.Common
-    ()
+    (
+    )
 import Cardano.Wallet.UI.Lib.Discretization
     ( Window (..)
     )
@@ -111,11 +112,13 @@ instance FromForm DepositsParams where
         windowOpen <- parseMaybe "window-open" form
         spent <- isJust <$> lookupMaybe "spent" form
         customers <- Set.fromList <$> parseAll "customers" form
-        pageTimes <- Set.fromList . fmap Down <$>
-            parseAll "times-paginating-presence" form
+        pageTimes <-
+            Set.fromList . fmap Down
+                <$> parseAll "times-paginating-presence" form
         pageCustomers <-
             Set.fromList <$> parseAll "customers-paginating-presence" form
-        pageTxIds <- Set.fromList <$> parseAll "tx-ids-paginating-presence" form
+        pageTxIds <-
+            Set.fromList <$> parseAll "tx-ids-paginating-presence" form
         pure
             $ DepositsParams
                 slot

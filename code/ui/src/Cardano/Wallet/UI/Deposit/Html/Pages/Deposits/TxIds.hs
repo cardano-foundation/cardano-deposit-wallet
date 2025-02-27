@@ -42,9 +42,9 @@ import Cardano.Wallet.UI.Lib.Pagination.Type
     , PaginateM
     )
 import Control.Lens
-    ( _1
-    , view
+    ( view
     , (<&>)
+    , _1
     )
 import Control.Monad
     ( when

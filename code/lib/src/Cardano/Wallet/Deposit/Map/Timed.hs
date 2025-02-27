@@ -6,26 +6,31 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Cardano.Wallet.Deposit.Map.Timed
-    (
-    -- * Timed
+    ( -- * Timed
       Timed (..)
-    -- * TimedSeq
+
+      -- * TimedSeq
     , TimedSeq
-    -- ** Construction
+
+      -- ** Construction
     , fromList
     , singleton
-    -- ** Destruction
+
+      -- ** Destruction
     , toList
-    -- ** Query
+
+      -- ** Query
     , takeAfter
     , takeUpTo
     , extractInterval
     , minKey
     , maxKey
-    -- ** Modification
+
+      -- ** Modification
     , dropAfter
     , dropBefore
-    -- ** Functor
+
+      -- ** Functor
     , fmapTimedSeq
     )
 where
@@ -211,8 +216,7 @@ takeAfter bucket mstart mcount =
     takeAfterElements bucket mcount
         . onFingerTree
             ( dropUntil
-                ( \q -> mstart & maybe True (\t -> time q >= Last (Just t))
-                )
+                (\q -> mstart & maybe True (\t -> time q >= Last (Just t)))
             )
 
 -- | Extract the last n elements from a timed seq before and excluding

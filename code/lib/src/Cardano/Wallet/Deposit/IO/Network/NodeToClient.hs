@@ -59,22 +59,24 @@ import qualified Cardano.Wallet.Network as NetworkLayer
 fromNetworkLayer
     :: NetworkLayer.NetworkLayer IO Read.ConsensusBlock
     -> NetworkEnv IO (Read.EraValue Read.Block)
-fromNetworkLayer nl = mapBlock Read.fromConsensusBlock $
-    NetworkEnv
-        { chainSync = \_tr follower -> do
-            -- TODO: Connect tracer
-            let follower' = mapChainFollower id id chainPointFromChainTip id follower
-            NetworkLayer.chainSync nl nullTracer follower'
-            return $ error "impossible: chainSync returned"
-            -- TODO: We can change the error type of 'NetworkLayer.postTx' it
-            -- doesn't need the ErrPostTxEraUnsupported case
-        , postTx = runExceptT . withExceptT translateErrPostTx . NetworkLayer.postTx nl
-        , currentPParams =
-            NetworkLayer.currentPParams nl
-        , getTimeTranslation = toTimeTranslation (NetworkLayer.timeInterpreter nl)
-        , slotToUTCTime = Time.slotToUTCTime <$> snapshot ti
-        }
-
+fromNetworkLayer nl =
+    mapBlock Read.fromConsensusBlock
+        $ NetworkEnv
+            { chainSync = \_tr follower -> do
+                -- TODO: Connect tracer
+                let follower' = mapChainFollower id id chainPointFromChainTip id follower
+                NetworkLayer.chainSync nl nullTracer follower'
+                return $ error "impossible: chainSync returned"
+            , -- TODO: We can change the error type of 'NetworkLayer.postTx' it
+              -- doesn't need the ErrPostTxEraUnsupported case
+              postTx =
+                runExceptT . withExceptT translateErrPostTx . NetworkLayer.postTx nl
+            , currentPParams =
+                NetworkLayer.currentPParams nl
+            , getTimeTranslation =
+                toTimeTranslation (NetworkLayer.timeInterpreter nl)
+            , slotToUTCTime = Time.slotToUTCTime <$> snapshot ti
+            }
   where
     ti = NetworkLayer.timeInterpreter nl
 
@@ -83,4 +85,5 @@ fromNetworkLayer nl = mapBlock Read.fromConsensusBlock $
         NetworkLayer.ErrPostTxValidationError errorText -> ErrPostTxValidationError errorText
         NetworkLayer.ErrPostTxMempoolFull -> ErrPostTxMempoolFull
         NetworkLayer.ErrPostTxEraUnsupported _era ->
-            error "translateErrPostTx: ErrPostTxEraUnsupported should be impossible"
+            error
+                "translateErrPostTx: ErrPostTxEraUnsupported should be impossible"

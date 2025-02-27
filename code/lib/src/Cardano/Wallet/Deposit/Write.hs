@@ -131,6 +131,7 @@ type Block = Read.Block Read.Conway
 {-----------------------------------------------------------------------------
     Signing
 ------------------------------------------------------------------------------}
+
 -- | Add a signature to the transaction using the private key
 addSignature :: XPrv -> Tx -> Tx
 addSignature xprv tx@(Read.Tx ledgerTx) =

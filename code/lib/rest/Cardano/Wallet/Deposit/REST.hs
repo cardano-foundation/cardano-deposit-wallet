@@ -350,7 +350,8 @@ loadWallet wtc bootEnv dir = do
         action f = findTheDepositWalletOnDisk bootEnv dir $ \case
             Right wallet ->
                 Right
-                    <$> WalletIO.withWalletLoad wtc
+                    <$> WalletIO.withWalletLoad
+                        wtc
                         (WalletIO.WalletEnv bootEnv wallet)
                         f
             Left e -> pure $ Left $ ErrLoadingDatabase e
@@ -381,7 +382,8 @@ initWallet wtc tr bootEnv dir credentials users = do
         action f = createTheDepositWalletOnDisk tr dir credentials users $ \case
             Just wallet -> do
                 fmap Right
-                    $ WalletIO.withWalletInit wtc
+                    $ WalletIO.withWalletInit
+                        wtc
                         (WalletIO.WalletEnv bootEnv wallet)
                         credentials
                         users
@@ -484,7 +486,8 @@ inspectTx
     -> WalletResourceM InspectTx
 inspectTx = onWalletInstance . WalletIO.inspectTx
 
-resolveCurrentEraTx :: Write.Tx -> WalletResourceM CurrentEraResolvedTx
+resolveCurrentEraTx
+    :: Write.Tx -> WalletResourceM CurrentEraResolvedTx
 resolveCurrentEraTx = onWalletInstance . WalletIO.resolveCurrentEraTx
 
 submitTx :: Write.Tx -> WalletResourceM (Either Network.ErrPostTx ())

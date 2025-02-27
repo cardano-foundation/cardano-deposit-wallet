@@ -90,12 +90,13 @@ data InspectTx = InspectTx
 -- values of our inputs minus the sum of the values of the change outputs and
 -- minus the outputs to our customers.
 transactionBalance :: InspectTx -> Integer
-transactionBalance InspectTx{..} = getSum $
-    (ourInputs ^. traverse . _3 . mkSum)
-        - (change ^. traverse . _2 . mkSum)
-        - (ourOutputs ^. traverse . _3 . mkSum)
-    where
-        mkSum = to (Sum . unCoin)
+transactionBalance InspectTx{..} =
+    getSum
+        $ (ourInputs ^. traverse . _3 . mkSum)
+            - (change ^. traverse . _2 . mkSum)
+            - (ourOutputs ^. traverse . _3 . mkSum)
+  where
+    mkSum = to (Sum . unCoin)
 
 -- | Inspect a transaction where inputs have been resolved to our UTxO.
 inspectTx :: WalletState -> CurrentEraResolvedTx -> InspectTx

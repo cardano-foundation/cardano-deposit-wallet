@@ -11,8 +11,7 @@ maintainer:         hal@cardanofoundation.org
 copyright:          2023 Cardano Foundation
 category:           Web
 data-files:         data/swagger.json
-extra-source-files:
-  spec/**/*.lagda.md
+extra-source-files: spec/**/*.lagda.md
 
 common language
   default-language:   Haskell2010
@@ -129,10 +128,10 @@ test-suite scenario
     , base
     , bytestring
     , cardano-crypto
+    , cardano-deposit-wallet
     , cardano-wallet-test-utils
     , containers
     , contra-tracer
-    , cardano-deposit-wallet
     , delta-store
     , hspec
 
@@ -150,10 +149,10 @@ library http
     , aeson-pretty
     , base
     , bytestring
-    , cardano-wallet-read
-    , contra-tracer
     , cardano-deposit-wallet
     , cardano-deposit-wallet:rest
+    , cardano-wallet-read
+    , contra-tracer
     , http-media
     , insert-ordered-containers
     , lens
@@ -180,10 +179,10 @@ library rest
     , bytestring
     , cardano-addresses
     , cardano-crypto
+    , cardano-deposit-wallet
     , cardano-ledger-byron
     , contra-tracer
     , crypto-primitives
-    , cardano-deposit-wallet
     , customer-deposit-wallet-pure
     , deepseq
     , delta-store
@@ -208,31 +207,31 @@ test-suite unit
   main-is:            test-suite-unit.hs
   ghc-options:        -Wno-unused-packages
   build-depends:
+    , address-derivation-discovery
     , aeson
     , aeson-pretty
     , base
-    , base58-bytestring
     , base16-bytestring
+    , base58-bytestring
     , bech32
     , bech32-th
     , bytestring
     , cardano-addresses
-    , address-derivation-discovery
     , cardano-crypto
     , cardano-crypto-class
+    , cardano-deposit-wallet
+    , cardano-deposit-wallet:http
+    , cardano-deposit-wallet:rest
     , cardano-ledger-api
     , cardano-ledger-core
     , cardano-ledger-core:testlib
     , cardano-ledger-shelley
     , cardano-slotting
-    , cardano-wallet-read == 1.0.0.0
+    , cardano-wallet-read           ==1.0.0.0
     , cardano-wallet-test-utils
     , containers
     , contra-tracer
-    , cardano-deposit-wallet
-    , customer-deposit-wallet-pure == 0.1.0.0
-    , cardano-deposit-wallet:http
-    , cardano-deposit-wallet:rest
+    , customer-deposit-wallet-pure  ==0.1.0.0
     , data-default
     , directory
     , hspec

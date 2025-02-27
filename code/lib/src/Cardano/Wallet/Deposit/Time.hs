@@ -13,21 +13,19 @@ module Cardano.Wallet.Deposit.Time
       TimeInterpreter
     , PastHorizonException
     , mockTimeInterpreter
-
     , slotToUTCTime
 
-    -- * from Write
+      -- * from Write
     , Write.TimeTranslation
     , toTimeTranslation
     , toTimeTranslationPure
 
-    -- * wishlist
+      -- * wishlist
     , LookupTimeFromSlot
     , unsafeUTCTimeOfSlot
     , unsafeSlotOfUTCTime
     , systemStartMainnet
     , originTime
-
     ) where
 
 import Prelude
@@ -78,21 +76,24 @@ import qualified Cardano.Write.Tx as Write
 {-----------------------------------------------------------------------------
     TimeInterpreter
 ------------------------------------------------------------------------------}
-type TimeInterpreter = Primitive.TimeInterpreter (Either PastHorizonException)
+type TimeInterpreter =
+    Primitive.TimeInterpreter (Either PastHorizonException)
 
 mockTimeInterpreter :: Primitive.TimeInterpreter Identity
-mockTimeInterpreter = hoistTimeInterpreter (pure . runIdentity) $
-    mkSingleEraInterpreter
-        (StartTime $ UTCTime (toEnum 0) 0)
-        mockSlottingParameters
+mockTimeInterpreter =
+    hoistTimeInterpreter (pure . runIdentity)
+        $ mkSingleEraInterpreter
+            (StartTime $ UTCTime (toEnum 0) 0)
+            mockSlottingParameters
 
 mockSlottingParameters :: SlottingParameters
-mockSlottingParameters = SlottingParameters
-    { getSlotLength = SlotLength 1
-    , getEpochLength = EpochLength 21_600
-    , getActiveSlotCoefficient = ActiveSlotCoefficient 1
-    , getSecurityParameter = Quantity 2_160
-    }
+mockSlottingParameters =
+    SlottingParameters
+        { getSlotLength = SlotLength 1
+        , getEpochLength = EpochLength 21_600
+        , getActiveSlotCoefficient = ActiveSlotCoefficient 1
+        , getSecurityParameter = Quantity 2_160
+        }
 
 {-----------------------------------------------------------------------------
     TimeInterpreter
@@ -105,7 +106,11 @@ type LookupTimeFromSlot = Slot -> Maybe (WithOrigin UTCTime)
 -- TODO: Check roundtrip properties once we need to implement the corresponding 'utcTimeToSlot'.
 slotToUTCTime :: TimeInterpreter -> LookupTimeFromSlot
 slotToUTCTime _ti Origin = Just Origin
-slotToUTCTime ti (At s) = either (const Nothing) (Just . At) . interpretQuery ti . Primitive.slotToUTCTime =<< convertSlotNo s
+slotToUTCTime ti (At s) =
+    either (const Nothing) (Just . At)
+        . interpretQuery ti
+        . Primitive.slotToUTCTime
+        =<< convertSlotNo s
   where
     convertSlotNo :: SlotNo -> Maybe Primitive.SlotNo
     convertSlotNo (SlotNo n) = Primitive.SlotNo <$> intCastMaybe n
@@ -129,7 +134,8 @@ unsafeSlotOfUTCTime :: UTCTime -> Read.Slot
 unsafeSlotOfUTCTime t
     | origin = Origin
     | byron = At $ SlotNo $ fromIntegral $ (pt - originTime) `div` 20
-    | otherwise = At $ SlotNo $ fromIntegral $ pt - shelleyTime + byronSlots
+    | otherwise =
+        At $ SlotNo $ fromIntegral $ pt - shelleyTime + byronSlots
   where
     pt = floor $ utcTimeToPOSIXSeconds t
     origin = pt < originTime
