@@ -184,6 +184,9 @@ test-show-details: direct
 package cardano-deposit-wallet-ui
     tests: True
 
+package cardano-deposit-wallet
+    tests: True
+    
 -- Now disable all other tests with a global flag.
 -- This is what they do in cardano-node/cabal.project.
 
