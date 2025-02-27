@@ -36,7 +36,7 @@ import Cardano.Wallet.Application.Version
     , Version
     , showFullVersion
     )
-import Cardano.Wallet.Deposit.CLI
+import Cardano.Wallet.Deposit.Application.Options
     ( LogOutput (..)
     , LoggingOptions
     , ServeArgs

@@ -23,7 +23,7 @@
 -- License: Apache-2.0
 --
 -- Shared types and helpers for CLI parsing
-module Cardano.Wallet.Deposit.CLI
+module Cardano.Wallet.Deposit.Application.Options
     ( LogOutput (..)
     , LoggingOptions
     , Mode (..)

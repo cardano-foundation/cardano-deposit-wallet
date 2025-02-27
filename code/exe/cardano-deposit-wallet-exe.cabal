@@ -66,7 +66,7 @@ library
     Cardano.Wallet.Deposit.Application
     Cardano.Wallet.Deposit.Application.Commands.Serve
     Cardano.Wallet.Deposit.Application.Logging
-    Cardano.Wallet.Deposit.CLI
+    Cardano.Wallet.Deposit.Application.Options
 
 executable cardano-deposit-wallet
   import:           language, opts-exe

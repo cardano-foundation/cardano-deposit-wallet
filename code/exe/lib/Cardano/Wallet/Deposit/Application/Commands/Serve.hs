@@ -31,7 +31,7 @@ import Cardano.Wallet.Deposit.Application.Logging
     , tracerSeveritiesOption
     , withTracers
     )
-import Cardano.Wallet.Deposit.CLI
+import Cardano.Wallet.Deposit.Application.Options
     ( Mode (..)
     , ServeArgs (..)
     , databaseOption
