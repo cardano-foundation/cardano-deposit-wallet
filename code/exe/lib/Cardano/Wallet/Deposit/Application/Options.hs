@@ -1,22 +1,9 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE ApplicativeDo #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE ExistentialQuantification #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE GADTs #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NumericUnderscores #-}
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE UndecidableInstances #-}
 
 -- |
 -- Copyright: © 2018-2020 IOHK
@@ -24,15 +11,13 @@
 --
 -- Shared types and helpers for CLI parsing
 module Cardano.Wallet.Deposit.Application.Options
-    ( LogOutput (..)
-    , LoggingOptions
+    ( LoggingOptions
     , Mode (..)
+    , Port (..)
     , cli
     , cmdVersion
     , databaseOption
     , depositByronGenesisFileOption
-    , ekgEnabled
-    , helperTracing
     , hostPreferenceOption
     , listenDepositOption
     , listenDepositUiOption
@@ -40,12 +25,11 @@ module Cardano.Wallet.Deposit.Application.Options
     , loggingOptions
     , loggingSeverityOrOffReader
     , loggingTracers
+    , loggingSeverities
     , modeOption
     , runCli
-    , setupDirectory
     , shutdownHandlerFlag
     , tlsOption
-    , withLogging
     , networkConfigurationOption
     , nodeSocketOption
     , ServeArgs (..)
@@ -55,50 +39,8 @@ import Prelude hiding
     ( getLine
     )
 
-import Cardano.BM.Backend.Switchboard
-    ( Switchboard
-    )
-import Cardano.BM.Configuration.Static
-    ( defaultConfigStdout
-    )
-import Cardano.BM.Counters
-    ( readCounters
-    )
-import Cardano.BM.Data.Configuration
-    ( Endpoint (..)
-    )
-import Cardano.BM.Data.Counter
-    ( Counter (..)
-    , nameCounter
-    )
-import Cardano.BM.Data.LogItem
-    ( LOContent (..)
-    , LoggerName
-    , PrivacyAnnotation (..)
-    , mkLOMeta
-    )
-import Cardano.BM.Data.Output
-    ( ScribeDefinition (..)
-    , ScribeFormat (..)
-    , ScribeId
-    , ScribeKind (..)
-    , ScribePrivacy (..)
-    )
 import Cardano.BM.Data.Severity
     ( Severity (..)
-    )
-import Cardano.BM.Data.SubTrace
-    ( SubTrace (..)
-    )
-import Cardano.BM.Setup
-    ( setupTrace_
-    , shutdown
-    )
-import Cardano.BM.Trace
-    ( Trace
-    , appendName
-    , logDebug
-    , traceNamedObject
     )
 import Cardano.Launcher.Node
     ( CardanoNodeConn
@@ -124,9 +66,6 @@ import Cardano.Wallet.Orphans
 import Cardano.Wallet.Primitive.SyncProgress
     ( SyncTolerance (..)
     )
-import Cardano.Wallet.Primitive.Types.Hash
-    ( Hash (..)
-    )
 import Control.Applicative
     ( optional
     , (<|>)
@@ -135,14 +74,8 @@ import Control.Arrow
     ( left
     )
 import Control.Monad
-    ( forM_
-    , forever
-    , join
+    ( join
     , unless
-    , when
-    )
-import Control.Monad.IO.Class
-    ( MonadIO
     )
 import Data.Bifunctor
     ( Bifunctor (..)
@@ -151,18 +84,8 @@ import Data.Bifunctor
 import Data.Char
     ( toLower
     )
-import Data.Maybe
-    ( fromMaybe
-    , isJust
-    )
 import Data.Streaming.Network
     ( HostPreference
-    )
-import Data.String
-    ( IsString
-    )
-import Data.Text
-    ( Text
     )
 import Data.Text.Class
     ( FromText (..)
@@ -186,10 +109,8 @@ import Options.Applicative
     ( CommandFields
     , Mod
     , OptionFields
-    , ParseError (InfoMsg)
     , Parser
     , ParserInfo
-    , abortOption
     , auto
     , command
     , customExecParser
@@ -216,35 +137,11 @@ import Options.Applicative.Types
     ( ReadM (..)
     , readerAsk
     )
-import System.Directory
-    ( createDirectoryIfMissing
-    , doesDirectoryExist
-    , doesFileExist
-    )
-import System.Environment
-    ( lookupEnv
-    )
 import System.Exit
-    ( exitFailure
-    , exitSuccess
-    )
-import System.IO
-    ( stderr
-    )
-import UnliftIO.Concurrent
-    ( threadDelay
-    )
-import UnliftIO.Exception
-    ( bracket
+    ( exitSuccess
     )
 
-import qualified Cardano.BM.Configuration.Model as CM
-import qualified Cardano.BM.Data.BackendKind as CM
-import qualified Cardano.BM.Data.Observable as Obs
-import qualified Data.Bifunctor as Bi
 import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
-import qualified UnliftIO.Async as Async
 
 {-------------------------------------------------------------------------------
                                    CLI
@@ -466,186 +363,9 @@ instance FromText (Port tag) where
 instance ToText (Port tag) where
     toText (Port p) = toText p
 
--- | Wrapper type around 'Text' to make its semantic more explicit
-newtype Service = Service Text deriving newtype (IsString, Show, Eq)
-
-newtype TxId = TxId {getTxId :: Hash "Tx"}
-    deriving (Eq, Show)
-
-instance FromText TxId where
-    fromText = Bi.first (const err) . fmap TxId . fromText
-      where
-        err =
-            TextDecodingError
-                "A transaction ID should be a hex-encoded string of 64 characters."
-
 {-------------------------------------------------------------------------------
                                   Logging
 -------------------------------------------------------------------------------}
-
--- | Controls how much information to include in log output.
-data Verbosity
-    = -- | The default level of verbosity.
-      Default
-    | -- | Include less information in the log output.
-      Quiet
-    | -- | Include more information in the log output.
-      Verbose
-    deriving (Eq, Show)
-
-data LogOutput
-    = -- | Log to console, with the given minimum 'Severity'.
-      --
-      -- Logs of Warning or higher severity will be output to stderr. Notice or
-      -- lower severity logs will be output to stdout.
-      LogToStdStreams Severity
-    | LogToFile FilePath Severity
-    deriving (Eq, Show)
-
-mkScribe :: LogOutput -> [ScribeDefinition]
-mkScribe (LogToFile path sev) =
-    pure
-        $ ScribeDefinition
-            { scName = T.pack path
-            , scFormat = ScText
-            , scKind = FileSK
-            , scMinSev = sev
-            , scMaxSev = Critical
-            , scPrivacy = ScPublic
-            , scRotation = Nothing
-            }
-mkScribe (LogToStdStreams sev) =
-    [ mkScribe' (max errMin sev, maxBound, StderrSK)
-    , mkScribe' (sev, pred errMin, StdoutSK)
-    ]
-  where
-    errMin = Warning
-    mkScribe' (minSev, maxSev, kind) =
-        ScribeDefinition
-            { scName = "text"
-            , scFormat = ScText
-            , scKind = kind
-            , scMinSev = minSev
-            , scMaxSev = maxSev
-            , scPrivacy = ScPublic
-            , scRotation = Nothing
-            }
-
-mkScribeId :: LogOutput -> [ScribeId]
-mkScribeId (LogToStdStreams _) = ["StdoutSK::text", "StderrSK::text"]
-mkScribeId (LogToFile file _) = pure $ T.pack $ "FileSK::" <> file
-
-getPrometheusURL :: IO (Maybe (String, Port "Prometheus"))
-getPrometheusURL = do
-    prometheus_port <- lookupEnv "CARDANO_WALLET_PROMETHEUS_PORT"
-    prometheus_host <-
-        fromMaybe "127.0.0.1" <$> lookupEnv "CARDANO_WALLET_PROMETHEUS_HOST"
-    case (prometheus_host, prometheus_port) of
-        (host, Just port) ->
-            case fromText @(Port "Prometheus") $ T.pack port of
-                Right port' -> pure $ Just (host, port')
-                _ -> do
-                    TIO.hPutStr
-                        stderr
-                        "Port value for prometheus metrics invalid. Will be disabled."
-                    pure Nothing
-        _ -> pure Nothing
-
-getEKGURL :: IO (Maybe (String, Port "EKG"))
-getEKGURL = do
-    ekg_port <- lookupEnv "CARDANO_WALLET_EKG_PORT"
-    ekg_host <-
-        fromMaybe "127.0.0.1" <$> lookupEnv "CARDANO_WALLET_EKG_HOST"
-    case (ekg_host, ekg_port) of
-        (host, Just port) ->
-            case fromText @(Port "EKG") $ T.pack port of
-                Right port' -> pure $ Just (host, port')
-                _ -> do
-                    TIO.hPutStr
-                        stderr
-                        "Port value for EKB metrics invalid. Will be disabled."
-                    pure Nothing
-        _ -> pure Nothing
-
-ekgEnabled :: IO Bool
-ekgEnabled = isJust <$> getEKGURL
-
--- | Initialize logging at the specified minimum 'Severity' level.
-initTracer
-    :: LoggerName
-    -> [LogOutput]
-    -> IO (Switchboard Text, (CM.Configuration, Trace IO Text))
-initTracer loggerName outputs = do
-    prometheusHP <- getPrometheusURL
-    ekgHP <- getEKGURL
-    cfg <- do
-        c <- defaultConfigStdout
-        CM.setSetupBackends
-            c
-            [CM.KatipBK, CM.AggregationBK, CM.EKGViewBK, CM.EditorBK]
-        CM.setDefaultBackends c [CM.KatipBK]
-        CM.setSetupScribes c $ outputs >>= mkScribe
-        CM.setDefaultScribes c $ outputs >>= mkScribeId
-        CM.setBackends c "test-cluster.metrics" (Just [CM.EKGViewBK])
-        CM.setBackends c "cardano-wallet.metrics" (Just [CM.EKGViewBK])
-        forM_ ekgHP $ \(h, p) -> do
-            CM.setEKGBindAddr c $ Just (Endpoint (h, getPort p))
-        forM_ prometheusHP $ \(h, p) ->
-            CM.setPrometheusBindAddr c $ Just (h, getPort p)
-        pure c
-    (tr, sb) <- setupTrace_ cfg loggerName
-    ekgEnabled >>= flip when (startCapturingMetrics tr)
-    pure (sb, (cfg, tr))
-  where
-    -- https://github.com/IntersectMBO/cardano-node/blob/f7d57e30c47028ba2aeb306a4f21b47bb41dec01/cardano-node/src/Cardano/Node/Configuration/Logging.hs#L224
-    startCapturingMetrics :: Trace IO Text -> IO ()
-    startCapturingMetrics trace0 = do
-        let trace = appendName "metrics" trace0
-            counters =
-                [ Obs.MemoryStats
-                , Obs.ProcessStats
-                , Obs.NetStats
-                , Obs.IOStats
-                , Obs.GhcRtsStats
-                , Obs.SysStats
-                ]
-        _ <- Async.async $ forever $ do
-            cts <- readCounters (ObservableTraceSelf counters)
-            traceCounters trace cts
-            threadDelay 30_000_000 -- 30 seconds
-        pure ()
-      where
-        traceCounters
-            :: forall m a. MonadIO m => Trace m a -> [Counter] -> m ()
-        traceCounters _tr [] = return ()
-        traceCounters tr (c@(Counter _ct cn cv) : cs) = do
-            mle <- mkLOMeta Notice Confidential
-            traceNamedObject tr (mle, LogValue (nameCounter c <> "." <> cn) cv)
-            traceCounters tr cs
-
--- | See 'withLoggingNamed'
-withLogging
-    :: [LogOutput]
-    -> ((Switchboard Text, (CM.Configuration, Trace IO Text)) -> IO a)
-    -> IO a
-withLogging =
-    withLoggingNamed "cardano-wallet"
-
--- | Run an action with logging available and configured. When the action is
--- finished (normally or otherwise), log messages are flushed.
-withLoggingNamed
-    :: LoggerName
-    -> [LogOutput]
-    -> ((Switchboard Text, (CM.Configuration, Trace IO Text)) -> IO a)
-    -- ^ The action to run with logging configured.
-    -> IO a
-withLoggingNamed loggerName outputs = bracket before after
-  where
-    before = initTracer loggerName outputs
-    after (sb, (_, tr)) = do
-        logDebug (appendName "main" tr) "Logging shutdown."
-        shutdown sb
-
 data LoggingOptions tracers = LoggingOptions
     { loggingMinSeverity :: Severity
     , loggingTracers :: tracers
@@ -684,54 +404,6 @@ loggingOptions tracers =
                     "Individual component severity for 'NAME'. See --help-tracing \
                     \for details and available tracers."
 
--- | A hidden "helper" option which always fails, but shows info about the
--- logging options.
-helperTracing :: [(String, String)] -> Parser (a -> a)
-helperTracing tracerDescriptions =
-    abortOption (InfoMsg helpTxt)
-        $ long "help-tracing"
-            <> help "Show help for tracing options"
-            <> hidden
-  where
-    helpTxt = helperTracingText tracerDescriptions
-
-helperTracingText :: [(String, String)] -> String
-helperTracingText tracerDescriptions =
-    unlines
-        $ [ "Additional tracing options:"
-          , ""
-          , "  --log-level SEVERITY     Global minimum severity for a message to be logged."
-          , "                           Defaults to \"DEBUG\"."
-          , ""
-          , "  --trace-NAME=off         Disable logging on the given tracer."
-          , "  --trace-NAME=SEVERITY    Minimum severity for a message to be logged, or"
-          , "                           \"off\" to disable the tracer. Note that component"
-          , "                           traces still abide by the global log-level. For"
-          , "                           example, if the global log level is \"INFO\", then"
-          , "                           there will be no \"DEBUG\" messages whatsoever."
-          , "                           Defaults to \"INFO\"."
-          , ""
-          , "The possible log levels (lowest to highest) are:"
-          , "  " ++ unwords (map fst loggingSeverities)
-          , ""
-          , "The possible tracers are:"
-          ]
-            ++ [pretty_ tracerName desc | (tracerName, desc) <- tracerDescriptions]
-  where
-    maxLength = maximum $ map (length . fst) tracerDescriptions
-    pretty_ tracerName desc =
-        "  " ++ padRight maxLength ' ' tracerName ++ "  " ++ desc
-      where
-        padRight n c cs = take n $ cs ++ replicate n c
-
-{-------------------------------------------------------------------------------
-                                 Helpers
--------------------------------------------------------------------------------}
-
--- | Like 'hPutErrLn' but with provided default 'Handle'
-putErrLn :: Text -> IO ()
-putErrLn = TIO.hPutStrLn stderr
-
 data Mode c = Normal c SyncTolerance
     deriving (Show)
 
@@ -755,28 +427,6 @@ cmdVersion =
     exec = do
         putStrLn $ showFullVersion version gitRevision
         exitSuccess
-
-{-------------------------------------------------------------------------------
-                            Commands - 'launch'
--------------------------------------------------------------------------------}
-
--- | Initialize a directory to store data such as blocks or the wallet databases
-setupDirectory :: (Text -> IO ()) -> FilePath -> IO ()
-setupDirectory logT dir = do
-    exists <- doesFileExist dir
-    when exists $ do
-        putErrLn
-            $ mconcat
-                [ T.pack dir <> " must be a directory, but it is"
-                , " a file. Exiting."
-                ]
-        exitFailure
-    doesDirectoryExist dir >>= \case
-        True -> logT $ "Using directory: " <> T.pack dir
-        False -> do
-            logT $ "Creating directory: " <> T.pack dir
-            let createParentIfMissing = True
-            createDirectoryIfMissing createParentIfMissing dir
 
 -- | --mainnet --shelley-genesis=FILE
 -- --testnet --byron-genesis=FILE --shelley-genesis=FILE

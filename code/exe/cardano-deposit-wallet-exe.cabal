@@ -22,7 +22,9 @@ common opts-exe
     ghc-options: -O2 -Werror
 
 common opts-lib
-  ghc-options: -Wall -Wcompat -Wredundant-constraints -Wunused-packages
+  ghc-options:
+    -Wall -Wcompat -Wredundant-constraints -Wincomplete-uni-patterns
+    -Wincomplete-record-updates -Wunused-imports -Wunused-packages
 
   if flag(release)
     ghc-options: -O2 -Werror
