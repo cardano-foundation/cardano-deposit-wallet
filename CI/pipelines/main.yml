@@ -47,12 +47,32 @@ steps:
         - nix build $CI_SCRIPTS_DIR/rewrite-libs
       agents:
         system: ${linux_agent}
+  - group: cardano-deposit-wallet code
+    depends_on:
+      - linux-setup
+    steps:
     - label: Code and cabal files are formatted
       commands:
         - cd code
         - nix develop -c just format-check
       agents:
         system: ${linux_agent}
+
+    - label: Unit tests (UI)
+      commands:
+      - nix build -L ./code#project.hsPkgs.cardano-deposit-wallet-ui.checks.unit
+      agents:
+        system: ${linux_agent}
+      artifact_paths:
+      - ./result/*
+
+    - label: Unit tests (Lib)
+      commands:
+      - nix build -L ./code#project.hsPkgs.cardano-deposit-wallet.checks.unit
+      agents:
+        system: ${linux_agent}
+      artifact_paths:
+      - ./result/*
 
   - group: Linux Setup
     depends_on: []
