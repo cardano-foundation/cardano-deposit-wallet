@@ -5,7 +5,6 @@ module Cardano.Wallet.Deposit.Pure.UTxO
     , restrictedBy
     , filterByAddress
     , toList
-
     , DeltaUTxO
     , excludingD
     , receiveD

@@ -175,9 +175,11 @@ depositsElementH depositsHistoryLink = onWalletPresentH $ \case
                                 , hxTarget_ "#deposits"
                                 ]
                                 $ do
-                                    div_ [class_ "d-flex justify-content-end"]
+                                    div_
+                                        [class_ "d-flex justify-content-end"]
                                         toggle
-                                    div_ [class_ "mt-1"]
+                                    div_
+                                        [class_ "mt-1"]
                                         depositsViewControls
                 box "Deposits by Time" configure $ do
                     div_ [class_ "row gx-0"]

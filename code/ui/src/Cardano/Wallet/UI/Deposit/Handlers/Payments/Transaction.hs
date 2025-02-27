@@ -27,9 +27,6 @@ import Cardano.Wallet.Deposit.Pure.API.Address
     ( NetworkTag (..)
     , getNetworkTag
     )
-import Cardano.Wallet.Deposit.Read
-    ( Address
-    )
 import Cardano.Wallet.Deposit.REST
     ( WalletResource
     , WalletResourceM
@@ -42,6 +39,9 @@ import Cardano.Wallet.Deposit.REST
     , resolveCurrentEraTx
     , signTx
     , submitTx
+    )
+import Cardano.Wallet.Deposit.Read
+    ( Address
     )
 import Cardano.Wallet.Deposit.Write
     ( Tx

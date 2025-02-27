@@ -6,15 +6,14 @@ let
       cabal-fmt = { index-state = indexState; };
       haskell-language-server = { index-state = indexState; };
       hoogle = { index-state = indexState; };
+      fourmolu = { index-state = indexState; };
     };
     withHoogle = true;
     buildInputs = [
       pkgs.just
       pkgs.gitAndTools.git
-      pkgs.haskellPackages.fourmolu
       pkgs.haskellPackages.ghcid
       pkgs.haskellPackages.hlint
-      pkgs.haskellPackages.stylish-haskell
     ];
     shellHook = ''
       echo "Entering shell for cardano-deposit-wallet development"

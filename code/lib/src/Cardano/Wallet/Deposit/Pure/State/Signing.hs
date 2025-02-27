@@ -68,5 +68,6 @@ signTx tx passphrase w = signTx' <$> rootXSignKey w
                 (T.encodeUtf8 passphrase)
                 BS.empty
                 encryptedXPrv
-        keys = deriveXPrvBIP32Path unencryptedXPrv
-            <$> getBIP32PathsForOwnedInputs tx w
+        keys =
+            deriveXPrvBIP32Path unencryptedXPrv
+                <$> getBIP32PathsForOwnedInputs tx w

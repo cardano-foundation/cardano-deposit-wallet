@@ -73,8 +73,11 @@ scenarios = do
 
         it "4. Create payments to a different wallet" $ \env -> do
             withWalletEnvMock env $ \walletEnv ->
-                Wallet.withWalletInit nullTracer
-                    walletEnv (XPubCredentials xpub) 32
+                Wallet.withWalletInit
+                    nullTracer
+                    walletEnv
+                    (XPubCredentials xpub)
+                    32
                     $ Exchanges.scenarioCreatePayment xprv env mockAddress
 
     describe "Temporary tests" $ do

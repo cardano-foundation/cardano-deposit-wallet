@@ -33,7 +33,8 @@ match check no checkD = \case
     NoMatch -> no
     DirectionMatch -> checkD
 
-filterByDirection :: Ord b => Direction -> b -> (a -> Match b) -> [a] -> [a]
+filterByDirection
+    :: Ord b => Direction -> b -> (a -> Match b) -> [a] -> [a]
 filterByDirection Asc w f = filter (match (>= w) False False . f)
 filterByDirection Desc w f = filter (match (<= w) False True . f)
 

@@ -267,14 +267,14 @@ prop_availableBalance_rollForward_rollBackward =
         === Wallet.availableBalance w0
         .&&. Wallet.availableBalance
             (fst $ Wallet.rollBackward timeFromSlot chainPoint1 w3)
-        === Wallet.availableBalance w1
+            === Wallet.availableBalance w1
         .&&. Wallet.availableBalance
             (fst $ Wallet.rollBackward timeFromSlot chainPoint2 w3)
-        === Wallet.availableBalance w2
+            === Wallet.availableBalance w2
         .&&. Wallet.availableBalance w3
-        =/= Wallet.availableBalance w2
+            =/= Wallet.availableBalance w2
         .&&. Wallet.availableBalance w3
-        `Read.lessOrEqual` Wallet.availableBalance w2
+            `Read.lessOrEqual` Wallet.availableBalance w2
   where
     w0 = emptyWalletWith17Addresses
     Just addr1 = Wallet.customerAddress 1 w0
@@ -301,8 +301,7 @@ emptyWalletWith17Addresses =
 
 seed :: SomeMnemonic
 seed = case createMnemonicFromWords
-    "vital minimum victory start lunch find city peanut shiver soft hedgehog artwork mushroom loud found"
-    of
+    "vital minimum victory start lunch find city peanut shiver soft hedgehog artwork mushroom loud found" of
     Right seed' -> seed'
     Left e -> error $ show e
 

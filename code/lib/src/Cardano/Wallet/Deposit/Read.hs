@@ -13,13 +13,11 @@ module Cardano.Wallet.Deposit.Read
     , Read.EraValue (..)
     , Read.Conway
     , Read.getEra
-
     , Read.SlotNo (..)
     , Read.ChainPoint (..)
     , Read.Slot
     , Read.WithOrigin (..)
     , Read.slotFromChainPoint
-
     , Address
     , KeyHash
     , NetworkTag (..)
@@ -27,7 +25,6 @@ module Cardano.Wallet.Deposit.Read
     , Addr
     , compactAddr
     , decompactAddr
-
     , Ix
     , Read.TxIn
     , Read.TxOut
@@ -35,7 +32,6 @@ module Cardano.Wallet.Deposit.Read
     , Read.Value
     , Read.lessOrEqual
     , UTxO
-
     , Read.TxId
     , Read.Tx (..)
     , Read.utxoFromEraTx
@@ -44,7 +40,6 @@ module Cardano.Wallet.Deposit.Read
     , Read.getValidityInterval
     , Read.getTxId
     , Read.invalidHereafter
-
     , Read.Block
     , Read.getChainPoint
     , Read.getEraBHeader
@@ -52,18 +47,14 @@ module Cardano.Wallet.Deposit.Read
     , Read.getEraTransactions
     , mockNextBlock
     , Read.mockRawHeaderHash
-
     , Read.ChainTip (..)
     , Read.getChainTip
     , Read.prettyChainTip
-
     , Read.PParams (..)
     , Read.mockPParamsConway
-
     , Read.GenesisData
     , Read.GenesisHash
     , Read.mockGenesisDataMainnet
-
     , Read.NetworkId (Read.Mainnet, Read.Testnet)
     , Read.getNetworkId
     , getEraSlotOfBlock
@@ -109,8 +100,8 @@ type Address = Read.CompactAddr
 mkEnterpriseAddress :: NetworkTag -> KeyHash -> Address
 mkEnterpriseAddress network =
     compactAddrFromEnterpriseAddr
-    . EnterpriseAddrC network
-    . KeyHashObj
+        . EnterpriseAddrC network
+        . KeyHashObj
 
 type Ix = Read.TxIx
 
@@ -122,11 +113,12 @@ type UTxO = Map Read.TxIn Read.TxOut
 {-----------------------------------------------------------------------------
     Block
 ------------------------------------------------------------------------------}
+
 -- | Create a new block from a sequence of transaction.
 mockNextBlock
     :: Read.ChainPoint -> [Read.Tx Read.Conway] -> Read.Block Read.Conway
 mockNextBlock old txs =
-    mkBlockEra BlockParameters{slotNumber,blockNumber,txs}
+    mkBlockEra BlockParameters{slotNumber, blockNumber, txs}
   where
     blockNumber = Read.BlockNo $ Read.unSlotNo slotNumber
     slotNumber = case old of

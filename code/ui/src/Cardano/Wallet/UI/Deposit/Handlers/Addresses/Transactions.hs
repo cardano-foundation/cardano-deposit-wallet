@@ -28,14 +28,14 @@ import Cardano.Wallet.Deposit.Pure
 import Cardano.Wallet.Deposit.Pure.API.TxHistory
     ( DownTime
     )
-import Cardano.Wallet.Deposit.Read
-    ( Address
-    , Slot
-    )
 import Cardano.Wallet.Deposit.REST
     ( WalletResource
     , customerAddress
     , getTxHistoryByCustomer
+    )
+import Cardano.Wallet.Deposit.Read
+    ( Address
+    , Slot
     )
 import Cardano.Wallet.Read
     ( TxId

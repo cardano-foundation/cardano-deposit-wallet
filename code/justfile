@@ -1,5 +1,10 @@
 format:
-    nix develop -c fourmolu -i exe
+    fourmolu -i exe lib ui
+    find exe lib ui -name '*.cabal' -exec cabal-fmt -i {} \;
+
+format-check:
+    fourmolu -c -q exe lib ui > /dev/null
+    find exe lib ui -name '*.cabal' -exec cabal-fmt -c {} \;
 
 build t:
     cabal build -O0 ${{t}}

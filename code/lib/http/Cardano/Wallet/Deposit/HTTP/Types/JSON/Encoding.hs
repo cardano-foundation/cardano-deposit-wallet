@@ -7,7 +7,6 @@
 -- License: Apache-2.0
 --
 -- Utilities for mapping data types to/from JSON.
---
 module Cardano.Wallet.Deposit.HTTP.Types.JSON.Encoding
     ( Custom (..)
     , customOptions
@@ -47,19 +46,18 @@ import GHC.Generics
 ------------------------------------------------------------------------------}
 newtype Custom a = Custom {unCustom :: a}
 
-instance (Generic a, GFromJSON Zero (Rep a)) => FromJSON (Custom a)
-  where
+instance (Generic a, GFromJSON Zero (Rep a)) => FromJSON (Custom a) where
     parseJSON = fmap Custom . genericParseJSON customOptions
 
-instance (Generic a, GToJSON' Value Zero (Rep a)) => ToJSON (Custom a)
-  where
+instance (Generic a, GToJSON' Value Zero (Rep a)) => ToJSON (Custom a) where
     toJSON = genericToJSON customOptions . unCustom
 
 customOptions :: Options
-customOptions = defaultOptions
-    { fieldLabelModifier = camelTo2 '_' . dropWhile (== '_')
-    , omitNothingFields = True
-    }
+customOptions =
+    defaultOptions
+        { fieldLabelModifier = camelTo2 '_' . dropWhile (== '_')
+        , omitNothingFields = True
+        }
 
 {-----------------------------------------------------------------------------
     Text

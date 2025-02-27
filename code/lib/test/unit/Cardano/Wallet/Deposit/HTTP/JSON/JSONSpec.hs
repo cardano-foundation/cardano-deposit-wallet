@@ -1,7 +1,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeApplications #-}
-
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Cardano.Wallet.Deposit.HTTP.JSON.JSONSpec
@@ -82,23 +81,33 @@ import qualified Data.List as L
 spec :: Spec
 spec = do
     describe "JSON serialization & deserialization" $ do
-        it "ApiT Address" $ property $
-            prop_jsonRoundtrip @(ApiT Address)
-        it "ApiT Customer" $ property $
-            prop_jsonRoundtrip @(ApiT Customer)
-        it "ApiT CustomerList" $ property $
-            prop_jsonRoundtrip @(ApiT CustomerList)
-        it "ApiT ChainPoint" $ property $
-            prop_jsonRoundtrip @(ApiT ChainPoint)
+        it "ApiT Address"
+            $ property
+            $ prop_jsonRoundtrip @(ApiT Address)
+        it "ApiT Customer"
+            $ property
+            $ prop_jsonRoundtrip @(ApiT Customer)
+        it "ApiT CustomerList"
+            $ property
+            $ prop_jsonRoundtrip @(ApiT CustomerList)
+        it "ApiT ChainPoint"
+            $ property
+            $ prop_jsonRoundtrip @(ApiT ChainPoint)
     describe "schema checks" $ do
         it "ApiT Address"
             $ jsonMatchesSchema genApiTAddress depositDefinitions addressSchema
         it "ApiT Customer"
             $ jsonMatchesSchema genApiTCustomer depositDefinitions customerSchema
         it "ApiT CustomerList"
-            $ jsonMatchesSchema genApiTCustomerList depositDefinitions customerListSchema
+            $ jsonMatchesSchema
+                genApiTCustomerList
+                depositDefinitions
+                customerListSchema
         it "ApiT ChainPoint"
-            $ jsonMatchesSchema genApiTChainPoint depositDefinitions chainPointSchema
+            $ jsonMatchesSchema
+                genApiTChainPoint
+                depositDefinitions
+                chainPointSchema
 
 jsonMatchesSchema
     :: (ToJSON a, Show a)
@@ -114,7 +123,8 @@ jsonMatchesSchema gen defs schema =
     validate :: Definitions Schema -> Schema -> Value -> Expectation
     validate defs' sch' x = validateJSON defs' sch' x `shouldBe` []
 
-    validateInstance :: ToJSON a => Definitions Schema -> Schema -> a -> Expectation
+    validateInstance
+        :: ToJSON a => Definitions Schema -> Schema -> a -> Expectation
     validateInstance defs' sch' = validate defs' sch' . toJSON
 
     counterExampleJSON
@@ -128,7 +138,8 @@ jsonMatchesSchema gen defs schema =
             ("Failed to " <> t <> ":\n" <> BL.unpack (encodePretty $ toJSON x))
             $ f x
 
-prop_jsonRoundtrip :: (Eq a, Show a, FromJSON a, ToJSON a) => a -> Property
+prop_jsonRoundtrip
+    :: (Eq a, Show a, FromJSON a, ToJSON a) => a -> Property
 prop_jsonRoundtrip val =
     decode (encode val) === Just val
 
@@ -158,16 +169,17 @@ genApiTChainPoint :: Gen (ApiT ChainPoint)
 genApiTChainPoint = ApiT <$> genChainPoint
 
 genChainPoint :: Gen Read.ChainPoint
-genChainPoint = frequency
-    [ ( 1, pure Read.GenesisPoint)
-    , (40, Read.BlockPoint <$> genReadSlotNo <*> genHeaderHash)
-    ]
+genChainPoint =
+    frequency
+        [ (1, pure Read.GenesisPoint)
+        , (40, Read.BlockPoint <$> genReadSlotNo <*> genHeaderHash)
+        ]
   where
     genReadSlotNo = Read.SlotNo . fromIntegral <$> (arbitrary :: Gen Word64)
     genHeaderHash = elements mockHashes
 
 mockHashes :: [Read.RawHeaderHash]
-mockHashes = map Read.mockRawHeaderHash [0..2]
+mockHashes = map Read.mockRawHeaderHash [0 .. 2]
 
 instance Arbitrary (ApiT Address) where
     arbitrary = genApiTAddress

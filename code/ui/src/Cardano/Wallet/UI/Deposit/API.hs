@@ -11,13 +11,13 @@ import Prelude
 import Cardano.Wallet.Deposit.Pure
     ( Customer
     )
-import Cardano.Wallet.Deposit.Read
-    ( Address
-    , TxId
-    )
 import Cardano.Wallet.Deposit.REST.Wallet.Create
     ( PostWalletViaMnemonic
     , PostWalletViaXPub
+    )
+import Cardano.Wallet.Deposit.Read
+    ( Address
+    , TxId
     )
 import Cardano.Wallet.Read
     ( WithOrigin (..)

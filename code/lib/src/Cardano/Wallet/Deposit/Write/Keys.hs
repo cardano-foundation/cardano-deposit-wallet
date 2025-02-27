@@ -42,6 +42,7 @@ import qualified Cardano.Ledger.Keys as L
 {-----------------------------------------------------------------------------
     Key conversion
 ------------------------------------------------------------------------------}
+
 -- | Create an enterprise address from a ledger 'VKey'.
 enterpriseAddressFromVKey
     :: L.Network
@@ -49,32 +50,33 @@ enterpriseAddressFromVKey
     -> Address
 enterpriseAddressFromVKey network =
     mkEnterpriseAddress
-    . L.coerceKeyRole
-    . L.hashKey
+        . L.coerceKeyRole
+        . L.hashKey
   where
     mkEnterpriseAddress h =
         L.compactAddr
-        $ L.Addr network (L.KeyHashObj h) L.StakeRefNull
+            $ L.Addr network (L.KeyHashObj h) L.StakeRefNull
 
 -- | Convert 'XPub' to a ledger verification key.
 vkeyFromXPub :: XPub -> VKey 'L.Witness L.StandardCrypto
 vkeyFromXPub =
     VKey
-    . fromMaybe impossible
-    . DSIGN.rawDeserialiseVerKeyDSIGN
-    . xpubPublicKey
+        . fromMaybe impossible
+        . DSIGN.rawDeserialiseVerKeyDSIGN
+        . xpubPublicKey
   where
     impossible = error "impossible: Cannot convert XPub to VKey"
 
 -- | Convert 'XSignature' to a ledger signature.
 signedDSIGNfromXSignature
     :: XSignature
-    -> SignedDSIGN L.StandardCrypto
+    -> SignedDSIGN
+        L.StandardCrypto
         (L.Hash L.StandardCrypto L.EraIndependentTxBody)
 signedDSIGNfromXSignature =
     DSIGN.SignedDSIGN
-    . fromMaybe impossible
-    . DSIGN.rawDeserialiseSigDSIGN
-    . rawSerialiseXSignature
+        . fromMaybe impossible
+        . DSIGN.rawDeserialiseSigDSIGN
+        . rawSerialiseXSignature
   where
     impossible = error "impossible: Cannot convert XSignature to SignedDSIGN"

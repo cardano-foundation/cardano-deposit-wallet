@@ -6,7 +6,6 @@ module Cardano.Wallet.Deposit.HTTP.Types.OpenAPI
     , apiSchema
     , depositPaths
     , depositDefinitions
-
     , customerSchema
     , addressSchema
     , customerListSchema
@@ -197,7 +196,8 @@ getLocalTipPath = ("/network/local-tip", pathItem)
         mempty
             & summary ?~ summary'
             & at 200 ?~ at200
-    summary' = "Obtain the chain point until which the wallet is synchronized against the network"
+    summary' =
+        "Obtain the chain point until which the wallet is synchronized against the network"
     at200 =
         "Ok"
             & _Inline . content . at jsonMediaType
@@ -206,7 +206,8 @@ getLocalTipPath = ("/network/local-tip", pathItem)
 chainPointSchema :: Schema
 chainPointSchema =
     mempty
-       & oneOf ?~ [Inline chainPointOriginSchema, Inline chainPointAtSlotSchema]
+        & oneOf
+            ?~ [Inline chainPointOriginSchema, Inline chainPointAtSlotSchema]
 
 chainPointOriginSchema :: Schema
 chainPointOriginSchema =
@@ -219,9 +220,9 @@ chainPointAtSlotSchema =
     mempty
         & type_ ?~ OpenApiObject
         & properties
-            .~  [ ("slot_no", Inline slotSchema)
-                , ("header_hash", Inline headerHashSchema)
-                ]
+            .~ [ ("slot_no", Inline slotSchema)
+               , ("header_hash", Inline headerHashSchema)
+               ]
 
 slotSchema :: Schema
 slotSchema =

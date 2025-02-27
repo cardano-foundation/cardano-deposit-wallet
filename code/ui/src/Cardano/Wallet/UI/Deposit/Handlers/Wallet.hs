@@ -20,9 +20,6 @@ import Cardano.Wallet.Deposit.Pure.State.Creation
     , credentialsFromEncodedXPub
     , credentialsFromMnemonics
     )
-import Cardano.Wallet.Deposit.Read
-    ( slotFromChainPoint
-    )
 import Cardano.Wallet.Deposit.REST
     ( WalletResource
     , WalletResourceM
@@ -33,6 +30,9 @@ import Cardano.Wallet.Deposit.REST
 import Cardano.Wallet.Deposit.REST.Wallet.Create
     ( PostWalletViaMnemonic (..)
     , PostWalletViaXPub (..)
+    )
+import Cardano.Wallet.Deposit.Read
+    ( slotFromChainPoint
     )
 import Cardano.Wallet.UI.Common.Layer
     ( Push (Push)

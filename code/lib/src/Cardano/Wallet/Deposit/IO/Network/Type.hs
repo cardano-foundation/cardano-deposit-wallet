@@ -60,10 +60,9 @@ data NetworkEnv m block = NetworkEnv
     -- ^ Current protocol paramters.
     , getTimeTranslation
         :: m Time.TimeTranslation
-        -- ^ Get the current 'TimeInterpreter' from the Cardano node.
+    -- ^ Get the current 'TimeInterpreter' from the Cardano node.
     , slotToUTCTime
         :: m (Slot -> (Maybe (WithOrigin UTCTime)))
-
     }
 
 mapBlock
@@ -71,10 +70,11 @@ mapBlock
     => (block1 -> block2)
     -> NetworkEnv m block1
     -> NetworkEnv m block2
-mapBlock f env@NetworkEnv{chainSync} = env
-    { chainSync = \tr follower ->
-        chainSync tr (mapChainFollower id id id (fmap f) follower)
-    }
+mapBlock f env@NetworkEnv{chainSync} =
+    env
+        { chainSync = \tr follower ->
+            chainSync tr (mapChainFollower id id id (fmap f) follower)
+        }
 
 {-------------------------------------------------------------------------------
     Errors

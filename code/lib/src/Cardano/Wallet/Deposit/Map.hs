@@ -300,6 +300,6 @@ onFinger
 onFinger (Finger w m) f = Finger w $ f m
 
 type family Peel x where
-    Peel (Map (W w k : xs) v) =  Map xs v
-    Peel (Map (F w k : xs) v) =  Map xs v
+    Peel (Map (W w k : xs) v) = Map xs v
+    Peel (Map (F w k : xs) v) = Map xs v
     Peel (Map '[] v) = v

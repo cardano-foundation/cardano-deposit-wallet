@@ -47,6 +47,12 @@ steps:
         - nix build $CI_SCRIPTS_DIR/rewrite-libs
       agents:
         system: ${linux_agent}
+    - label: Code and cabal files are formatted
+      commands:
+        - cd code
+        - nix develop -c just format-check
+      agents:
+        system: ${linux_agent}
 
   - group: Linux Setup
     depends_on: []

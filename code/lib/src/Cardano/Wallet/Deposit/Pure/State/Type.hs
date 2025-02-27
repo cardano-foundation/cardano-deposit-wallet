@@ -1,4 +1,5 @@
 {-# LANGUAGE StrictData #-}
+
 module Cardano.Wallet.Deposit.Pure.State.Type
     ( -- * Types
       WalletState (..)
@@ -112,7 +113,7 @@ fromRawCustomer = id
 
 -- | Maximum 'Customer' that is being tracked.
 trackedCustomers :: WalletState -> Customer
-trackedCustomers = (+1) . Address.getMaxCustomer . addresses
+trackedCustomers = (+ 1) . Address.getMaxCustomer . addresses
 
 walletXPub :: WalletState -> XPub
 walletXPub = Address.getXPub . addresses

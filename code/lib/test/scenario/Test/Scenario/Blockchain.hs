@@ -2,26 +2,22 @@
 {-# LANGUAGE NumericUnderscores #-}
 {-# LANGUAGE RecordWildCards #-}
 
-{-|
-Copyright: © 2024 Cardano Foundation
-License: Apache-2.0
-
-Mock implementation of a blockchain for the purpose of testing.
-
-TODO:
-* Make the blockchain more real.
--}
+-- |
+-- Copyright: © 2024 Cardano Foundation
+-- License: Apache-2.0
+--
+-- Mock implementation of a blockchain for the purpose of testing.
+--
+-- TODO:
+-- * Make the blockchain more real.
 module Test.Scenario.Blockchain
     ( assert
-
     , ScenarioEnv
     , withScenarioEnvMock
     , withWalletEnvMock
-
     , Faucet
     , ada
     , payFromFaucet
-
     , signTx
     , submitTx
     ) where
@@ -70,6 +66,7 @@ assert False = error "Assertion failed!"
 {-----------------------------------------------------------------------------
     Environment
 ------------------------------------------------------------------------------}
+
 -- | Environment for scenarios.
 data ScenarioEnv = ScenarioEnv
     { genesisData :: Read.GenesisData
@@ -95,13 +92,14 @@ withWalletEnvMock
     -> IO a
 withWalletEnvMock ScenarioEnv{..} action = do
     database <- newStore
-    let walletEnv = Wallet.WalletEnv
-            Wallet.WalletBootEnv
-                { Wallet.logger = nullTracer
-                , Wallet.genesisData = genesisData
-                , Wallet.networkEnv = networkEnv
-                }
-            database
+    let walletEnv =
+            Wallet.WalletEnv
+                Wallet.WalletBootEnv
+                    { Wallet.logger = nullTracer
+                    , Wallet.genesisData = genesisData
+                    , Wallet.networkEnv = networkEnv
+                    }
+                database
     action walletEnv
 
 {-----------------------------------------------------------------------------
@@ -114,19 +112,21 @@ newtype Faucet = Faucet
 ada :: Integer -> Write.Value
 ada = Write.mkAda
 
-payFromFaucet :: ScenarioEnv -> [(Write.Address, Write.Value)] -> IO ()
+payFromFaucet
+    :: ScenarioEnv -> [(Write.Address, Write.Value)] -> IO ()
 payFromFaucet env destinations =
     submitTx env tx
   where
     toTxOut (addr, value) = Write.mkTxOut addr value
-    txBody = Write.TxBody
-        { Write.spendInputs = mempty
-        , Write.collInputs = mempty
-        , Write.txouts =
-            Map.fromList $ zip [toEnum 0..] $ map toTxOut destinations
-        , Write.collRet = Nothing
-        , Write.expirySlot = Nothing
-        }
+    txBody =
+        Write.TxBody
+            { Write.spendInputs = mempty
+            , Write.collInputs = mempty
+            , Write.txouts =
+                Map.fromList $ zip [toEnum 0 ..] $ map toTxOut destinations
+            , Write.collRet = Nothing
+            , Write.expirySlot = Nothing
+            }
     tx = signTx (xprv (faucet env)) [] $ Write.mkTx txBody
 
 {-----------------------------------------------------------------------------
