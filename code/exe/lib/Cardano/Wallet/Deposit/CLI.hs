@@ -12,7 +12,6 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NumericUnderscores #-}
-{-# LANGUAGE PackageImports #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
@@ -47,6 +46,9 @@ module Cardano.Wallet.Deposit.CLI
     , shutdownHandlerFlag
     , tlsOption
     , withLogging
+    , networkConfigurationOption
+    , nodeSocketOption
+    , ServeArgs (..)
     ) where
 
 import Prelude hiding
@@ -98,11 +100,24 @@ import Cardano.BM.Trace
     , logDebug
     , traceNamedObject
     )
+import Cardano.Launcher.Node
+    ( CardanoNodeConn
+    , cardanoNodeConn
+    , isWindows
+    )
+import Cardano.Wallet.Application.Server
+    ( Listen (..)
+    )
+import Cardano.Wallet.Application.Tls
+    ( TlsConfiguration (..)
+    )
+import Cardano.Wallet.Application.Tracers (TracerSeverities)
 import Cardano.Wallet.Application.Version
     ( gitRevision
     , showFullVersion
     , version
     )
+import Cardano.Wallet.Network.Config (NetworkConfiguration (..))
 import Cardano.Wallet.Orphans
     (
     )
@@ -117,8 +132,7 @@ import Control.Applicative
     , (<|>)
     )
 import Control.Arrow
-    ( first
-    , left
+    ( left
     )
 import Control.Monad
     ( forM_
@@ -131,7 +145,8 @@ import Control.Monad.IO.Class
     ( MonadIO
     )
 import Data.Bifunctor
-    ( bimap
+    ( Bifunctor (..)
+    , bimap
     )
 import Data.Char
     ( toLower
@@ -139,6 +154,9 @@ import Data.Char
 import Data.Maybe
     ( fromMaybe
     , isJust
+    )
+import Data.Streaming.Network
+    ( HostPreference
     )
 import Data.String
     ( IsString
@@ -164,44 +182,7 @@ import GHC.Generics
 import GHC.TypeLits
     ( Symbol
     )
-
--- See ADP-1910
-
-import Cardano.Wallet.Application.Server
-    ( Listen (..)
-    )
-import Cardano.Wallet.Application.Tls
-    ( TlsConfiguration (..)
-    )
-import Data.Streaming.Network
-    ( HostPreference
-    )
-import Options.Applicative.Types
-    ( ReadM (..)
-    , readerAsk
-    )
-import System.Directory
-    ( createDirectoryIfMissing
-    , doesDirectoryExist
-    , doesFileExist
-    )
-import System.Environment
-    ( lookupEnv
-    )
-import System.Exit
-    ( exitFailure
-    , exitSuccess
-    )
-import System.IO
-    ( stderr
-    )
-import UnliftIO.Concurrent
-    ( threadDelay
-    )
-import UnliftIO.Exception
-    ( bracket
-    )
-import "optparse-applicative" Options.Applicative
+import Options.Applicative
     ( CommandFields
     , Mod
     , OptionFields
@@ -230,6 +211,31 @@ import "optparse-applicative" Options.Applicative
     , subparser
     , switch
     , value
+    )
+import Options.Applicative.Types
+    ( ReadM (..)
+    , readerAsk
+    )
+import System.Directory
+    ( createDirectoryIfMissing
+    , doesDirectoryExist
+    , doesFileExist
+    )
+import System.Environment
+    ( lookupEnv
+    )
+import System.Exit
+    ( exitFailure
+    , exitSuccess
+    )
+import System.IO
+    ( stderr
+    )
+import UnliftIO.Concurrent
+    ( threadDelay
+    )
+import UnliftIO.Exception
+    ( bracket
     )
 
 import qualified Cardano.BM.Configuration.Model as CM
@@ -730,10 +736,10 @@ data Mode c = Normal c SyncTolerance
     deriving (Show)
 
 modeOption :: Parser c -> Parser (Mode c)
-modeOption nodeSocketOption = normalMode
+modeOption nodeSocketOption' = normalMode
   where
     normalMode =
-        Normal <$> nodeSocketOption <*> syncToleranceOption
+        Normal <$> nodeSocketOption' <*> syncToleranceOption
 
 {-------------------------------------------------------------------------------
                             Commands - 'version'
@@ -772,3 +778,55 @@ setupDirectory logT dir = do
             let createParentIfMissing = True
             createDirectoryIfMissing createParentIfMissing dir
 
+-- | --mainnet --shelley-genesis=FILE
+-- --testnet --byron-genesis=FILE --shelley-genesis=FILE
+networkConfigurationOption :: Parser NetworkConfiguration
+networkConfigurationOption = mainnet <|> testnet
+  where
+    mainnet = mainnetFlag
+    testnet = TestnetConfig <$> genesisFileOption "byron" "testnet"
+
+    mainnetFlag =
+        flag' MainnetConfig
+            $ long "mainnet" <> help "Use Cardano mainnet protocol"
+
+    genesisFileOption :: String -> String -> Parser FilePath
+    genesisFileOption era net =
+        option (eitherReader $ first getTextDecodingError . fromText . T.pack)
+            $ long net
+                <> metavar "FILE"
+                <> help ("Path to the " <> era <> " genesis data in JSON format.")
+
+-- | --node-socket=FILE
+nodeSocketOption :: Parser CardanoNodeConn
+nodeSocketOption =
+    option (eitherReader (addHelp . cardanoNodeConn))
+        $ long "node-socket"
+            <> metavar (if isWindows then "PIPENAME" else "FILE")
+            <> help helpText
+  where
+    helpText =
+        mconcat
+            [ "Path to the node's domain socket file (POSIX) "
+            , "or pipe name (Windows). "
+            , "Note: Maximum length for POSIX socket files is approx. 100 bytes. "
+            , "Note:"
+            , pipeHelp
+            ]
+    pipeHelp = " Windows named pipes are of the form \\\\.\\pipe\\cardano-node"
+    addHelp = first (if isWindows then (++ pipeHelp) else id)
+
+-- | Arguments for the 'serve' command
+data ServeArgs = ServeArgs
+    { _hostPreference :: HostPreference
+    , _mode :: Mode CardanoNodeConn
+    , _listenDeposit :: Maybe Listen
+    , _listenDepositUi :: Maybe Listen
+    , _tlsConfig :: Maybe TlsConfiguration
+    , _networkConfiguration :: NetworkConfiguration
+    , _database :: Maybe FilePath
+    , _enableShutdownHandler :: Bool
+    , _logging :: LoggingOptions TracerSeverities
+    , _depositByronGenesisFile :: Maybe FilePath
+    }
+    deriving (Show)

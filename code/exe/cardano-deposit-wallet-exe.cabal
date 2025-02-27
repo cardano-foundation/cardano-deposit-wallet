@@ -41,31 +41,31 @@ library
     , cardano-deposit-wallet-ui
     , cardano-deposit-wallet:http
     , cardano-deposit-wallet:rest
+    , cardano-wallet
     , cardano-wallet-exe
+    , cardano-wallet-launcher
     , cardano-wallet-network-layer
     , cardano-wallet-primitive
     , cardano-wallet-ui:common
     , contra-tracer
+    , directory
+    , iohk-monitoring
+    , iohk-monitoring-extra
+    , lobemo-backend-ekg
     , network
+    , optparse-applicative
     , servant-server
     , streaming-commons
+    , text
+    , text-class
     , transformers
     , unliftio
     , warp
-    , optparse-applicative
-    , http-client
-    , fmt
-    , text, time, text-class, aeson
-    , iohk-monitoring
-    , cardano-addresses
-    , address-derivation-discovery
-    , filepath
-    , cardano-wallet-read
-    , bytestring
-    , directory
 
   exposed-modules:
     Cardano.Wallet.Deposit.Application
+    Cardano.Wallet.Deposit.Application.Commands.Serve
+    Cardano.Wallet.Deposit.Application.Logging
     Cardano.Wallet.Deposit.CLI
 
 executable cardano-deposit-wallet
@@ -76,18 +76,4 @@ executable cardano-deposit-wallet
   build-depends:
     , base
     , cardano-deposit-wallet-exe
-    , cardano-wallet
-    , cardano-wallet-exe
-    , cardano-wallet-launcher
-    , cardano-wallet-network-layer
-    , contra-tracer
-    , iohk-monitoring
-    , iohk-monitoring-extra
-    , lobemo-backend-ekg
-    , network-uri
-    , optparse-applicative
-    , text
-    , text-class
-    , transformers
-    , unliftio
     , with-utf8
