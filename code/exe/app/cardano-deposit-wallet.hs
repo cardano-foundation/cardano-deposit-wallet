@@ -31,31 +31,6 @@ import Cardano.Startup
     , installSignalHandlers
     , withShutdownHandler
     )
-import Cardano.Wallet.Application.CLI
-    ( LogOutput (..)
-    , LoggingOptions
-    , Mode (..)
-    , cli
-    , cmdVersion
-    , databaseOption
-    , depositByronGenesisFileOption
-    , ekgEnabled
-    , enableWindowsANSI
-    , helperTracing
-    , hostPreferenceOption
-    , listenDepositOption
-    , listenDepositUiOption
-    , loggingMinSeverity
-    , loggingOptions
-    , loggingSeverityOrOffReader
-    , loggingTracers
-    , modeOption
-    , runCli
-    , setupDirectory
-    , shutdownHandlerFlag
-    , tlsOption
-    , withLogging
-    )
 import Cardano.Wallet.Application.Server
     ( HostPreference
     , Listen
@@ -82,6 +57,30 @@ import Cardano.Wallet.CLI
     )
 import Cardano.Wallet.Deposit.Application
     ( serveDepositWallet
+    )
+import Cardano.Wallet.Deposit.CLI
+    ( LogOutput (..)
+    , LoggingOptions
+    , Mode (..)
+    , cli
+    , cmdVersion
+    , databaseOption
+    , depositByronGenesisFileOption
+    , ekgEnabled
+    , helperTracing
+    , hostPreferenceOption
+    , listenDepositOption
+    , listenDepositUiOption
+    , loggingMinSeverity
+    , loggingOptions
+    , loggingSeverityOrOffReader
+    , loggingTracers
+    , modeOption
+    , runCli
+    , setupDirectory
+    , shutdownHandlerFlag
+    , tlsOption
+    , withLogging
     )
 import Cardano.Wallet.Network.Config
     ( NetworkConfiguration (..)
@@ -172,11 +171,9 @@ import qualified System.Info as I
 
 main :: IO ()
 main = withUtf8 $ do
-    enableWindowsANSI
     runCli
         $ cli
-        $ mempty
-            <> cmdServe
+        $ cmdServe
             <> cmdVersion
 
 beforeMainLoop :: Trace IO MainLog -> URI -> IO ()
@@ -363,8 +360,7 @@ tracerSeveritiesOption =
   where
     traceOpt field def =
         fmap Const . option loggingSeverityOrOffReader
-            $ mempty
-                <> long ("trace-" <> T.unpack (getConst (field tracerLabels)))
+            $ long ("trace-" <> T.unpack (getConst (field tracerLabels)))
                 <> value def
                 <> metavar "SEVERITY"
                 <> internal

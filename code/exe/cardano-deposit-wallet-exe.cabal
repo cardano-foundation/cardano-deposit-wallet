@@ -52,8 +52,21 @@ library
     , transformers
     , unliftio
     , warp
+    , optparse-applicative
+    , http-client
+    , fmt
+    , text, time, text-class, aeson
+    , iohk-monitoring
+    , cardano-addresses
+    , address-derivation-discovery
+    , filepath
+    , cardano-wallet-read
+    , bytestring
+    , directory
 
-  exposed-modules: Cardano.Wallet.Deposit.Application
+  exposed-modules:
+    Cardano.Wallet.Deposit.Application
+    Cardano.Wallet.Deposit.CLI
 
 executable cardano-deposit-wallet
   import:           language, opts-exe
