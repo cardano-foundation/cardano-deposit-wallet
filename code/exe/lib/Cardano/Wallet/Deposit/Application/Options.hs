@@ -15,7 +15,6 @@ module Cardano.Wallet.Deposit.Application.Options
     , Mode (..)
     , Port (..)
     , cli
-    , cmdVersion
     , databaseOption
     , depositByronGenesisFileOption
     , hostPreferenceOption
@@ -54,11 +53,6 @@ import Cardano.Wallet.Application.Tls
     ( TlsConfiguration (..)
     )
 import Cardano.Wallet.Application.Tracers (TracerSeverities)
-import Cardano.Wallet.Application.Version
-    ( gitRevision
-    , showFullVersion
-    , version
-    )
 import Cardano.Wallet.Network.Config (NetworkConfiguration (..))
 import Cardano.Wallet.Orphans
     (
@@ -112,7 +106,6 @@ import Options.Applicative
     , Parser
     , ParserInfo
     , auto
-    , command
     , customExecParser
     , eitherReader
     , flag'
@@ -136,9 +129,6 @@ import Options.Applicative
 import Options.Applicative.Types
     ( ReadM (..)
     , readerAsk
-    )
-import System.Exit
-    ( exitSuccess
     )
 
 import qualified Data.Text as T
@@ -412,21 +402,6 @@ modeOption nodeSocketOption' = normalMode
   where
     normalMode =
         Normal <$> nodeSocketOption' <*> syncToleranceOption
-
-{-------------------------------------------------------------------------------
-                            Commands - 'version'
--------------------------------------------------------------------------------}
-
-cmdVersion :: Mod CommandFields (IO ())
-cmdVersion =
-    command "version"
-        $ info cmd
-        $ progDesc "Show the program's version."
-  where
-    cmd = pure exec
-    exec = do
-        putStrLn $ showFullVersion version gitRevision
-        exitSuccess
 
 -- | --mainnet --shelley-genesis=FILE
 -- --testnet --byron-genesis=FILE --shelley-genesis=FILE

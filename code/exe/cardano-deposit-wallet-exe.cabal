@@ -67,6 +67,7 @@ library
   exposed-modules:
     Cardano.Wallet.Deposit.Application
     Cardano.Wallet.Deposit.Application.Commands.Serve
+    Cardano.Wallet.Deposit.Application.Commands.Version
     Cardano.Wallet.Deposit.Application.Logging
     Cardano.Wallet.Deposit.Application.Options
 
