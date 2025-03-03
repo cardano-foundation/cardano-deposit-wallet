@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 512 512" xml:space="preserve">
+<polygon points="512,400.776 0,400.776 0,417.712 25.6,441.344 486.4,441.344 512,417.712 "/>
+<path style="fill:#FFFFFF;" d="M48,400.776v-277.6c0-6.64,5.4-12.072,12-12.072h392c6.6,0,12,5.432,12,12.072v277.6"/>
+<path d="M472,400.776h-16v-277.6c0-2.2-1.832-4.08-4-4.08H60c-2.168,0-4,1.872-4,4.08v277.592H40V123.176
+	c0-11.08,8.968-20.08,20-20.08h392c11.032,0,20,9,20,20.08V400.776z"/>
+<polygon style="fill:#13B7E6;" points="303.024,417.6 208.984,417.6 192.984,400.776 319.024,400.776 "/>
+<polygon style="fill:#32BEA6;" points="425.92,342.72 86.08,342.72 149.8,257.952 362.2,257.952 "/>
+<polyline style="fill:#FFD67F;" points="149.8,257.952 257.76,342.72 362.2,257.952 "/>
+<g style="opacity:0.15;">
+	<ellipse cx="255.92" cy="297.44" rx="37.512" ry="7.616"/>
+</g>
+<path style="fill:#FF583E;" d="M255.92,297.408l-9.6-12.68c-7.064-9.24-68.88-91.76-68.88-132.872c0-49.32,30.792-81.2,78.48-81.2
+	s78.48,31.872,78.48,81.2c0,41.048-61.816,123.576-68.824,132.872L255.92,297.408z"/>
+<circle style="fill:#FFFFFF;" cx="255.856" cy="152.4" r="25.416"/>
+</svg>
