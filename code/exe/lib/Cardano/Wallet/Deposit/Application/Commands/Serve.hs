@@ -26,7 +26,8 @@ import Cardano.Wallet.Deposit.Application
     ( serveDepositWallet
     )
 import Cardano.Wallet.Deposit.Application.Logging
-    ( MainLog (..)
+    ( DepositTracers (..)
+    , MainLog (..)
     , tracerSeveritiesOption
     , withTracers
     )
@@ -142,7 +143,7 @@ exec
                 enableShutdownHandler
                 logOpt
                 byronGenesisFileOpt
-            ) = withTracers logOpt $ \tr tracers -> do
+            ) = withTracers logOpt $ \depositTracers@(DepositTracers tracers tr) -> do
         withShutdownHandlerMaybe tr enableShutdownHandler $ do
             logDebug tr $ MsgServeArgs args
 
@@ -168,7 +169,7 @@ exec
                             discriminant
                             netParams
                     serveDepositWallet
-                        tracers
+                        depositTracers
                         databaseDir
                         host
                         listenDeposit

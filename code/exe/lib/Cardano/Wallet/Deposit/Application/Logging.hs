@@ -130,6 +130,7 @@ data MainLog
     | MsgSigInt
     | MsgShutdownHandler ShutdownHandlerLog
     | MsgFailedToParseGenesis Text
+    | MsgDebug String
     deriving (Show)
 
 instance ToText MainLog where
@@ -167,22 +168,31 @@ instance ToText MainLog where
                 , "Here's (perhaps) some helpful hint:"
                 , hint
                 ]
+        MsgDebug txt ->
+            T.pack txt
+
+data DepositTracers = DepositTracers
+    { walletTracers :: Tracers IO
+    , depositTrace :: Trace IO MainLog
+    }
 
 withTracers
     :: LoggingOptions TracerSeverities
-    -> (Trace IO MainLog -> Tracers IO -> IO a)
+    -> (DepositTracers -> IO a)
     -> IO a
 withTracers logOpt action =
-    withLogging [LogToStdStreams (loggingMinSeverity logOpt)] $ \(sb, (cfg, tr)) -> do
-        ekgEnabled >>= flip when (EKG.plugin cfg tr sb >>= loadPlugin sb)
-        let trMain = appendName "main" (transformTextTrace tr)
-        let tracers = setupTracers (loggingTracers logOpt) tr
-        logInfo trMain $ MsgVersion V.version V.gitRevision I.arch I.os
-        logInfo trMain =<< MsgCmdLine <$> getExecutablePath <*> getArgs
-        installSignalHandlers (logNotice trMain MsgSigTerm)
-        let logInterrupt UserInterrupt = logNotice trMain MsgSigInt
-            logInterrupt _ = pure ()
-        action trMain tracers `withException` logInterrupt
+    withLogging [LogToStdStreams (loggingMinSeverity logOpt)]
+        $ \(sb, (cfg, tr)) -> do
+            ekgEnabled >>= flip when (EKG.plugin cfg tr sb >>= loadPlugin sb)
+            let trMain = appendName "main" (transformTextTrace tr)
+            let tracers = setupTracers (loggingTracers logOpt) tr
+            logInfo trMain $ MsgVersion V.version V.gitRevision I.arch I.os
+            logInfo trMain =<< MsgCmdLine <$> getExecutablePath <*> getArgs
+            installSignalHandlers (logNotice trMain MsgSigTerm)
+            let logInterrupt UserInterrupt = logNotice trMain MsgSigInt
+                logInterrupt _ = pure ()
+                depositTracers = DepositTracers tracers trMain
+            action depositTracers `withException` logInterrupt
 
 tracerSeveritiesOption :: Parser TracerSeverities
 tracerSeveritiesOption =
