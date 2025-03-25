@@ -19,16 +19,16 @@ index-state: 2025-02-19T00:00:00Z
 
 index-state:
   , hackage.haskell.org 2025-02-19T00:00:00Z
-  , cardano-haskell-package 2025-02-19T00:00:00Z
+  , cardano-haskell-packages 2025-03-01T00:00:00Z
 
 source-repository-package
     type: git
     location: https://github.com/cardano-foundation/cardano-wallet-agda
-    tag: b5f11bde33585277aa3628b01fe6f5ee8bed2101
-    --sha256: 0dc0b60vbq1ljwrdxr45nc99c3gdn98myjyd3c9xmlkn8cwpvjwx
+    tag: 7663f8ae600462ba460e771e651ff3bd66fe4a5c
+    --sha256: sha256-3ielFSr9G1YUuQcImCv3eppYbwE+WA9tEFc219VWHgk=
     subdir:
-      lib/customer-deposit-wallet-pure
       lib/cardano-wallet-read
+      lib/customer-deposit-wallet-pure
 
 source-repository-package
     type: git
@@ -55,11 +55,13 @@ package cardano-addresses
 source-repository-package
     type: git
     location: https://github.com/cardano-foundation/cardano-wallet
-    tag: 3701dee264d866919872c955714fcda6132e7fc3
-    --sha256: sha256-B+pwc06JPDe9SSYmndgWnpjOph4pZzI7nSivqd+E/7g=
+    tag: 23b43afb04e8d0bef6f53825a369eea3ba8255c2
+    --sha256: sha256-Wbp9Jui1kMS+5hAY2Phx04N/YF9O85AWJAfMQNVkT/w=
     subdir:
       lib/address-derivation-discovery
       lib/api
+      lib/application/
+      lib/application-tls/
       lib/application-extras
       lib/balance-tx/
       lib/buildkite/
@@ -70,7 +72,6 @@ source-repository-package
       lib/delta-store/
       lib/delta-table/
       lib/delta-types/
-      lib/exe/
       lib/faucet/
       lib/iohk-monitoring-extra/
       lib/launcher/
@@ -87,12 +88,6 @@ source-repository-package
       lib/wai-middleware-logging/
       lib/wallet-benchmarks/
       lib/wallet/
-
-source-repository-package
-    type: git
-    location: https://github.com/input-output-hk/cardano-sl-x509
-    tag: a91add165152fa36f08e95fafe7da24f1dba4690
-    --sha256: 1ia8vlqghis92cla8qmqa6kh8f3jn29b01fshyk5hmgy5373s684
 
 --------------------------------------------------------------------------------
 -- BEGIN Constraints tweaking section
@@ -123,23 +118,8 @@ constraints:
 
 
   -- Cardano Node dependencies:
-  , io-classes == 1.5.0.0
   , io-classes -asserts
-
-
-  , cardano-ledger-api == 1.9.4.0
-
-  , ouroboros-network == 0.17.1.2
-
-  , cardano-api == 10.1.0.0
-
-  -- because of cardano-sl-x509
-  , tls < 1.7
-
-  -- because cardano-ledger-core 1.15.0.0
-  , data-default < 0.8.0.0
-
-
+  , data-default-class >= 0.2.0.0 && < 0.3
 
 -- Related to: https://github.com/haskell/cabal/issues/8554
 if impl(ghc == 8.10.7)
@@ -186,7 +166,7 @@ package cardano-deposit-wallet-ui
 
 package cardano-deposit-wallet
     tests: True
-    
+
 -- Now disable all other tests with a global flag.
 -- This is what they do in cardano-node/cabal.project.
 

@@ -48,8 +48,8 @@ test-suite unit
     , base
     , base16-bytestring
     , bytestring
-    , cardano-addresses
-    , cardano-crypto
+    , cardano-addresses            >=3.12.0 && <3.13
+    , cardano-crypto               >=1.1.2  && <1.2
     , cardano-deposit-wallet
     , cardano-deposit-wallet-ui
     , cardano-deposit-wallet:rest
@@ -125,11 +125,11 @@ library
     , base
     , base16-bytestring
     , bytestring
-    , cardano-addresses
-    , cardano-binary
+    , cardano-addresses            >=3.12.0  && <3.13
+    , cardano-binary               >=1.7.1.0 && <1.8
     , cardano-deposit-wallet
     , cardano-deposit-wallet:rest
-    , cardano-slotting
+    , cardano-slotting             >=0.2.0.0 && <0.3
     , cardano-wallet-read
     , cardano-wallet-ui:common
     , containers

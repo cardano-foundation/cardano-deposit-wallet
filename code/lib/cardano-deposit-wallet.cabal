@@ -55,13 +55,13 @@ library
     , bech32
     , bech32-th
     , bytestring
-    , cardano-addresses
+    , cardano-addresses             >=3.12.0   && <3.13
     , cardano-balance-tx
-    , cardano-crypto
-    , cardano-crypto-class
-    , cardano-ledger-api
-    , cardano-ledger-core
-    , cardano-strict-containers
+    , cardano-crypto                >=1.1.2    && <1.2
+    , cardano-crypto-class          >=2.1.5.0  && <2.2
+    , cardano-ledger-api            >=1.10.0.0 && <1.11
+    , cardano-ledger-core           >=1.16.0.0 && <1.17
+    , cardano-strict-containers     >=0.1.3.0  && <0.2
     , cardano-wallet
     , cardano-wallet-network-layer
     , cardano-wallet-primitive
@@ -74,7 +74,7 @@ library
     , digest
     , fingertree
     , int-cast
-    , io-classes
+    , io-classes                    >=1.5.0.0  && <1.6
     , lens
     , MonadRandom
     , monoidal-containers
@@ -127,7 +127,7 @@ test-suite scenario
   build-depends:
     , base
     , bytestring
-    , cardano-crypto
+    , cardano-crypto             >=1.1.2 && <1.2
     , cardano-deposit-wallet
     , cardano-wallet-test-utils
     , containers
@@ -177,10 +177,10 @@ library rest
   build-depends:
     , base
     , bytestring
-    , cardano-addresses
-    , cardano-crypto
+    , cardano-addresses             >=3.12.0  && <3.13
+    , cardano-crypto                >=1.1.2   && <1.2
     , cardano-deposit-wallet
-    , cardano-ledger-byron
+    , cardano-ledger-byron          >=1.0.2.0 && <1.1
     , contra-tracer
     , crypto-primitives
     , customer-deposit-wallet-pure
@@ -216,23 +216,23 @@ test-suite unit
     , bech32
     , bech32-th
     , bytestring
-    , cardano-addresses
-    , cardano-crypto
-    , cardano-crypto-class
+    , cardano-addresses             >=3.12.0   && <3.13
+    , cardano-crypto                >=1.1.2    && <1.2
+    , cardano-crypto-class          >=2.1.5.0  && <2.2
     , cardano-deposit-wallet
     , cardano-deposit-wallet:http
     , cardano-deposit-wallet:rest
-    , cardano-ledger-api
-    , cardano-ledger-core
+    , cardano-ledger-api            >=1.10.0.0 && <1.11
+    , cardano-ledger-core           >=1.16.0.0 && <1.17
     , cardano-ledger-core:testlib
-    , cardano-ledger-shelley
-    , cardano-slotting
-    , cardano-wallet-read           ==1.0.0.0
+    , cardano-ledger-shelley        >=1.15.0.0 && <1.16
+    , cardano-slotting              >=0.2.0.0  && <0.3
+    , cardano-wallet-read           ==1.0.0.1
     , cardano-wallet-test-utils
     , containers
     , contra-tracer
     , customer-deposit-wallet-pure  ==0.1.0.0
-    , data-default
+    , data-default                  >=0.8.0.0  && <0.9
     , directory
     , hspec
     , hspec-golden
