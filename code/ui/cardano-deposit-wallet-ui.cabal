@@ -51,10 +51,10 @@ test-suite unit
     , cardano-addresses
     , cardano-crypto
     , cardano-deposit-wallet
+    , cardano-deposit-wallet-ui
     , cardano-deposit-wallet:rest
     , cardano-wallet-read
     , cardano-wallet-ui:common
-    , cardano-wallet-ui:deposit
     , containers
     , contra-tracer
     , hspec
