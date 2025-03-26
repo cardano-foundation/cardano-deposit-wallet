@@ -51,9 +51,6 @@ import Cardano.Wallet.UI.Deposit.Html.Pages.Wallet
 import Cardano.Wallet.UI.Lib.ListOf
     ( ListOf
     )
-import Cardano.Wallet.UI.Type
-    ( WHtml
-    )
 import Data.Text
     ( Text
     )
@@ -86,7 +83,7 @@ import Servant
     ( Link
     )
 
-addressesH :: WHtml ()
+addressesH :: Html ()
 addressesH = do
     sseH addressesLink "addresses" ["wallet"]
 
