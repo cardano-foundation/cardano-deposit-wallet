@@ -113,7 +113,7 @@ fromRawCustomer = id
 
 -- | Maximum 'Customer' that is being tracked.
 trackedCustomers :: WalletState -> Customer
-trackedCustomers = (+ 1) . Address.getMaxCustomer . addresses
+trackedCustomers = Address.getKnownCustomerCount . addresses
 
 walletXPub :: WalletState -> XPub
 walletXPub = Address.getXPub . addresses

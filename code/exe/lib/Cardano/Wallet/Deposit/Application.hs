@@ -9,6 +9,7 @@ module Cardano.Wallet.Deposit.Application
 
 import Prelude
 
+import Cardano.BM.Trace (logDebug)
 import Cardano.Wallet.Application.Logging
     ( ApplicationLog (..)
     )
@@ -22,8 +23,11 @@ import Cardano.Wallet.Application.Tls
     ( TlsConfiguration
     )
 import Cardano.Wallet.Application.Tracers as Tracers
-    ( Tracers
-    , Tracers' (..)
+    ( Tracers' (..)
+    )
+import Cardano.Wallet.Deposit.Application.Logging
+    ( DepositTracers (..)
+    , MainLog (..)
     )
 import Cardano.Wallet.Deposit.IO
     ( WalletBootEnv
@@ -70,7 +74,7 @@ import Control.Monad.Trans.Cont
     , callCC
     )
 import Control.Tracer
-    ( Tracer
+    ( Tracer (..)
     , nullTracer
     , traceWith
     )
@@ -112,7 +116,7 @@ import qualified Network.Wai.Handler.Warp as Warp
 -- which was passed from the CLI and environment and starts all components of
 -- the wallet.
 serveDepositWallet
-    :: Tracers IO
+    :: DepositTracers
     -- ^ Logging config.
     -> Maybe FilePath
     -- ^ Database folder filepath
@@ -130,7 +134,10 @@ serveDepositWallet
     -- ^ A network layer to interact with the blockchain.
     -> ContT r IO ExitCode
 serveDepositWallet
-    Tracers{applicationTracer, apiServerTracer}
+    DepositTracers
+        { walletTracers = Tracers{applicationTracer, apiServerTracer}
+        , depositTrace
+        }
     databaseDir
     hostPref
     mListenDeposit
@@ -155,7 +162,7 @@ serveDepositWallet
                                 databaseDir
                                 bootEnv
                                 netLayer
-                                applicationTracer
+                                depositLogTracer
                                 $ start
                                     Warp.defaultSettings
                                     apiServerTracer
@@ -173,7 +180,7 @@ serveDepositWallet
                                 $ bootApi
                                     mDepositDatabaseDirAndResource
                                     bootEnv
-                                    applicationTracer
+                                    depositLogTracer
                                 $ start
                                     Warp.defaultSettings
                                     apiServerTracer
@@ -182,16 +189,17 @@ serveDepositWallet
             void $ liftIO $ forever $ threadDelay 1000000
             exit ExitSuccess
       where
+        depositLogTracer = MsgDebug >$< Tracer (logDebug depositTrace)
         trace :: ApplicationLog -> IO ()
         trace = traceWith applicationTracer
 
 bootApi
     :: Maybe (FilePath, Resource REST.ErrDatabase WalletInstance)
     -> WalletBootEnv IO
-    -> Tracer IO ApplicationLog
+    -> Tracer IO String
     -> (Application -> IO ())
     -> ContT r IO ()
-bootApi mDepositDatabaseDirAndResource bootEnv applicationTracer starter = do
+bootApi mDepositDatabaseDirAndResource bootEnv depositTrace starter = do
     (databaseDir', resource) <-
         case mDepositDatabaseDirAndResource of
             Nothing -> do
@@ -203,9 +211,7 @@ bootApi mDepositDatabaseDirAndResource bootEnv applicationTracer starter = do
                 liftIO
                     $ loadDepositWalletFromDisk
                         nullTracer
-                        ( DepositApplicationLog
-                            >$< applicationTracer
-                        )
+                        depositTrace
                         databaseDir'
                         bootEnv
                         resource
@@ -217,7 +223,7 @@ bootApi mDepositDatabaseDirAndResource bootEnv applicationTracer starter = do
                 resource
                 bootEnv
                 databaseDir'
-                applicationTracer
+                depositTrace
                 starter
     ContT $ \k ->
         withAsync apiService $ \_ -> k ()
@@ -227,7 +233,7 @@ bootUI
     :: Maybe FilePath
     -> WalletBootEnv IO
     -> NetworkLayer IO block
-    -> Tracer IO ApplicationLog
+    -> Tracer IO String
     -> (Application -> IO ())
     -> ContT
         r
@@ -239,7 +245,7 @@ bootUI
                 WalletInstance
             )
         )
-bootUI databaseDir bootEnv netLayer applicationTracer starter = do
+bootUI databaseDir bootEnv netLayer depositTrace starter = do
     databaseDir' <- case databaseDir of
         Nothing -> ContT $ withSystemTempDirectory "deposit-wallet"
         Just databaseDir' -> pure databaseDir'
@@ -248,9 +254,7 @@ bootUI databaseDir bootEnv netLayer applicationTracer starter = do
     liftIO
         $ loadDepositWalletFromDisk
             (walletTipChanges >$< oobMessages ui)
-            ( DepositApplicationLog
-                >$< applicationTracer
-            )
+            depositTrace
             databaseDir'
             bootEnv
             resource
@@ -266,7 +270,7 @@ bootUI databaseDir bootEnv netLayer applicationTracer starter = do
                 ui
                 bootEnv
                 databaseDir'
-                applicationTracer
+                depositTrace
                 starter
     ContT $ \k ->
         withAsync uiService $ \_ -> k ()
@@ -287,20 +291,20 @@ startDepositServer
     :: WalletResource
     -> WalletBootEnv IO
     -> FilePath
-    -> Tracer IO ApplicationLog
+    -> Tracer IO String
     -> (Application -> IO ())
     -> IO ()
 startDepositServer
     resource
     bootEnv
     databaseDir'
-    tracer
+    stringTracer
     server =
         server
             $ serve (Proxy @Deposit.API)
             $ Deposit.server
                 nullTracer
-                (DepositApplicationLog >$< tracer)
+                stringTracer
                 databaseDir'
                 bootEnv
                 resource
@@ -309,20 +313,20 @@ startDepositUiServer
     :: UILayer WalletResource
     -> WalletBootEnv IO
     -> FilePath
-    -> Tracer IO ApplicationLog
+    -> Tracer IO String
     -> (Application -> IO ())
     -> IO ()
 startDepositUiServer
     ui
     bootEnv
     databaseDir'
-    tracer
+    stringTracer
     server =
         server
             $ serve (Proxy @DepositUi.UI)
             $ DepositUi.serveUI
                 (walletTipChanges >$< oobMessages ui)
-                (DepositUIApplicationLog >$< tracer)
+                stringTracer
                 ui
                 bootEnv
                 databaseDir'

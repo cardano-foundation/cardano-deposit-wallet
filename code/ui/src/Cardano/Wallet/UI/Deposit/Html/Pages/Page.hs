@@ -76,10 +76,6 @@ import Cardano.Wallet.UI.Deposit.Html.Pages.Wallet
     , isPresent
     , walletH
     )
-import Cardano.Wallet.UI.Type
-    ( WalletType (..)
-    , runWHtml
-    )
 import Control.Lens
     ( _Just
     )
@@ -99,7 +95,6 @@ page
     -> RawHtml
 page c p = RawHtml
     $ renderBS
-    $ runWHtml Deposit
     $ pageFromBodyH faviconLink c
     $ do
         bodyH sseLink (headerH p)

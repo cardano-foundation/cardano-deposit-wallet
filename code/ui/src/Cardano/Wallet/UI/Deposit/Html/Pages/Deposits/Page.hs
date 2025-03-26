@@ -36,9 +36,6 @@ import Cardano.Wallet.UI.Deposit.Html.Pages.Wallet
 import Cardano.Wallet.UI.Lib.Discretization
     ( Window (..)
     )
-import Cardano.Wallet.UI.Type
-    ( WHtml
-    )
 import Control.Monad
     ( forM_
     )
@@ -71,7 +68,7 @@ import Servant
     , ToHttpApiData (toUrlPiece)
     )
 
-depositsH :: Link -> WHtml ()
+depositsH :: Link -> Html ()
 depositsH depositsLink = do
     sseH depositsLink "deposits-page" ["wallet"]
 

@@ -79,9 +79,6 @@ import Cardano.Wallet.UI.Deposit.Html.Common
     , lovelaceH
     , txIdH
     )
-import Cardano.Wallet.UI.Type
-    ( WHtml
-    )
 import Control.Monad
     ( forM_
     , when
@@ -133,7 +130,7 @@ import qualified Data.Map.Monoidal.Strict as MonoidalMap
 import qualified Data.Text.Lazy as TL
 import qualified Data.Text.Lazy.Encoding as TL
 
-paymentsH :: Link -> WHtml ()
+paymentsH :: Link -> Html ()
 paymentsH paymentsLink = do
     sseH paymentsLink "payments-page" ["payments"]
 

@@ -29,4 +29,3 @@ ignore-me
 .direnv
 tmp
 .cabal-fmt-*
-cabal.project.*freeze

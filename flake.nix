@@ -52,7 +52,6 @@
           code = import ./code/cardano-deposit-wallet.nix {
             inherit system;
             inherit (inputs) nixpkgs haskellNix iohkNix CHaP flake-utils;
-            rewrite-libs = rewrite-libs.packages.default;
           };
           devShells =
             import ./nix/devShells.nix { inherit code node pkgs system; };

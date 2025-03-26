@@ -1,11 +1,12 @@
 { code, node, pkgs, system, ... }:
-let hsPkgs = code.packages.project.hsPkgs;
+let
+  hsPkgs = code.packages.project.hsPkgs;
+  indexState = "2025-01-01T23:24:19Z";
 in {
   devShells.default = pkgs.mkShell {
     packages = [
       hsPkgs.cardano-addresses-cli.components.exes.cardano-address
       hsPkgs.bech32.components.exes.bech32
-      code.packages.cardano-deposit-wallet
       node.${system}.pkgs.cardano-node
       node.${system}.pkgs.cardano-cli
     ];
