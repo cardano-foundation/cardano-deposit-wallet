@@ -1,0 +1,94 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "rc-*"
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (e.g. v1.0.0)"
+        required: true
+        type: string
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  XDG_CACHE_HOME: /tmp/nix-eval-cache/${{ github.job }}
+  LC_ALL: C.UTF-8
+  CI_DIR: ./CI
+  CI_SCRIPTS_DIR: ./CI/scripts
+  RELEASE_SCRIPT: nix develop ./CI#release --command
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Prepare release: determine version, create rc branch, patch flake.nix
+  # ---------------------------------------------------------------------------
+
+  prepare-release:
+    name: Prepare Release
+    runs-on: [self-hosted, linux, x86_64, cardano-wallet]
+    outputs:
+      version: ${{ steps.prepare.outputs.version }}
+      rc-commit: ${{ steps.prepare.outputs.rc-commit }}
+    env:
+      INPUT_VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Prepare release candidate
+        id: prepare
+        run: ${{ env.RELEASE_SCRIPT }} ${{ env.CI_SCRIPTS_DIR }}/add-release-commits.sh
+
+  # ---------------------------------------------------------------------------
+  # Build artifacts via CI workflow
+  # ---------------------------------------------------------------------------
+
+  build:
+    name: Build (Linux)
+    needs: prepare-release
+    uses: ./.github/workflows/ci.yml
+
+  # ---------------------------------------------------------------------------
+  # Create release (requires approval via environment)
+  # ---------------------------------------------------------------------------
+
+  create-release:
+    name: Create Release
+    needs: [prepare-release, build]
+    runs-on: [self-hosted, linux, x86_64, cardano-wallet]
+    environment: release
+    env:
+      VERSION: ${{ needs.prepare-release.outputs.version }}
+      TEMPLATE: ./CI/templates/release.md
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Push release
+        run: ${{ env.RELEASE_SCRIPT }} ${{ env.CI_SCRIPTS_DIR }}/push-release.sh
+
+  # ---------------------------------------------------------------------------
+  # Upload artifacts to the release
+  # ---------------------------------------------------------------------------
+
+  upload-artifacts:
+    name: Upload Artifacts
+    needs: [prepare-release, create-release, build]
+    runs-on: [self-hosted, linux, x86_64, cardano-wallet]
+    env:
+      VERSION: ${{ needs.prepare-release.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Upload release artifacts
+        run: ${{ env.RELEASE_SCRIPT }} ${{ env.CI_SCRIPTS_DIR }}/push-release-artifacts.sh

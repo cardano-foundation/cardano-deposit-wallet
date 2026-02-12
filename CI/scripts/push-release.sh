@@ -1,8 +1,12 @@
-#! /usr/bin/env bash
+#!/usr/bin/env bash
 
 set -euox pipefail
 
-VERSION=$(buildkite-agent meta-data get release-version)
+if [ -z "${VERSION:-}" ]; then
+	echo "Error: VERSION is not set."
+	exit 1
+fi
+
 title="Release Candidate of $VERSION"
 
 gh release create \

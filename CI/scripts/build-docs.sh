@@ -15,9 +15,9 @@
 
 set -euox pipefail
 
-# Define the current branch in case of buildkite or local
-if [ -n "${BUILDKITE:-}" ]; then
-	current_branch=${BUILDKITE_BRANCH}
+# Define the current branch in case of CI or local
+if [ -n "${GITHUB_ACTIONS:-}" ]; then
+	current_branch=${GITHUB_REF_NAME}
 else
 	current_branch=$(git rev-parse --abbrev-ref HEAD)
 fi
@@ -75,7 +75,7 @@ git commit -m "Update pages from $current_branch to $target" || true
 git push origin gh-pages || true
 
 # Switch back to the original branch
-if [ -z "${BUILDKITE:-}" ]; then
+if [ -z "${GITHUB_ACTIONS:-}" ]; then
 	git checkout "$current_branch"
 	git clean -fxd
 fi
