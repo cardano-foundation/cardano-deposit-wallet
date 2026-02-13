@@ -1,28 +1,25 @@
-#!/usr/bin/env  bash
+#!/usr/bin/env bash
 
 set -euox pipefail
 
-if [ -z "${BUILDKITE:-}" ]; then
-	echo "Error: BUILDKITE is not set."
-	exit 1
-fi
-
-# use BUILDKITE_BRANCH if BUILDKITE_TAG is not set, fallback to the version in the flake.nix
-if [[ -z "${BUILDKITE_TAG:-}" ]]; then
-	if [[ ! $BUILDKITE_BRANCH =~ ^rc- ]]; then
+# Determine VERSION from tag, branch, or flake.nix
+if [[ -n "${INPUT_VERSION:-}" ]]; then
+	# workflow_dispatch with explicit version input
+	VERSION="$INPUT_VERSION"
+elif [[ -n "${GITHUB_REF_NAME:-}" ]]; then
+	case "$GITHUB_REF_NAME" in
+	rc-*)
+		VERSION=v${GITHUB_REF_NAME#rc-}
+		;;
+	v*)
+		VERSION=$GITHUB_REF_NAME
+		;;
+	*)
 		VERSION=$(nix eval --raw .#version)
-	else
-		VERSION=${BUILDKITE_BRANCH#rc-}
-	fi
-elif
-	# check buildkite tag does not starts with rc-
-	[[ ! $BUILDKITE_TAG =~ ^rc- ]]
-then
-	# use the buildkite tag as the version
-	VERSION=$BUILDKITE_TAG
+		;;
+	esac
 else
-	# remove rc- from the buildkite tag, this is a release candidate
-	VERSION=v${BUILDKITE_TAG#rc-}
+	VERSION=$(nix eval --raw .#version)
 fi
 
 RELEASE_CANDIDATE_BRANCH="rc/$VERSION"
@@ -36,7 +33,7 @@ sed -i "s/version = self.dirtyShortRev or self.shortRev;/version = \"$VERSION\";
 
 # configure git
 git config --global user.email "hal@cardanofoundation.org"
-git config --global user.name "Buildkite Pipeline"
+git config --global user.name "GitHub Actions"
 
 # commit the changes
 git add flake.nix
@@ -46,8 +43,8 @@ RELEASE_CANDIDATE_COMMIT=$(git rev-parse HEAD)
 
 git push -f origin "$RELEASE_CANDIDATE_BRANCH"
 
-if [ -n "${BUILDKITE:-}" ]; then
-	buildkite-agent meta-data set "release-version" "$VERSION"
-	buildkite-agent meta-data set "release-candidate-commit" "$RELEASE_CANDIDATE_COMMIT"
-	buildkite-agent meta-data set "base-build" "$BUILDKITE_BUILD_ID"
+# Export outputs for GitHub Actions
+if [ -n "${GITHUB_OUTPUT:-}" ]; then
+	echo "version=$VERSION" >>"$GITHUB_OUTPUT"
+	echo "rc-commit=$RELEASE_CANDIDATE_COMMIT" >>"$GITHUB_OUTPUT"
 fi

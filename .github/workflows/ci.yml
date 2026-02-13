@@ -1,0 +1,337 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  XDG_CACHE_HOME: /tmp/nix-eval-cache/${{ github.job }}
+  LC_ALL: C.UTF-8
+  CI_DIR: ./CI
+  CI_SCRIPTS_DIR: ./CI/scripts
+  DOCS_SCRIPT: nix develop ./CI#docs --command
+  DOCS_TEST_DIR: ./site/docs/test
+  TESTS_SCRIPT: nix develop ./CI#tests --command
+  CHECKS_SCRIPT: nix develop ./CI#checks --command
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Build gates
+  # ---------------------------------------------------------------------------
+
+  build-gate:
+    name: Build Gate (Linux)
+    runs-on: [self-hosted, linux, x86_64, cardano-wallet]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build derivations
+        run: >-
+          nix build -L
+          .#cardano-deposit-wallet
+          ./code#cardano-deposit-wallet-linux64-static
+          ./code#project.hsPkgs.cardano-deposit-wallet.checks.unit
+          ./code#project.hsPkgs.cardano-deposit-wallet-ui.checks.unit
+
+  build-gate-artifacts:
+    name: Build Gate (Linux Artifacts)
+    runs-on: [self-hosted, linux, x86_64, cardano-wallet]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build packaging derivations
+        run: >-
+          nix build -L
+          .#linux64.package
+          .#docker-image
+
+  build-gate-mac:
+    name: Build Gate (macOS)
+    runs-on: [self-hosted, macOS, ARM64, cardano-wallet]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build derivations
+        run: >-
+          nix build -L
+          .#cardano-deposit-wallet
+          .#macos-silicon.package
+
+  # ---------------------------------------------------------------------------
+  # Checks (needs: build-gate)
+  # ---------------------------------------------------------------------------
+
+  checks:
+    name: ${{ matrix.name }}
+    needs: build-gate
+    runs-on: [self-hosted, linux, x86_64, cardano-wallet]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Check Nix format
+            run: $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-nix-format.sh
+          - name: Check Shell format
+            run: $CHECKS_SCRIPT $CI_SCRIPTS_DIR/check-shell-format.sh
+          - name: Nix develop works
+            run: nix develop --command echo "Nix develop works"
+          - name: Runmd tool works
+            run: nix flake check $CI_SCRIPTS_DIR/runmd
+          - name: Rewrite-libs tool builds
+            run: nix build $CI_SCRIPTS_DIR/rewrite-libs
+          - name: Code format
+            run: cd code && nix develop -c just format-check
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: ${{ matrix.name }}
+        run: ${{ matrix.run }}
+
+  # ---------------------------------------------------------------------------
+  # Unit tests (needs: build-gate)
+  # ---------------------------------------------------------------------------
+
+  unit-tests:
+    name: Unit tests (${{ matrix.name }})
+    needs: build-gate
+    runs-on: [self-hosted, linux, x86_64, cardano-wallet]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Lib
+            derivation: ./code#project.hsPkgs.cardano-deposit-wallet.checks.unit
+          - name: UI
+            derivation: ./code#project.hsPkgs.cardano-deposit-wallet-ui.checks.unit
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run tests
+        run: nix build -L ${{ matrix.derivation }}
+
+  # ---------------------------------------------------------------------------
+  # Linux artifacts (needs: build-gate-artifacts)
+  # ---------------------------------------------------------------------------
+
+  linux-package:
+    name: Linux Package
+    needs: build-gate-artifacts
+    runs-on: [self-hosted, linux, x86_64, cardano-wallet]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build package
+        run: nix build .#linux64.package
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-package
+          path: result/*.tar.gz
+
+  docker-image:
+    name: Docker Image
+    needs: build-gate-artifacts
+    runs-on: [self-hosted, linux, x86_64, cardano-wallet]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build docker image
+        run: ${{ env.CI_SCRIPTS_DIR }}/build-docker-image.sh
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: result/*.tar.gz
+
+  # ---------------------------------------------------------------------------
+  # Docs (needs: build-gate)
+  # ---------------------------------------------------------------------------
+
+  build-docs:
+    name: Build Docs
+    needs: build-gate
+    runs-on: [self-hosted, linux, x86_64, cardano-wallet]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build and publish docs
+        run: ${{ env.DOCS_SCRIPT }} ${{ env.CI_SCRIPTS_DIR }}/build-docs.sh
+
+  # ---------------------------------------------------------------------------
+  # Smoke tests
+  # ---------------------------------------------------------------------------
+
+  smoke-test-linux:
+    name: Smoke Test Linux Package
+    needs: linux-package
+    runs-on: [self-hosted, linux, x86_64, cardano-wallet]
+    env:
+      PACKAGED_FOR: linux64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux-package
+          path: artifact
+      - name: Smoke test
+        run: >-
+          ${{ env.TESTS_SCRIPT }}
+          ${{ env.CI_SCRIPTS_DIR }}/smoke-test-package.sh artifact/*.tar.gz
+
+  smoke-test-docker:
+    name: Smoke Test Docker Image
+    needs: docker-image
+    runs-on: [self-hosted, linux, x86_64, cardano-wallet]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: artifact
+      - name: Smoke test
+        run: >-
+          ${{ env.TESTS_SCRIPT }}
+          ${{ env.CI_SCRIPTS_DIR }}/smoke-test-docker-image.sh artifact/*.tar.gz
+
+  # ---------------------------------------------------------------------------
+  # macOS artifacts and smoke tests (needs: build-gate-mac)
+  # ---------------------------------------------------------------------------
+
+  mac-package-silicon:
+    name: macOS Silicon Package
+    needs: build-gate-mac
+    runs-on: [self-hosted, macOS, ARM64, cardano-wallet]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build package
+        run: nix build .#macos-silicon.package
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-silicon-package
+          path: result/*.tar.gz
+
+  smoke-test-macos:
+    name: Smoke Test macOS Silicon
+    needs: mac-package-silicon
+    runs-on: [self-hosted, macOS, ARM64, cardano-wallet]
+    env:
+      PACKAGED_FOR: macos-silicon
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-silicon-package
+          path: artifact
+      - name: Smoke test
+        run: >-
+          ${{ env.TESTS_SCRIPT }}
+          ${{ env.CI_SCRIPTS_DIR }}/smoke-test-package.sh artifact/*.tar.gz
+
+  # ---------------------------------------------------------------------------
+  # Docs tests (main only)
+  # ---------------------------------------------------------------------------
+
+  docs-tests-linux:
+    name: Docs test (${{ matrix.name }})
+    if: github.ref == 'refs/heads/main'
+    needs: [linux-package, docker-image]
+    runs-on: [self-hosted, linux, x86_64, cardano-wallet]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Flake install (linux64)
+            recipe: build-and-install-package-with-mithril.yml
+            env_packaged_for: linux64
+            env_flake: "true"
+          - name: Package install (linux64)
+            recipe: download-and-install-package.yml
+            env_packaged_for: linux64
+          - name: Docker from release
+            recipe: docker-from-release.yml
+          - name: Docker from flake
+            recipe: docker-from-flake.yml
+    env:
+      PACKAGED_FOR: ${{ matrix.env_packaged_for || '' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux-package
+          path: artifact
+      - uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: artifact
+      - name: Run docs test
+        run: |
+          if [ "${{ matrix.env_flake }}" = "true" ]; then
+            export FLAKE=$(pwd)
+          fi
+          ${{ env.TESTS_SCRIPT }} ${{ env.CI_SCRIPTS_DIR }}/run-md.sh \
+            ${{ env.DOCS_TEST_DIR }}/${{ matrix.recipe }}
+
+  docs-tests-macos:
+    name: Docs test macOS (${{ matrix.name }})
+    if: github.ref == 'refs/heads/main'
+    needs: mac-package-silicon
+    runs-on: [self-hosted, macOS, ARM64, cardano-wallet]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Mithril download (silicon)
+            recipe: download-mithril.yml
+            env_packaged_for: macos-silicon
+          - name: Flake install (silicon)
+            recipe: build-and-install-package-without-mithril.yml
+            env_packaged_for: macos-silicon
+            env_flake: "true"
+          - name: Package install (silicon)
+            recipe: download-and-install-package.yml
+            env_packaged_for: macos-silicon
+            env_echoing: "true"
+    env:
+      PACKAGED_FOR: ${{ matrix.env_packaged_for || '' }}
+      ECHOING: ${{ matrix.env_echoing || '' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-silicon-package
+          path: artifact
+      - name: Run docs test
+        run: |
+          if [ "${{ matrix.env_flake }}" = "true" ]; then
+            export FLAKE=$(pwd)
+          fi
+          ${{ env.TESTS_SCRIPT }} ${{ env.CI_SCRIPTS_DIR }}/run-md.sh \
+            ${{ env.DOCS_TEST_DIR }}/${{ matrix.recipe }}

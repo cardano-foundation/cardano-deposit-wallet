@@ -19,12 +19,7 @@ trap cleanup INT
 
 cd "$workdir" || exit
 
-if [ -n "${BUILDKITE:-}" ]; then
-	cardano_wallet_image="result/cardano-deposit-wallet-$VERSION-docker.tar.gz"
-	buildkite-agent artifact download "$cardano_wallet_image" .
-else
-	cardano_wallet_image="$1"
-fi
+cardano_wallet_image="$(cd "$home" && realpath "$1")"
 
 # load the cardano-deposit-wallet image
 docker load -i "$cardano_wallet_image"

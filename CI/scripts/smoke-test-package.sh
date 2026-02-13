@@ -25,15 +25,7 @@ workdir=$(mktemp -d)
 node_session="node-session-$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13)"
 wallet_session="wallet-session-$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13)"
 
-# download the cardano-deposit-wallet package
-if [ -n "${BUILDKITE:-}" ]; then
-	VERSION=$(nix eval --raw .#version)
-	cardano_wallet_segment="cardano-deposit-wallet-$VERSION-$PACKAGED_FOR"
-	cardano_wallet_tar="result/$cardano_wallet_segment.tar.gz"
-	buildkite-agent artifact download "$cardano_wallet_tar" "."
-else
-	cardano_wallet_tar="$1"
-fi
+cardano_wallet_tar="$(realpath "$1")"
 
 # extract the cardano-deposit-wallet package
 tar xvzf "$cardano_wallet_tar" -C "$workdir"
