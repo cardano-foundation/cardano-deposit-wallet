@@ -16,9 +16,9 @@ case $PACKAGED_FOR in
         exit 1
         ;;
 esac
-LATEST_MITHRIL=$(curl -sL https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r .tag_name)
+LATEST_MITHRIL=$(curl -sL https://api.github.com/repos/IntersectMBO/mithril/releases/latest | jq -r .tag_name)
 MITHRIL_NAME=mithril-$LATEST_MITHRIL-$MITHRIL_PLATFORM
-wget -q https://github.com/input-output-hk/mithril/releases/download/$LATEST_MITHRIL/$MITHRIL_NAME.tar.gz
+wget -q https://github.com/IntersectMBO/mithril/releases/download/$LATEST_MITHRIL/$MITHRIL_NAME.tar.gz
 MITHRIL_DIR=$(pwd)/$MITHRIL_NAME
 mkdir -p "$MITHRIL_DIR"
 tar xvzf "$MITHRIL_NAME.tar.gz" -C "$MITHRIL_DIR" > /dev/null
